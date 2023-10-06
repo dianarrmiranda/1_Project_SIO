@@ -1,14 +1,14 @@
 const Caroussel = (images) => {
   return (
     <div className="carousel w-full">
-      {images.map((idx) => (
+      {images.map((idx, url) => (
         <div
           id={`slide${idx}`}
           className="carousel-item relative w-full"
           key={idx}
         >
           <img
-            src={images[idx]}
+            src={url}
             className="w-full"
           />
           <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
