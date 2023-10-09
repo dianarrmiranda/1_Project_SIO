@@ -1,46 +1,38 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../layout/Navbar';
-import Carousel from '../layout/Carousel'
+import Carousel from '../layout/Carousel';
+import ProductCard from '../layout/ProductCard';
 
-const imgs = ["https://i.imgur.com/bRJ9Eki.jpeg", "https://i.imgur.com/ffDXQcD.jpeg", "https://i.imgur.com/ULExX9s.jpeg"]
+const imgs = [
+  'https://i.imgur.com/bRJ9Eki.jpeg',
+  'https://i.imgur.com/ffDXQcD.jpeg',
+  'https://i.imgur.com/ULExX9s.jpeg',
+];
+
+const product = {
+  name: 'TestProd1',
+  id: 1,
+  image: "https://via.placeholder.com/400x400" ,
+  date: '2023/10/09 11:40',
+  origin: 'pt',
+  description: 'produto de testes',
+  price: 123.99,
+  in_Stock: 3,
+  category: {
+    name: 'Portateis',
+    id: 1,
+    description: 'PCs portateis',
+  },
+};
 
 const HomePage = () => {
   const navigate = useNavigate();
-
-  const [theme, setTheme] = useState(
-    localStorage.getItem('theme') ? localStorage.getItem('theme') : 'light'
-  );
-
-  const handleToggle = (e) => {
-    if (e.target.checked) {
-      setTheme('dark');
-    } else {
-      setTheme('light');
-    }
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
-
-  useEffect(() => {
-    localStorage.setItem('theme', theme);
-    const localTheme = localStorage.getItem('theme');
-
-    document.querySelector('html').setAttribute('data-theme', localTheme);
-  }, [theme]);
 
   return (
     <div>
       <Navbar />
       <Carousel images={imgs} />
-      <h1 className="text-xxl text-red-400">LAND PAGE</h1>
-      <button onClick={() => navigate('/store')}>GO TO STORE</button>
-      <input
-        id="search-box"  
-        type="checkbox"
-        onChange={handleToggle}
-        checked={theme === 'light' ? false: true}
-      />
-      
+      <ProductCard product={product}  />
     </div>
   );
 };

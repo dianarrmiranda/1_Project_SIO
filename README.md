@@ -14,6 +14,15 @@ Currently, two official plugins are available:
 git clone git@github.com:Dan1m4D/sio-project.git
 ```
 
+
+## Run frontend
+* Navigate to the root of the frontend project
+  
+```bash
+# Assuming you're in the root of the repo
+cd frontend
+```
+
 * Install dependencies
 ```bash
 yarn
@@ -31,6 +40,31 @@ ou
 ```
 npm run dev
 ```
+
+
+## Run backend
+
+* Navigate to the root of the backend project
+
+```bash
+# Assuming you're in the root of the repo
+cd backend/Backend
+```
+* Run springboot:
+
+```bash
+ mvn spring-boot:run
+```
+
+### BONUS
+#### Setting up postman (to view api calls)
+
+Install [Postman Desktop](https://www.postman.com/downloads/).
+If you're in linux try to search in package managers like [snap](https://snapcraft.io/) or flatpack.
+
+After installing, log in and folow this [tutorial](https://apidog.com/blog/how-to-import-export-postman-collection-data/).
+To test the api, make sure you have spingboot running and make the needed calls.
+
 
 # USED AND AGREED TECH STACKS:
 
