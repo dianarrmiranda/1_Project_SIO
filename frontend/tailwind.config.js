@@ -35,10 +35,10 @@ export default {
         },
         dark: {
           primary: '#3cb521',
-          secondary: '#363031',
+          secondary: '#313442',
           accent: '#2e4eea',
           neutral: '#1d1d30',
-          'base-100': '#12121e',
+          'base-100': '#464855',
         },
       },
     ],

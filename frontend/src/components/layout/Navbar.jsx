@@ -18,6 +18,7 @@ const Navbar = () => {
         className=" input input-bordered input-primary input-sm"
         placeholder='Search'
       />
+      <button className=' btn-primary btn' onClick={() => {}}>GO</button>
       <RiAccountCircleLine className="text-xl m-2" />
     </div>
   );
