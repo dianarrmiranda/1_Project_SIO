@@ -53,7 +53,7 @@ cd backend/Backend
 * Run springboot:
 
 ```bash
- mvn spring-boot:run
+ ./mvnw spring-boot:run
 ```
 
 ### BONUS
