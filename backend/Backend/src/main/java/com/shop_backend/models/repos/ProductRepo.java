@@ -12,6 +12,12 @@ public interface ProductRepo extends CrudRepository<Product, Integer> {
     @Query(value="SELECT * FROM Product prod", nativeQuery=true)
     List<Product> listProducts();
 
+    @Query(value="SELECT * FROM Product prod WHERE prod.CATEGORYID = :cat", nativeQuery=true)
+    List<Product> listProductsByCategory(@Param("cat") String cat);
+
+    @Query(value="SELECT * FROM Product prod WHERE prod.IS_HOT_DEAL", nativeQuery=true)
+    List<Product> listProductsHotDeals();
+
     @Query(value="SELECT COUNT(id) FROM Product prod", nativeQuery=true)
     String getNumberOfProducts();
     

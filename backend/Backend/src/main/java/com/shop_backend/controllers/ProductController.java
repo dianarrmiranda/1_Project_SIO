@@ -45,11 +45,13 @@ public class ProductController {
   @PostMapping(path="/add")
   public @ResponseBody String addProduct (@RequestParam String name,      @RequestParam String description,
                                           @RequestParam String origin,    @RequestParam Double price,  
-                                          @RequestParam Integer in_stock, @RequestParam  Category category) {
+                                          @RequestParam Integer in_stock, @RequestParam  Category category,
+                                          @RequestParam String img) {
 
     //  Check if any required value is empty
     if (name == null || name.equals("") || description == null || description.equals("") 
-        || origin == null || origin.equals("") || price == null || category == null) {
+        || origin == null || origin.equals("") || img == null || img.equals("") 
+        || price == null || category == null) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Provide all the required data fields!");
     }
     
@@ -70,6 +72,8 @@ public class ProductController {
       prod.setDescription(description);
       prod.setOrigin(origin);
       prod.setDate(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(new Date()));
+      prod.setImgSource(img);
+      prod.setIsHotDeal(false);
       prod.setPrice(price);
       prod.setIn_Stock(in_stock);
       prod.setCategory(category);
@@ -94,6 +98,7 @@ public class ProductController {
         //  Select what values to give to the user
         temp.put("id", prod.getID().toString());
         temp.put("name", prod.getName());
+        temp.put("img", prod.getImgSource());
         temp.put("price", prod.getPrice().toString());
         temp.put("in_stock", prod.getIn_Stock().toString());
         temp.put("category", prod.getCategory().getName());
@@ -102,6 +107,58 @@ public class ProductController {
       }
 
       return data;
+  }
+
+  //  List produtos from the repository (database)
+  @GetMapping(path = "/listByCategory")
+  public @ResponseBody LinkedList<HashMap<String, String>> listProductByCategory(@RequestParam String categoryID ) {
+
+    //  Check if any required value is empty
+    if (categoryID == null || categoryID.equals("")) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Provide all a valid category ID!");
+    }
+
+    LinkedList<HashMap<String, String>> data = new LinkedList<HashMap<String, String>>();
+    List<Product> returnedVals = productRepository.listProductsByCategory(categoryID);
+
+    for (Product prod : returnedVals) {
+      HashMap<String, String> temp = new HashMap<String, String>();
+
+      //  Select what values to give to the user
+      temp.put("id", prod.getID().toString());
+      temp.put("name", prod.getName());
+      temp.put("img", prod.getImgSource());
+      temp.put("price", prod.getPrice().toString());
+      temp.put("in_stock", prod.getIn_Stock().toString());
+      temp.put("category", prod.getCategory().getName());
+
+      data.add(temp);
+    }
+
+    return data;
+  }
+
+  //  List produtos from the repository (database)
+  @GetMapping(path = "/listHotDeals")
+  public @ResponseBody LinkedList<HashMap<String, String>> listProductHotDeals() {
+    LinkedList<HashMap<String, String>> data = new LinkedList<HashMap<String, String>>();
+    List<Product> returnedVals = productRepository.listProductsHotDeals();
+
+    for (Product prod : returnedVals) {
+      HashMap<String, String> temp = new HashMap<String, String>();
+
+      //  Select what values to give to the user
+      temp.put("id", prod.getID().toString());
+      temp.put("name", prod.getName());
+      temp.put("img", prod.getImgSource());
+      temp.put("price", prod.getPrice().toString());
+      temp.put("in_stock", prod.getIn_Stock().toString());
+      temp.put("category", prod.getCategory().getName());
+
+      data.add(temp);
+    }
+
+    return data;
   }
 
   //  Get the number of total products in the repository (database)

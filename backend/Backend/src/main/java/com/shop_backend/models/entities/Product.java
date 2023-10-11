@@ -17,7 +17,9 @@ public class Product {
     private String Description;
     private String Origin;
     private String Date;
+    private String ImgSource;
 
+    private Boolean IsHotDeal;
     private Double Price;
     private Integer In_Stock;
 
@@ -65,6 +67,14 @@ public class Product {
         Origin = origin;
     }
 
+    public Boolean getIsHotDeal() {
+        return IsHotDeal;
+    }
+
+    public void setIsHotDeal(Boolean isHotDeal) {
+        IsHotDeal = isHotDeal;
+    }
+
     public Double getPrice() {
         return Price;
     }
@@ -89,6 +99,11 @@ public class Product {
         Category = category;
     }
 
-    
+    public String getImgSource() {
+        return ImgSource;
+    }
 
+    public void setImgSource(String imgSource) {
+        ImgSource = imgSource;
+    }
 }
