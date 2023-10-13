@@ -8,7 +8,7 @@ const ProductCard = ({ product, className }) => {
     <div className={`card w-96 glass ${className}`}>
       <figure>
         <img
-          src={product.image}
+          src={product.img}
           alt={`${product.name}-from-deti-store`}
         />
       </figure>
