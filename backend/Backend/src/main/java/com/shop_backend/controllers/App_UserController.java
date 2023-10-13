@@ -12,22 +12,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.shop_backend.models.repos.App_UserRepo;
 import com.shop_backend.models.repos.RequestRepo;
 import com.shop_backend.models.repos.ShoppingCartItemRepo;
-
-import jakarta.validation.constraints.Null;
+import com.shop_backend.models.repos.ProductRepo;
 
 import com.shop_backend.models.entities.App_User;
-import com.shop_backend.models.entities.Category;
 import com.shop_backend.models.entities.Request;
 import com.shop_backend.models.entities.Product;
 import com.shop_backend.models.entities.ShoppingCartItem;
@@ -44,6 +39,8 @@ public class App_UserController {
   private RequestRepo RequestRepository;
   @Autowired
   private ShoppingCartItemRepo itemRepository;
+  @Autowired
+  private ProductRepo productRepository;
 
   //  Create and save a new app_user object to the repository (database)
   @PostMapping(path="/add")
@@ -264,10 +261,23 @@ public class App_UserController {
 
       List<ShoppingCartItem> orderCart = new ArrayList<>();
 
+      if (currentCart.size() < 1) {
+        throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The current shopping cart of this user is empty!");
+      }
+
       for (ShoppingCartItem item : currentCart) {
           ShoppingCartItem orderItem = item;
           orderCart.add(orderItem);
           total += item.getProd().getPrice() * item.getQuantity();
+
+
+          if (item.getProd().getIn_Stock() < item.getQuantity()) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Only " + item.getProd().getIn_Stock() + " items of type " + item.getProd().getName() + " are in stock, but " + item.getQuantity() + " where requested!");
+          }
+
+          item.getProd().setIn_Stock(item.getProd().getIn_Stock() - item.getQuantity());
+
+          productRepository.save(item.getProd());
       }
 
 
