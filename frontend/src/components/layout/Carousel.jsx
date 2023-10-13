@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import '../../utils/styles.css'
 
 const Carousel = ({ images }) => {
   const navigate = useNavigate();
@@ -16,14 +17,14 @@ const Carousel = ({ images }) => {
               'url(https://daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.jpg)',
           }}
         >
-          <div className="hero-overlay bg-opacity-60"></div>
+          <div className="hero-overlay bg-opacity-70"></div>
           <div className="hero-content text-center text-neutral-content">
-            <div className="max-w-md">
+            <div className="max-w-lg">
               <h1 className="mb-5 text-5xl font-bold">Hello there</h1>
               <p className="mb-5">
-                Provident cupiditate voluptatem et in. Quaerat fugiat ut
-                assumenda excepturi exercitationem quasi. In deleniti eaque aut
-                repudiandae et a id nisi.
+                Welcome to our department's online merch store!<br/>
+                Here you can find your favorite stuff with our favorite designs, from your department's logo to your beloved TUX!<br/>
+                <span className='font-bold'>Dig in!</span> 
               </p>
               <button
                 className="btn btn-primary"
@@ -62,7 +63,7 @@ const Carousel = ({ images }) => {
           />
           <span className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
             <a
-              href={'#slide' + ((idx + 1 - 1) % 4)}
+              href={'#slide' + ((idx - 1 + 1) % 4)}
               className="btn btn-circle opacity-20 hover:opacity-100"
             >
               ❮

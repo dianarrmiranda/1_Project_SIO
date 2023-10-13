@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../layout/Navbar';
 
 import fetchData from '../../utils';
+import Footer from '../layout/Footer';
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -34,6 +35,8 @@ const ProductPage = () => {
       <h1>Product {id}</h1>
       <h1>{product.name}</h1>
       <img src={product.imgSource} />
+      <p>{product.imgSource}</p>
+      <Footer />
     </div>
   );
 };
