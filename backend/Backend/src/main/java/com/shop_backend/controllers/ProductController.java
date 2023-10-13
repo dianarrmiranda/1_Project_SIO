@@ -188,6 +188,28 @@ public class ProductController {
     return data;
   }
 
+  //  Update the in_stock of a specific object based on ID
+  @PostMapping(path = "/updateStock")
+  public @ResponseBody String updateStock(@RequestParam Integer id, @RequestParam Integer stock) {
+    Product data;
+
+    try {
+       data = productRepository.findProductByID(id);
+    }
+    catch (Exception e) {
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
+    }
+
+    if (data == null) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "An entity the specified ID does not exist!");
+    }
+
+    data.setIn_Stock(stock);
+    productRepository.save(data);
+
+    return "Saved";
+  }
+
 
 
   //  Add and List methods for any Category Object

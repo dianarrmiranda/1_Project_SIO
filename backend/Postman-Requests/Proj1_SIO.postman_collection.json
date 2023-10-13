@@ -174,10 +174,10 @@
 				{
 					"name": "Add Product To Cart",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/user/addToCart?userID=1&prod=11&quantity=2",
+							"raw": "localhost:8080/user/addToCart?userID=1&prod=11&quantity=1",
 							"host": [
 								"localhost"
 							],
@@ -197,7 +197,7 @@
 								},
 								{
 									"key": "quantity",
-									"value": "2"
+									"value": "1"
 								}
 							]
 						}
@@ -207,7 +207,7 @@
 				{
 					"name": "Remove From Cart",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
 						"url": {
 							"raw": "localhost:8080/user/removeFromCart?userID=1&prod=1",
@@ -236,7 +236,7 @@
 				{
 					"name": "Request Current Cart",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
 						"url": {
 							"raw": "localhost:8080/user/requestCurrentCart?userID=1",
@@ -385,6 +385,35 @@
 							"path": [
 								"product",
 								"listHotDeals"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product Stock",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/product/updateStock?id=11&stock=25",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"product",
+								"updateStock"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "11"
+								},
+								{
+									"key": "stock",
+									"value": "25"
+								}
 							]
 						}
 					},

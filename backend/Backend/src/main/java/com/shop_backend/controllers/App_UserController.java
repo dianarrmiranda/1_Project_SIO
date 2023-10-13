@@ -182,7 +182,7 @@ public class App_UserController {
   }
 
   //  Add a product to this app_user's cart
-  @GetMapping(path = "/addToCart")
+  @PostMapping(path = "/addToCart")
   public @ResponseBody String addProdToCart(@RequestParam Integer userID, @RequestParam Product prod, @RequestParam Integer quantity) {
     App_User usr;
 
@@ -214,7 +214,7 @@ public class App_UserController {
   }
 
   //  Remove a product from this app_user's cart
-  @GetMapping(path = "/removeFromCart")
+  @PostMapping(path = "/removeFromCart")
   public @ResponseBody String removeProdFromCart(@RequestParam Integer userID, @RequestParam Product prod) {
     App_User usr;
 
@@ -241,7 +241,7 @@ public class App_UserController {
   }
 
   //  Add a product to this app_user's cart
-  @GetMapping(path = "/requestCurrentCart")
+  @PostMapping(path = "/requestCurrentCart")
   public @ResponseBody String RequestCart(@RequestParam Integer userID) {
     App_User usr;
 
