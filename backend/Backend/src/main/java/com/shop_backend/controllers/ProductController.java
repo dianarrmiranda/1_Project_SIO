@@ -12,11 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.HttpEntity;
-import org.springframework.web.client.RestTemplate;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +22,6 @@ import com.shop_backend.models.repos.ProductRepo;
 import com.shop_backend.models.repos.CategoryRepo;
 
 import com.shop_backend.models.entities.Product;
-import com.fasterxml.jackson.core.sym.Name;
 import com.shop_backend.models.entities.Category;
 
 
@@ -95,7 +89,7 @@ public class ProductController {
       for (Product prod : returnedVals) {
         HashMap<String, String> temp = new HashMap<String, String>();
 
-        //  Select what values to give to the user
+        //  Select what values to give to the app_user
         temp.put("id", prod.getID().toString());
         temp.put("name", prod.getName());
         temp.put("img", prod.getImgSource());
@@ -124,7 +118,7 @@ public class ProductController {
     for (Product prod : returnedVals) {
       HashMap<String, String> temp = new HashMap<String, String>();
 
-      //  Select what values to give to the user
+      //  Select what values to give to the app_user
       temp.put("id", prod.getID().toString());
       temp.put("name", prod.getName());
       temp.put("img", prod.getImgSource());
@@ -147,7 +141,7 @@ public class ProductController {
     for (Product prod : returnedVals) {
       HashMap<String, String> temp = new HashMap<String, String>();
 
-      //  Select what values to give to the user
+      //  Select what values to give to the app_user
       temp.put("id", prod.getID().toString());
       temp.put("name", prod.getName());
       temp.put("img", prod.getImgSource());
