@@ -34,7 +34,7 @@ const Navbar = () => {
   }, [theme]);
 
   return (
-    <div className="navbar bg-secondary w-full flex justify-between items-center p-2">
+    <div className="navbar bg-secondary w-full flex justify-between items-center p-2 top-0">
       <Link
         to="/"
         className="max-w-[5%]"
