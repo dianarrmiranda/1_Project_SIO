@@ -52,6 +52,7 @@ const Carousel = ({ images }) => {
 
       {images.map((url, idx) => (
         <div
+          key={idx}
           id={`slide${idx + 1}`}
           className="carousel-item relative w-full max-h-[80vh] overflow-y-hidden"
         >

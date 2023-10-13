@@ -1,4 +1,9 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+import fetchData from '../../utils';
+
 import Navbar from '../layout/Navbar';
 import Carousel from '../layout/Carousel';
 import ProductCard from '../layout/ProductCard';
@@ -9,30 +14,32 @@ const imgs = [
   'https://i.imgur.com/ULExX9s.jpeg',
 ];
 
-const product = {
-  name: 'TestProd1',
-  id: 1,
-  image: "https://via.placeholder.com/400x400" ,
-  date: '2023/10/09 11:40',
-  origin: 'pt',
-  description: 'produto de testes',
-  price: 123.99,
-  in_Stock: 3,
-  category: {
-    name: 'Portateis',
-    id: 1,
-    description: 'PCs portateis',
-  },
-};
-
 const HomePage = () => {
   const navigate = useNavigate();
+
+  const [products, setProducts] = useState([]);
+  const [hotDeals, setHotDeals] = useState([]);
+
+  useEffect(() => {
+    const initialize = async () => {
+      const data = await fetchData('/product/list')
+      setProducts(data);
+    };
+
+    initialize();
+  }, []);
+
+  console.log('products -> ', products);
 
   return (
     <div>
       <Navbar />
       <Carousel images={imgs} />
-      <ProductCard product={product}  />
+      <div className="flex flex-wrap m-[5%]">
+        {products.map((product) => (
+          <ProductCard key={product.id} className={"m-2"} product={product} />
+        ))}
+      </div>
     </div>
   );
 };
