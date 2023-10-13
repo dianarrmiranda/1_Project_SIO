@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import {
   RiAccountCircleLine,
@@ -14,6 +15,7 @@ const Navbar = () => {
   const [theme, setTheme] = useState(
     localStorage.getItem('theme') ? localStorage.getItem('theme') : 'light'
   );
+  const navigate = useNavigate()
 
   const handleToggle = (e) => {
     if (e.target.checked) {
@@ -65,7 +67,7 @@ const Navbar = () => {
           <RiSunFill className="swap-off" />
         </label>
 
-        <button className=" btn btn-circle m-1">
+        <button className=" btn btn-circle m-1" onClick={()=>navigate(`/login`)}>
           <RiAccountCircleLine className="text-xl" />
         </button>
         <button className="btn btn-circle m-1">
