@@ -9,7 +9,7 @@ const ProductCard = ({ product, className, isStore }) => {
     <div
       className={`card compact ${
         isStore ? 'w-48 ' : 'w-96'
-      } bg-white my-2 ${className}`}
+      } bg-white dark:bg-[#2f3132] my-2 ${className}`}
     >
       <figure>
         <img

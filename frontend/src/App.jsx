@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import StorePage from './components/pages/StorePage'
 import HomePage from './components/pages/HomePage'
 import ProductPage from './components/pages/ProductPage'
-import Login from './components/layout/login/Login'
+import Login from './components/login/Login'
 
 const App = () => {
   return (

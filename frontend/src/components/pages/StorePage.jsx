@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
-import fetchData from '../../utils';
+import { fetchData, getSearchParams } from '../../utils';
 
 import Navbar from '../layout/Navbar';
 import Footer from '../layout/Footer';
@@ -10,6 +10,8 @@ import Filter from '../layout/Filter';
 
 const StorePage = () => {
   const navigate = useNavigate();
+  const search_query = getSearchParams();
+  console.log('search params -> ', search_query);
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -34,9 +36,19 @@ const StorePage = () => {
   return (
     <div>
       <Navbar />
+      {search_query && (
+        <div className=" bg-accent mx-[5%] m-2 p-4 rounded-xl  ">
+          <h3>
+            You searched for:{' '}
+            <b>
+              <span dangerouslySetInnerHTML={{ __html: search_query }} />
+            </b>
+          </h3>
+        </div>
+      )}
       <div className="flex justify-between mx-[5%]">
         <div className="w-[20vw] flex-none">
-          <Filter categories={categories}/>
+          <Filter categories={categories} />
         </div>
         {isLoading ? (
           <div className="flex justify-center">
