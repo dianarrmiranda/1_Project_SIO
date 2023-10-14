@@ -26,6 +26,7 @@ public class Product {
     private Boolean IsHotDeal;
     private Double Price;
     private Integer In_Stock;
+    private Double Average_Stars;
 
     @ManyToOne
     @JoinColumn(name = "CategoryID", nullable=false)
@@ -125,5 +126,21 @@ public class Product {
 
     public void addReview(Review review) {
         Reviews.add(review);
+    }
+
+    public Double getAverage_Stars() {
+        return Average_Stars;
+    }
+
+    public void setAverage_Stars(Double average_stars) {
+        Average_Stars = average_stars;
+    }
+
+    public void updateAverage_Stars() {
+        double tempAvg = 0;
+        for (Review rev : Reviews) {
+            tempAvg += rev.getNumStars();
+        }
+        Average_Stars = tempAvg / Reviews.size();
     }
 }

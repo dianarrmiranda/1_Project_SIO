@@ -105,6 +105,13 @@ public class ProductController {
         temp.put("in_stock", prod.getIn_Stock().toString());
         temp.put("category", prod.getCategory().getName());
 
+        if (prod.getAverage_Stars() != null) {
+          temp.put("avg_stars", prod.getAverage_Stars().toString());
+        }
+        else {
+          temp.put("avg_stars", "---");
+        }
+        
         data.add(temp);
       }
 
@@ -133,6 +140,13 @@ public class ProductController {
       temp.put("price", prod.getPrice().toString());
       temp.put("in_stock", prod.getIn_Stock().toString());
       temp.put("category", prod.getCategory().getName());
+      
+      if (prod.getAverage_Stars() != null) {
+        temp.put("avg_stars", prod.getAverage_Stars().toString());
+      }
+      else {
+        temp.put("avg_stars", "---");
+      }
 
       data.add(temp);
     }
@@ -156,6 +170,13 @@ public class ProductController {
       temp.put("price", prod.getPrice().toString());
       temp.put("in_stock", prod.getIn_Stock().toString());
       temp.put("category", prod.getCategory().getName());
+      
+      if (prod.getAverage_Stars() != null) {
+        temp.put("avg_stars", prod.getAverage_Stars().toString());
+      }
+      else {
+        temp.put("avg_stars", "---");
+      }
 
       data.add(temp);
     }
@@ -260,6 +281,7 @@ public class ProductController {
     reviewRepository.save(rev);
 
     prod.addReview(rev);
+    prod.updateAverage_Stars();
     productRepository.save(prod);
 
     return "Saved";
