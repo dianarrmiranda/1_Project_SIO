@@ -23,6 +23,7 @@ const HomePage = () => {
 
   const [products, setProducts] = useState([]);
   const [hotDeals, setHotDeals] = useState([]);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     const initialize = async () => {
@@ -30,6 +31,9 @@ const HomePage = () => {
       const data_hot = await fetchData('/product/listHotDeals');
       setProducts(data_products);
       setHotDeals(data_hot);
+      if (data_products && data_hot) {
+        setLoading(false);
+      }
     };
 
     initialize();
@@ -45,25 +49,31 @@ const HomePage = () => {
         id="body"
         className="mx-[5%]"
       >
-        <div className="rounded-xl my-4">
-          <div className="divider">
-            <h1 className=" font-bold text-2xl m-2">🔥 HOT DEALS 🔥</h1>
+        {isLoading ? (
+          <div classname="justify-center">
+            <span className="loading loading-dots loading-lg"></span>
           </div>
-          <div className=" overflow-hidden hover:overflow-x-scroll snap-x flex flex-row ">
-            {hotDeals.map((product) => (
-              <ProductCard
-                key={product.id}
-                className={'m-2 flex-none w-80 snap-end'}
-                product={product}
-              />
-            ))}
-            {}
+        ) : (
+          <div className="rounded-xl my-4">
+            <div className="divider">
+              <h1 className=" font-bold text-2xl m-2">🔥 HOT DEALS 🔥</h1>
+            </div>
+            <div className=" overflow-hidden hover:overflow-x-scroll snap-x flex flex-row ">
+              {hotDeals.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  className={'m-2 flex-none w-80 snap-end'}
+                  product={product}
+                />
+              ))}
+              {}
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className='divider'></div>
+        <div className="divider"></div>
 
-        <div className=" flex flex-col justify-self-center p-[10%]">
+        <div className=" flex flex-col justify-center p-[10%]">
           <h1 className="text-xl font-bold my-4">
             Find more products on our store page
           </h1>
