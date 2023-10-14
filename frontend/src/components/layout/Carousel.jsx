@@ -8,7 +8,7 @@ const Carousel = ({ images }) => {
     <div className="carousel w-full">
       <div
         id={`slide0`}
-        className="carousel-item relative w-full max-h-[80vh] overflow-y-hidden"
+        className="carousel-item ease-in-out duration-300 relative w-full max-h-[80vh] overflow-y-hidden"
       >
         <div
           className="hero min-h-screen"
@@ -37,7 +37,7 @@ const Carousel = ({ images }) => {
         </div>
         <span className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
           <a
-            href={'#slide4'}
+            href={'#slide3'}
             className="btn btn-circle opacity-20 hover:opacity-100"
           >
             ❮
@@ -55,7 +55,7 @@ const Carousel = ({ images }) => {
         <div
           key={idx}
           id={`slide${idx + 1}`}
-          className="carousel-item relative w-full max-h-[80vh] overflow-y-hidden"
+          className="carousel-item relative w-full easy-in-out duration-700 max-h-[80vh] overflow-y-hidden"
         >
           <img
             src={url}

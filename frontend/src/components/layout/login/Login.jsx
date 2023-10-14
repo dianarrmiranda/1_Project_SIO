@@ -1,6 +1,7 @@
 import React from "react";
 import "./Login.css";
-import Navbar from "../layout/Navbar";
+import Navbar from "../Navbar";
+import Footer from "../Footer";
 
 const Login = () => {
   return (
@@ -16,6 +17,7 @@ const Login = () => {
           <input type="submit" value="Submit" />
         </form>
       </div>
+      <Footer />
     </div>
   );
 };
