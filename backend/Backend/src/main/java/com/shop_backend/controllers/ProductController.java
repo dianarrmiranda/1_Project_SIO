@@ -19,10 +19,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.shop_backend.models.repos.ProductRepo;
+import com.shop_backend.models.repos.ReviewRepo;
+import com.shop_backend.models.repos.App_UserRepo;
 import com.shop_backend.models.repos.CategoryRepo;
 
 import com.shop_backend.models.entities.Product;
 import com.shop_backend.models.entities.Category;
+import com.shop_backend.models.entities.App_User;
+import com.shop_backend.models.entities.Review;
 
 
 @Controller
@@ -34,6 +38,10 @@ public class ProductController {
   private ProductRepo productRepository;
   @Autowired
   private CategoryRepo categoryRepository;
+  @Autowired
+  private App_UserRepo userRepository;
+  @Autowired
+  private ReviewRepo reviewRepository;
 
   //  Create and save a new Product object to the repository (database)
   @PostMapping(path="/add")
@@ -206,6 +214,53 @@ public class ProductController {
 
     data.setIn_Stock(stock);
     productRepository.save(data);
+
+    return "Saved";
+  }
+
+  //  Update the in_stock of a specific object based on ID
+  @PostMapping(path = "/addReview")
+  public @ResponseBody String addReview(@RequestParam Integer productID, @RequestParam Integer userID,
+                                        @RequestParam String header, @RequestParam String description,
+                                        @RequestParam Integer stars) {
+    Product prod;
+    App_User user;
+
+    //  Check if given stars are between 1 and 5 (inclusive)
+    if (!(1 <= stars && stars <= 5)) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The number of Review stars must be between 1 and 5!");
+    }
+
+    //  Check if any required value is empty
+    if (header == null || header.equals("") || description == null || description.equals("") || stars == null) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Provide all the required data fields!");
+    }
+
+    //  Find the Product and User
+    try {
+      prod = productRepository.findProductByID(productID);
+      user = userRepository.findapp_userByID(userID);
+    }
+    catch (Exception e) {
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
+    }
+
+    if (prod == null) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A Product with the specified ID does not exist!");
+    }
+    if (user == null) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A User with the specified ID does not exist!");
+    }
+
+    Review rev = new Review();
+    rev.setHeader(header);
+    rev.setDescription(description);
+    rev.setNumStars(stars);
+    rev.setUserID(user);
+    reviewRepository.save(rev);
+
+    prod.addReview(rev);
+    productRepository.save(prod);
 
     return "Saved";
   }

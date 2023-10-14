@@ -424,6 +424,47 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Add Product Review",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/product/addReview?productID=11&userID=1&header=Adorei&description=Completamente mudou a minha vida!&stars=5",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"product",
+								"addReview"
+							],
+							"query": [
+								{
+									"key": "productID",
+									"value": "11"
+								},
+								{
+									"key": "userID",
+									"value": "1"
+								},
+								{
+									"key": "header",
+									"value": "Adorei"
+								},
+								{
+									"key": "description",
+									"value": "Completamente mudou a minha vida!"
+								},
+								{
+									"key": "stars",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

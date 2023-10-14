@@ -1,10 +1,14 @@
 package com.shop_backend.models.entities;
 
+import java.util.List;
+import java.util.LinkedList;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.JoinColumn;
 
 @Entity // This tells Hibernate to make a table out of this class
@@ -26,6 +30,10 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "CategoryID", nullable=false)
     private Category Category;
+
+    @OneToMany
+    @JoinColumn(name = "Reviews")
+    private List<Review> Reviews = new LinkedList<Review>();
 
     public Integer getID() {
         return ID;
@@ -105,5 +113,17 @@ public class Product {
 
     public void setImgSource(String imgSource) {
         ImgSource = imgSource;
+    }
+
+    public List<Review> getReviews() {
+        return Reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        Reviews = reviews;
+    }
+
+    public void addReview(Review review) {
+        Reviews.add(review);
     }
 }
