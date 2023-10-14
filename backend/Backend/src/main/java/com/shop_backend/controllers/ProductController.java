@@ -277,7 +277,7 @@ public class ProductController {
     rev.setHeader(header);
     rev.setDescription(description);
     rev.setNumStars(stars);
-    rev.setUserID(user);
+    rev.setUser(user.getID());
     reviewRepository.save(rev);
 
     prod.addReview(rev);

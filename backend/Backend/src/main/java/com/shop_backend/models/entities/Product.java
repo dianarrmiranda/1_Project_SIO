@@ -1,6 +1,9 @@
 package com.shop_backend.models.entities;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.LinkedList;
 
 import jakarta.persistence.Entity;
@@ -33,7 +36,8 @@ public class Product {
     private Category Category;
 
     @OneToMany
-    @JoinColumn(name = "Reviews")
+    @JoinColumn(name = "ProdID")
+    @JsonIgnore
     private List<Review> Reviews = new LinkedList<Review>();
 
     public Integer getID() {

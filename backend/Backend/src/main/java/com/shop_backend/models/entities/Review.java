@@ -12,22 +12,21 @@ public class Review {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer ID;
 
-    @ManyToOne
-    private App_User UserID;
+    private Integer UserID;
     private String Header;
     private String Description;
     private Integer NumStars;
-
+    
     public Integer getID() {
         return ID;
     }
     public void setID(Integer iD) {
         ID = iD;
     }
-    public App_User getUserID() {
+    public Integer getUser() {
         return UserID;
     }
-    public void setUserID(App_User userID) {
+    public void setUser(Integer userID) {
         UserID = userID;
     }
     public String getHeader() {
