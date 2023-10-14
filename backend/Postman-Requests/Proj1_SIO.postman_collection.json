@@ -210,7 +210,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/user/removeFromCart?userID=1&prod=1",
+							"raw": "localhost:8080/user/removeFromCart?userID=1&prod=11",
 							"host": [
 								"localhost"
 							],
@@ -226,7 +226,7 @@
 								},
 								{
 									"key": "prod",
-									"value": "1"
+									"value": "11"
 								}
 							]
 						}
@@ -314,7 +314,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/product/view?id=1",
+							"raw": "localhost:8080/product/view?id=11",
 							"host": [
 								"localhost"
 							],
@@ -326,7 +326,7 @@
 							"query": [
 								{
 									"key": "id",
-									"value": "1"
+									"value": "11"
 								}
 							]
 						}
@@ -358,14 +358,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/product/list",
+							"raw": "localhost:8080/product/listByCategory?categoryID=1",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"product",
-								"list"
+								"listByCategory"
+							],
+							"query": [
+								{
+									"key": "categoryID",
+									"value": "1"
+								}
 							]
 						}
 					},
