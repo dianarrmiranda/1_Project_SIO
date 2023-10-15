@@ -21,6 +21,9 @@ export default {
         bold: '700',
       },
     },
+    colors: {
+      '-card-color': 'var(--color-card)',
+    },
   },
   plugins: [require('daisyui')],
   darkMode: 'class', // enable dark mode
@@ -33,6 +36,7 @@ export default {
           accent: '#8c7469',
           neutral: '#1c1c30',
           'base-100': '#e2e2ee',
+          '--color-card': '#f5f5f5',
         },
         dark: {
           primary: '#3cb521',
@@ -40,6 +44,7 @@ export default {
           accent: '#967e73',
           neutral: '#1d1d30',
           'base-100': '#181A1B',
+          '--color-card': '#2f3132',
         },
       },
     ],
