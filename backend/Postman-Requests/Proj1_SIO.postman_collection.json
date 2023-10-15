@@ -172,12 +172,41 @@
 					"response": []
 				},
 				{
+					"name": "Update User Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/user/updatePassword?id=1&newPassword=12345",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"updatePassword"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								},
+								{
+									"key": "newPassword",
+									"value": "12345"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Add Product To Cart",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/user/addToCart?userID=1&prod=11&quantity=1",
+							"raw": "localhost:8080/user/addToCart?prod=11&userID=1&quantity=2",
 							"host": [
 								"localhost"
 							],
@@ -188,16 +217,16 @@
 							],
 							"query": [
 								{
-									"key": "userID",
-									"value": "1"
-								},
-								{
 									"key": "prod",
 									"value": "11"
 								},
 								{
-									"key": "quantity",
+									"key": "userID",
 									"value": "1"
+								},
+								{
+									"key": "quantity",
+									"value": "2"
 								}
 							]
 						}
@@ -269,7 +298,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/product/add?name=TestProd1&description=produto de testes&origin=pt&price=123.99&in_stock=3&category=1",
+							"raw": "localhost:8080/product/add?name=TestProd1&description=produto de testes&img=../resources/images/test.png&origin=Portugal&price=123.99&in_stock=3&category=1",
 							"host": [
 								"localhost"
 							],
@@ -288,8 +317,12 @@
 									"value": "produto de testes"
 								},
 								{
+									"key": "img",
+									"value": "../resources/images/test.png"
+								},
+								{
 									"key": "origin",
-									"value": "pt"
+									"value": "Portugal"
 								},
 								{
 									"key": "price",
@@ -431,7 +464,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/product/addReview?productID=11&userID=1&header=Adorei&description=Completamente mudou a minha vida!&stars=5",
+							"raw": "localhost:8080/product/addReview?productID=11&userID=1&header=Adorei o Produto&description=Completamente mudou a minha vida!&stars=4",
 							"host": [
 								"localhost"
 							],
@@ -451,7 +484,7 @@
 								},
 								{
 									"key": "header",
-									"value": "Adorei"
+									"value": "Adorei o Produto"
 								},
 								{
 									"key": "description",
@@ -459,7 +492,7 @@
 								},
 								{
 									"key": "stars",
-									"value": "5"
+									"value": "4"
 								}
 							]
 						}
