@@ -181,6 +181,28 @@ public class App_UserController {
     return data;
   }
 
+  //  Update the password of a specific object based on ID
+  @PostMapping(path = "/updatePassword")
+  public @ResponseBody String updatePassword(@RequestParam Integer id, @RequestParam String newPassword) {
+    App_User usr;
+
+    try {
+      usr = app_userRepository.findapp_userByID(id);
+    }
+    catch (Exception e) {
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
+    }
+
+    if (usr == null) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A user with the specified ID does not exist!");
+    }
+
+    usr.setPassword(newPassword);
+    app_userRepository.save(usr);
+
+    return "Saved";
+  }
+
   //  Add a product to this app_user's cart
   @PostMapping(path = "/addToCart")
   public @ResponseBody String addProdToCart(@RequestParam Integer userID, @RequestParam Product prod, @RequestParam Integer quantity) {
@@ -244,6 +266,7 @@ public class App_UserController {
   @PostMapping(path = "/requestCurrentCart")
   public @ResponseBody String RequestCart(@RequestParam Integer userID) {
     App_User usr;
+    String receipt = "";
 
     try {
        usr = app_userRepository.findapp_userByID(userID);
@@ -256,40 +279,54 @@ public class App_UserController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The specified User does not exist!");
     }
 
-      List<ShoppingCartItem> currentCart = usr.getShopping_Cart();
-      double total = 0;
+    receipt += "------------ Client ----------\n";
+    receipt += "Client Name: " + usr.getName() + "\n";
+    receipt += "Client Email: " + usr.getEmail() + "\n";
+    receipt += "Payment Information: " + usr.getCredit_Card() + "\n\n";
 
-      List<ShoppingCartItem> orderCart = new ArrayList<>();
+    List<ShoppingCartItem> currentCart = usr.getShopping_Cart();
+    double total = 0;
+    int i = 0;
 
-      if (currentCart.size() < 1) {
-        throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The current shopping cart of this user is empty!");
-      }
+    List<ShoppingCartItem> orderCart = new ArrayList<>();
 
-      for (ShoppingCartItem item : currentCart) {
-          ShoppingCartItem orderItem = item;
-          orderCart.add(orderItem);
-          total += item.getProd().getPrice() * item.getQuantity();
+    if (currentCart.size() < 1) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The current shopping cart of this user is empty!");
+    }
 
+    receipt += "------------ Products ----------\n";
+    for (ShoppingCartItem item : currentCart) {
+        ShoppingCartItem orderItem = item;
+        orderCart.add(orderItem);
+        total += item.getProd().getPrice() * item.getQuantity();
 
-          if (item.getProd().getIn_Stock() < item.getQuantity()) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Only " + item.getProd().getIn_Stock() + " items of type " + item.getProd().getName() + " are in stock, but " + item.getQuantity() + " where requested!");
-          }
-
-          item.getProd().setIn_Stock(item.getProd().getIn_Stock() - item.getQuantity());
-
-          productRepository.save(item.getProd());
-      }
+        if (item.getProd().getIn_Stock() < item.getQuantity()) {
+          throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Only " + item.getProd().getIn_Stock() + " items of type " + item.getProd().getName() + " are in stock, but " + item.getQuantity() + " where requested!");
+        }
 
 
-      Request ord = new Request();
-      ord.setItem(orderCart);
-      ord.setTotal(total);
-      RequestRepository.save(ord);
+        receipt += "\n ----- Product " + i + " ------\n";
+        receipt += "Name: " + item.getProd().getName() + "\n";
+        receipt += "Price: " + item.getProd().getPrice() + "€\n";
+        receipt += "Quantity: " + item.getQuantity() + "\n";
 
-      usr.clearFromCart();
-      usr.addToRequestHistory(ord);
-      app_userRepository.save(usr);
+        item.getProd().setIn_Stock(item.getProd().getIn_Stock() - item.getQuantity());
+        productRepository.save(item.getProd());
+        i++;
+    }
 
-    return "Saved";
+    receipt += "\n------------ Total ----------\n";
+    receipt += "Total: " + total + "€\n";
+
+    Request ord = new Request();
+    ord.setItem(orderCart);
+    ord.setTotal(total);
+    RequestRepository.save(ord);
+
+    usr.clearFromCart();
+    usr.addToRequestHistory(ord);
+    app_userRepository.save(usr);
+
+    return receipt;
   }
 }
