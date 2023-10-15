@@ -23,22 +23,23 @@ export default {
     },
   },
   plugins: [require('daisyui')],
+  darkMode: 'class', // enable dark mode
   daisyui: {
     themes: [
       {
         light: {
           primary: '#65de4a',
           secondary: '#cfc9ca',
-          accent: '#1534d1',
+          accent: '#8c7469',
           neutral: '#1c1c30',
           'base-100': '#e2e2ee',
         },
         dark: {
           primary: '#3cb521',
-          secondary: '#313442',
-          accent: '#2e4eea',
+          secondary: '#363031',
+          accent: '#967e73',
           neutral: '#1d1d30',
-          'base-100': '#464855',
+          'base-100': '#181A1B',
         },
       },
     ],

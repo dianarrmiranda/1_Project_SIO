@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../layout/Navbar';
 
-import fetchData from '../../utils';
+import { fetchData } from '../../utils';
 import Footer from '../layout/Footer';
 
 const ProductPage = () => {
@@ -18,10 +18,8 @@ const ProductPage = () => {
     };
     initialize();
   }, []);
-  
-  console.log('====================================');
+
   console.log('Product ->', product);
-  console.log('====================================');
 
   return (
     <div>

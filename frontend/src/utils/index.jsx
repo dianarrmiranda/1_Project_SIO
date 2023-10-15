@@ -1,5 +1,5 @@
-import axios from "axios";
-import { API_BASE_URL } from "../constants";
+import axios from 'axios';
+import { API_BASE_URL } from '../constants';
 
 const fetchData = async (endpoint) => {
   try {
@@ -10,4 +10,8 @@ const fetchData = async (endpoint) => {
   }
 };
 
-export default fetchData
+const getSearchParams = () => {
+  return new URLSearchParams(window.location.search).get('search');
+};
+
+export { fetchData, getSearchParams };

@@ -41,22 +41,24 @@ const Navbar = () => {
       >
         <img src={logo}></img>
       </Link>
-      <div className='join'>
+      <form className='join'>
         <input
           type="textbox"
           className='input input-bordered input-primary input-sm join-item'
           placeholder="Search"
+          name='search'
         />
         <button
           className="btn btn-primary btn-sm join-item"
+          type='submit  '
           onClick={() => {}}
         >
           Search
         </button>
-      </div>
+      </form>
 
       <div className="flex">
-        <label className="swap swap-rotate m-1">
+        <label className="swap swap-rotate m-2 p-2 ">
           <input
             id="search-box"
             type="checkbox"
@@ -67,10 +69,10 @@ const Navbar = () => {
           <RiSunFill className="swap-off" />
         </label>
 
-        <button className=" btn btn-circle m-1" onClick={()=>navigate(`/login`)}>
+        <button className=" m-2 p-2" onClick={()=>navigate(`/login`)}>
           <RiAccountCircleLine className="text-xl" />
         </button>
-        <button className="btn btn-circle m-1">
+        <button className=" m-2 p-2">
           <RiShoppingBag2Line className="text-xl" />
         </button>
       </div>

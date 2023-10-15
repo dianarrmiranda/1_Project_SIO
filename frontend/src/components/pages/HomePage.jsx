@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { RiFireLine } from 'react-icons/ri';
-
-import fetchData from '../../utils';
+import { fetchData } from '../../utils';
 
 import './../../utils/styles.css';
 
