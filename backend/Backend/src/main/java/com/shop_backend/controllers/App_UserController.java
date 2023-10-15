@@ -33,6 +33,8 @@ import com.shop_backend.models.entities.ShoppingCartItem;
 @RestController
 @RequestMapping(path="/user")
 public class App_UserController {
+
+  //  Needed repositories (database tables)
   @Autowired
   private App_UserRepo app_userRepository;
   @Autowired
@@ -60,12 +62,12 @@ public class App_UserController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The role value must either be 'user' or 'admin'!");
     }
 
-    //  Check the role is app_user or admin
+    //  Check the given email is already associated with another user
     if (app_userRepository.findapp_userByEmail(email) != null) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A user with this email already exists!");
     }
     
-    //  Register the app_user Object
+    //  Register the App_User Object
     try {
       App_User usr = new App_User();
       usr.setName(name);
@@ -87,20 +89,23 @@ public class App_UserController {
   @GetMapping(path = "/list")
   public @ResponseBody LinkedList<HashMap<String, String>> listapp_user() {
     LinkedList<HashMap<String, String>> data = new LinkedList<HashMap<String, String>>();
-      List<App_User> returnedVals = app_userRepository.listapp_users();
 
-      for (App_User usr : returnedVals) {
-        HashMap<String, String> temp = new HashMap<String, String>();
+    //  Get all Users
+    List<App_User> returnedVals = app_userRepository.listapp_users();
 
-        //  Select what values to give to the app_user
-        temp.put("id", usr.getID().toString());
-        temp.put("name", usr.getName());
-        temp.put("email", usr.getEmail());
+    //  Create an array of maps with the intended values (like a JSON object)
+    for (App_User usr : returnedVals) {
+      HashMap<String, String> temp = new HashMap<String, String>();
 
-        data.add(temp);
-      }
+      //  Select what values to give to the app_user
+      temp.put("id", usr.getID().toString());
+      temp.put("name", usr.getName());
+      temp.put("email", usr.getEmail());
 
-      return data;
+      data.add(temp);
+    }
+
+    return data;
   }
 
   //  List produtos from the repository (database)
@@ -148,6 +153,7 @@ public class App_UserController {
   public @ResponseBody App_User viewapp_userByID(@RequestParam Integer id) {
     App_User data;
 
+    //  Check if a User with this ID exists
     try {
        data = app_userRepository.findapp_userByID(id);
     }
@@ -167,6 +173,7 @@ public class App_UserController {
   public @ResponseBody App_User checkLoginInfo(@RequestParam String email, @RequestParam String password) {
     App_User data;
 
+    //  Check if a User with this login information exists or nor
     try {
        data = app_userRepository.findapp_userByEmailAndPassword(email, password);
     }
@@ -186,6 +193,7 @@ public class App_UserController {
   public @ResponseBody String updatePassword(@RequestParam Integer id, @RequestParam String newPassword) {
     App_User usr;
 
+    //  Check if a User with this ID exists
     try {
       usr = app_userRepository.findapp_userByID(id);
     }
@@ -197,6 +205,7 @@ public class App_UserController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A user with the specified ID does not exist!");
     }
 
+    //  Set the new password and save the User Object (overwrite old object)
     usr.setPassword(newPassword);
     app_userRepository.save(usr);
 
@@ -208,6 +217,7 @@ public class App_UserController {
   public @ResponseBody String addProdToCart(@RequestParam Integer userID, @RequestParam Product prod, @RequestParam Integer quantity) {
     App_User usr;
 
+    //  Check if a User with this ID exists
     try {
        usr = app_userRepository.findapp_userByID(userID);
     }
@@ -219,12 +229,14 @@ public class App_UserController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The specified User does not exist!");
     }
 
+    //  Create a new shopping cart item
     try {
       ShoppingCartItem item = new ShoppingCartItem();
       item.setProd(prod);
       item.setQuantity(quantity);
       itemRepository.save(item);
 
+      //  Add the item to the user's cart
       usr.addProdToCart(item);
       app_userRepository.save(usr);
     }
@@ -240,6 +252,7 @@ public class App_UserController {
   public @ResponseBody String removeProdFromCart(@RequestParam Integer userID, @RequestParam Product prod) {
     App_User usr;
 
+    //  Check if a User with this ID exists
     try {
        usr = app_userRepository.findapp_userByID(userID);
     }
@@ -251,6 +264,7 @@ public class App_UserController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The specified User does not exist!");
     }
 
+    //  Remove the item from the cart
     try {
        usr.removeProdFromCart(prod);
        app_userRepository.save(usr);
@@ -262,12 +276,13 @@ public class App_UserController {
     return "Saved";
   }
 
-  //  Add a product to this app_user's cart
+  //  Request the current cart as an order
   @PostMapping(path = "/requestCurrentCart")
   public @ResponseBody String RequestCart(@RequestParam Integer userID) {
     App_User usr;
     String receipt = "";
 
+    //  Check if a User with this ID exists
     try {
        usr = app_userRepository.findapp_userByID(userID);
     }
@@ -279,31 +294,34 @@ public class App_UserController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The specified User does not exist!");
     }
 
+    //  Create the receipt String object
     receipt += "------------ Client ----------\n";
     receipt += "Client Name: " + usr.getName() + "\n";
     receipt += "Client Email: " + usr.getEmail() + "\n";
     receipt += "Payment Information: " + usr.getCredit_Card() + "\n\n";
 
     List<ShoppingCartItem> currentCart = usr.getShopping_Cart();
+    List<ShoppingCartItem> orderCart = new ArrayList<>();
     double total = 0;
     int i = 0;
 
-    List<ShoppingCartItem> orderCart = new ArrayList<>();
 
+    //  Check if the user has any items in its cart
     if (currentCart.size() < 1) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The current shopping cart of this user is empty!");
     }
 
+    //  Add the current items in the shopping cart to an order object
     receipt += "------------ Products ----------\n";
     for (ShoppingCartItem item : currentCart) {
         ShoppingCartItem orderItem = item;
         orderCart.add(orderItem);
         total += item.getProd().getPrice() * item.getQuantity();
 
+        //  Check if requested item quantity is available
         if (item.getProd().getIn_Stock() < item.getQuantity()) {
           throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Only " + item.getProd().getIn_Stock() + " items of type " + item.getProd().getName() + " are in stock, but " + item.getQuantity() + " where requested!");
         }
-
 
         receipt += "\n ----- Product " + i + " ------\n";
         receipt += "Name: " + item.getProd().getName() + "\n";
@@ -318,6 +336,7 @@ public class App_UserController {
     receipt += "\n------------ Total ----------\n";
     receipt += "Total: " + total + "€\n";
 
+    //  Save the new order request and update the user's shopping history and clear the shopping cart
     Request ord = new Request();
     ord.setItem(orderCart);
     ord.setTotal(total);

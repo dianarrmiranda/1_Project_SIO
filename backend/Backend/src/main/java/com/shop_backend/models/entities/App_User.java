@@ -5,12 +5,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.JoinColumn;
 
 import java.util.List;
 import java.util.LinkedList;
-
-import com.shop_backend.models.entities.ShoppingCartItem;
 
 @Entity // This tells Hibernate to make a table out of this class
 public class App_User {

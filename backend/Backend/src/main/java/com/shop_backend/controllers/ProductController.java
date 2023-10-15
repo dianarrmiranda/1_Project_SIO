@@ -92,33 +92,33 @@ public class ProductController {
   @GetMapping(path = "/list")
   public @ResponseBody LinkedList<HashMap<String, String>> listProduct() {
     LinkedList<HashMap<String, String>> data = new LinkedList<HashMap<String, String>>();
-      List<Product> returnedVals = productRepository.listProducts();
+    List<Product> returnedVals = productRepository.listProducts();
 
-      for (Product prod : returnedVals) {
-        HashMap<String, String> temp = new HashMap<String, String>();
+    for (Product prod : returnedVals) {
+      HashMap<String, String> temp = new HashMap<String, String>();
 
-        //  Select what values to give to the app_user
-        temp.put("id", prod.getID().toString());
-        temp.put("name", prod.getName());
-        temp.put("img", prod.getImgSource());
-        temp.put("price", prod.getPrice().toString());
-        temp.put("in_stock", prod.getIn_Stock().toString());
-        temp.put("category", prod.getCategory().getName());
+      //  Select what values to give to the app_user
+      temp.put("id", prod.getID().toString());
+      temp.put("name", prod.getName());
+      temp.put("img", prod.getImgSource());
+      temp.put("price", prod.getPrice().toString());
+      temp.put("in_stock", prod.getIn_Stock().toString());
+      temp.put("category", prod.getCategory().getName());
 
-        if (prod.getAverage_Stars() != null) {
-          temp.put("avg_stars", prod.getAverage_Stars().toString());
-        }
-        else {
-          temp.put("avg_stars", "---");
-        }
-        
-        data.add(temp);
+      if (prod.getAverage_Stars() != null) {
+        temp.put("avg_stars", prod.getAverage_Stars().toString());
       }
+      else {
+        temp.put("avg_stars", "---");
+      }
+      
+      data.add(temp);
+    }
 
-      return data;
+    return data;
   }
 
-  //  List produtos from the repository (database)
+  //  List produtos from the repository by Category (database)
   @GetMapping(path = "/listByCategory")
   public @ResponseBody LinkedList<HashMap<String, String>> listProductByCategory(@RequestParam String categoryID ) {
 
@@ -127,6 +127,7 @@ public class ProductController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Provide all a valid category ID!");
     }
 
+    //  Create a sort of "JSON" like object and fill it
     LinkedList<HashMap<String, String>> data = new LinkedList<HashMap<String, String>>();
     List<Product> returnedVals = productRepository.listProductsByCategory(categoryID);
 
@@ -141,6 +142,7 @@ public class ProductController {
       temp.put("in_stock", prod.getIn_Stock().toString());
       temp.put("category", prod.getCategory().getName());
       
+      //  If the product has no reviews (and stars) give '---'
       if (prod.getAverage_Stars() != null) {
         temp.put("avg_stars", prod.getAverage_Stars().toString());
       }
@@ -154,7 +156,7 @@ public class ProductController {
     return data;
   }
 
-  //  List produtos from the repository (database)
+  //  List produtos from the repository marked as Hot Deals (database)
   @GetMapping(path = "/listHotDeals")
   public @ResponseBody LinkedList<HashMap<String, String>> listProductHotDeals() {
     LinkedList<HashMap<String, String>> data = new LinkedList<HashMap<String, String>>();
@@ -171,6 +173,7 @@ public class ProductController {
       temp.put("in_stock", prod.getIn_Stock().toString());
       temp.put("category", prod.getCategory().getName());
       
+      //  If the product has no reviews (and stars) give '---'
       if (prod.getAverage_Stars() != null) {
         temp.put("avg_stars", prod.getAverage_Stars().toString());
       }
@@ -203,6 +206,7 @@ public class ProductController {
   public @ResponseBody Product viewProductByID(@RequestParam Integer id) {
     Product data;
 
+    //  Check if a Product with this ID exists
     try {
        data = productRepository.findProductByID(id);
     }
@@ -222,6 +226,7 @@ public class ProductController {
   public @ResponseBody String updateStock(@RequestParam Integer id, @RequestParam Integer stock) {
     Product data;
 
+    //  Check if a Product with this ID exists
     try {
        data = productRepository.findProductByID(id);
     }
@@ -233,6 +238,7 @@ public class ProductController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "An entity the specified ID does not exist!");
     }
 
+    //  Update the Product's stock and save it in the repository (database) (overwrites the old row)
     data.setIn_Stock(stock);
     productRepository.save(data);
 
@@ -257,7 +263,7 @@ public class ProductController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Provide all the required data fields!");
     }
 
-    //  Find the Product and User
+    //  Check if a Product and User with the specified IDs exist
     try {
       prod = productRepository.findProductByID(productID);
       user = userRepository.findapp_userByID(userID);
@@ -323,6 +329,7 @@ public class ProductController {
     try {
       List<Category> returnedVals = categoryRepository.listCategories();
 
+      //  Select what values to give to the app_user
       for (Category ctg : returnedVals) {
         HashMap<String, String> temp = new HashMap<String, String>();
         temp.put("id", ctg.getID().toString());
@@ -338,16 +345,23 @@ public class ProductController {
     }
   }
 
-  //  View Categories  
+  //  View all the values of a given Category  
   @GetMapping(path="/category/view")
   public @ResponseBody Category getCategory(@RequestParam Integer id) {
-    try {
-      Category returnedVals = categoryRepository.findCategoryByID(id);
+    Category returnedVals;
 
-      return returnedVals;
+    //  Check if a Category with this ID exists
+    try {
+      returnedVals = categoryRepository.findCategoryByID(id);
     }
     catch (Exception e) {
-      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing Error!");
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
+
+    if (returnedVals == null) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A Category with the specified ID does not exist!");
+    }
+
+    return returnedVals;
   }
 }
