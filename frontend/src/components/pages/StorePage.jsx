@@ -33,6 +33,8 @@ const StorePage = () => {
     initialize();
   }, []);
 
+  console.log('Products -> ', products);
+
   return (
     <div>
       <Navbar />
@@ -59,7 +61,6 @@ const StorePage = () => {
             {products.map((product) => (
               <ProductCard
                 key={product.id}
-                className={''}
                 product={product}
                 isStore
               />

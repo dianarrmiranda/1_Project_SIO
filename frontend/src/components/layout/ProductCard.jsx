@@ -9,7 +9,7 @@ const ProductCard = ({ product, className, isStore }) => {
     <div
       className={`card compact ${
         isStore ? 'w-48 ' : 'w-96'
-      } bg-white dark:bg-[#2f3132] my-2 ${className}`}
+      } -bg-card-color my-2 ${className}`}
     >
       <figure>
         <img
@@ -21,11 +21,12 @@ const ProductCard = ({ product, className, isStore }) => {
         />
       </figure>
       <div className="card-body">
-        <h2 className="card-title text-[1rem]">{product.name}</h2>
+        <h3 className={`card-title ${isStore? 'text-sm' : 'text-md'} line-clamp-1 hover:line-clamp-none`}>{product.name}</h3>
         <p>{product.description}</p>
-        <div className="card-actions justify-end">
+        <div className="card-actions justify-start">
+          <button className=' badge badge-outline'>{product.category}</button>
           <button
-            className="btn btn-sm btn-secondary"
+            className=" bottom-0 right-0 m-5 absolute "
             onClick={() => navigate(`/store/product/${product.id}`)}
           >
             <RiEyeLine />

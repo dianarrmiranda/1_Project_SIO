@@ -1,3 +1,10 @@
+const stock = [
+  { id: 0, status: 'In Stock' },
+  { id: 1, status: 'Available by encomend' },
+  { id: 2, status: 'Out of Stock' },
+  { id: 3, status: 'Unavailable' },
+];
+
 const Filter = ({ categories }) => {
   return (
     <form className="bg-secondary shadow-xl rounded-xl m-2 p-2">
@@ -24,7 +31,7 @@ const Filter = ({ categories }) => {
         {categories?.map((cat) => (
           <span className="m-1">
             <input
-              id={`cbx-${cat.id}`}
+              id={`cat-${cat.id}`}
               key={cat.id}
               type="checkbox"
               value={cat.id}
@@ -34,9 +41,31 @@ const Filter = ({ categories }) => {
             />
             <label
               className="p-1"
-              htmlFor={`cbx-${cat.id}`}
+              htmlFor={`cat-${cat.id}`}
             >
               {cat.nome}
+            </label>
+          </span>
+        ))}
+      </div>
+      <div className="divider">Stock</div>
+      <div className="flex flex-wrap justify-start">
+        {stock?.map((s) => (
+          <span className="m-1">
+            <input
+              id={`status-${s.id}`}
+              key={s.id}
+              type="checkbox"
+              value={s.id}
+              className="checkbox checkbox-sm checkbox-accent align-middle"
+              placeholder="lol"
+              name="stock"
+            />
+            <label
+              className="p-1"
+              htmlFor={`status-${s.id}`}
+            >
+              {s.status}
             </label>
           </span>
         ))}
@@ -44,8 +73,10 @@ const Filter = ({ categories }) => {
       <button
         type="submit"
         className="btn btn-accent btn-sm w-full p-2 mt-4 "
-            value="Submit"
->APPLY</button>
+        value="Submit"
+      >
+        APPLY
+      </button>
     </form>
   );
 };
