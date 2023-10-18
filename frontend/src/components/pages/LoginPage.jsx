@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Footer from "../layout/Footer";
 import Navbar from "../layout/Navbar";
+import { useNavigate } from 'react-router-dom';
 
 import { fetchData } from '../../utils';
 
@@ -8,6 +9,8 @@ import { fetchData } from '../../utils';
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const navigate = useNavigate();
 
     const handleLogin = async (event) => {
         event.preventDefault();
@@ -24,9 +27,7 @@ const LoginPage = () => {
         } catch (error) {
           console.error('Error during API call', error);
         }
-
     };
-    
     
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -44,7 +45,7 @@ const LoginPage = () => {
             <div className="text-center bg:text-left">
               <h1 className="text-5xl font-bold">Login now!</h1>
               <p className="py-6">
-                New here? <a href="#" className="link link-primary">Sign up</a> for an account to get started.
+                New here? <a href="" onClick={() => navigate('/registerUser')} className="link link-primary">Sign up</a> for an account to get started.
               </p>
             </div>
             <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">

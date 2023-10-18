@@ -3,6 +3,7 @@ import StorePage from './components/pages/StorePage'
 import HomePage from './components/pages/HomePage'
 import ProductPage from './components/pages/ProductPage'
 import LoginPage from './components/pages/LoginPage'
+import RegisterUserPage from './components/pages/RegisterUserPage'
 
 const App = () => {
   return (
@@ -12,6 +13,7 @@ const App = () => {
             <Route path='/store' element={<StorePage/>} />
             <Route path='/store/product/:id' element={<ProductPage/>} />
             <Route path='/login' element={<LoginPage/>} />
+            <Route path='/registerUser' element={<RegisterUserPage/>} />
         </Routes>
     </BrowserRouter>
   )
