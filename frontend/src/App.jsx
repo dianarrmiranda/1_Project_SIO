@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import StorePage from './components/pages/StorePage'
 import HomePage from './components/pages/HomePage'
 import ProductPage from './components/pages/ProductPage'
-import Login from './components/login/Login'
+import LoginPage from './components/pages/LoginPage'
 
 const App = () => {
   return (
@@ -11,7 +11,7 @@ const App = () => {
             <Route path='/' element={<HomePage/>} />
             <Route path='/store' element={<StorePage/>} />
             <Route path='/store/product/:id' element={<ProductPage/>} />
-            <Route path='/login' element={<Login/>} />
+            <Route path='/login' element={<LoginPage/>} />
         </Routes>
     </BrowserRouter>
   )
