@@ -33,6 +33,8 @@ const Navbar = () => {
     document.querySelector('html').setAttribute('data-theme', localTheme);
   }, [theme]);
 
+  const user = JSON.parse(localStorage.getItem('user'));
+  
   return (
     <div className="navbar bg-secondary w-full flex justify-between items-center p-2 top-0">
       <Link
@@ -69,11 +71,9 @@ const Navbar = () => {
           <RiSunFill className="swap-off" />
         </label>
 
-        <button className=" m-2 p-2" onClick={()=>navigate(`/login`)}>
+        <button className="flex items-center m-2 p-2" onClick={user ? () => navigate(`/user/${user.id}`) : () => navigate('/login')}>
+          <p className="mr-2">{user ? `Hello ${user.name}!  ` : "  "}  </p>
           <RiAccountCircleLine className="text-xl" />
-        </button>
-        <button className=" m-2 p-2">
-          <RiShoppingBag2Line className="text-xl" />
         </button>
       </div>
     </div>

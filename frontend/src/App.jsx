@@ -4,6 +4,7 @@ import HomePage from './components/pages/HomePage'
 import ProductPage from './components/pages/ProductPage'
 import LoginPage from './components/pages/LoginPage'
 import RegisterUserPage from './components/pages/RegisterUserPage'
+import UserPage from './components/pages/UserPage'
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
             <Route path='/store/product/:id' element={<ProductPage/>} />
             <Route path='/login' element={<LoginPage/>} />
             <Route path='/registerUser' element={<RegisterUserPage/>} />
+            <Route path='/user/:id' element={<UserPage/>} />
         </Routes>
     </BrowserRouter>
   )

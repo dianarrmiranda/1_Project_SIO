@@ -21,6 +21,8 @@ const LoginPage = () => {
             console.log('Login successful');
             setEmail('');
             setPassword('');
+            localStorage.setItem('user', JSON.stringify(response));
+            navigate('/');
           } else {
             console.error('Login failed');
           }

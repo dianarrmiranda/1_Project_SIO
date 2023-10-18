@@ -2,6 +2,8 @@ import { useState } from 'react';
 import Navbar from '../layout/Navbar';
 import Footer from '../layout/Footer';
 
+import { fetchData } from '../../utils';
+
 function RegisterUserPage() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
