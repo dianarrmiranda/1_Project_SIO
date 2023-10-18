@@ -187,6 +187,48 @@ public class ProductController {
     return data;
   }
 
+  //  List produtos from the repository by Name (database)
+  @GetMapping(path = "/listByName")
+  public @ResponseBody LinkedList<HashMap<String, String>> listProductByName(@RequestParam String name ) {
+
+    //  Check if any required value is empty
+    if (name == null || name.equals("")) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Provide all a valid name!");
+    }
+
+    //  Create a sort of "JSON" like object and fill it
+    LinkedList<HashMap<String, String>> data = new LinkedList<HashMap<String, String>>();
+    List<Product> returnedVals = productRepository.listProducts();
+
+    for (Product prod : returnedVals) {
+      HashMap<String, String> temp = new HashMap<String, String>();
+
+      if (!prod.getName().contains(name)) {
+        continue;
+      }
+
+      //  Select what values to give to the app_user
+      temp.put("id", prod.getID().toString());
+      temp.put("name", prod.getName());
+      temp.put("img", prod.getImgSource());
+      temp.put("price", prod.getPrice().toString());
+      temp.put("in_stock", prod.getIn_Stock().toString());
+      temp.put("category", prod.getCategory().getName());
+      
+      //  If the product has no reviews (and stars) give '---'
+      if (prod.getAverage_Stars() != null) {
+        temp.put("avg_stars", prod.getAverage_Stars().toString());
+      }
+      else {
+        temp.put("avg_stars", "---");
+      }
+
+      data.add(temp);
+    }
+
+    return data;
+  }
+
   //  Get the number of total products in the repository (database)
   @GetMapping(path = "/number")
   public @ResponseBody LinkedList<HashMap<String, String>> numberOfProduct() {

@@ -30,6 +30,7 @@ import com.shop_backend.models.entities.ShoppingCartItem;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import jakarta.persistence.Query;
 
 @Controller
 @CrossOrigin("*")
@@ -175,12 +176,12 @@ public class App_UserController {
 
   //  View all app_user info IF email and password check out, else return bad login info
   @GetMapping(path = "/checkLogin")
-  public @ResponseBody List<App_User> checkLoginInfo(@RequestParam String email, @RequestParam String password) {
-    TypedQuery<App_User> typedQuery;
+  public @ResponseBody List checkLoginInfo(@RequestParam String email, @RequestParam String password) {
+    Query typedQuery;
 
     //  Check if a User with this login information exists or nor
-      String query = "SELECT u FROM App_User u WHERE u.Email = '" + email + "' AND u.Password = '" + password + "'";
-      typedQuery = entityManager.createQuery(query, App_User.class);
+      String query = "SELECT u FROM App_User u WHERE (u.Email = '" + email + "') AND (u.Password = '" + password + "')";
+      typedQuery = entityManager.createQuery(query);
 
     if (typedQuery == null) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "User authentication is incorrect!");
@@ -188,29 +189,6 @@ public class App_UserController {
 
     return typedQuery.getResultList();
   }
-
-  /* //  View all app_user info IF email and password check out, else return bad login info
-  @GetMapping(path = "/checkLogin")
-  public @ResponseBody Array checkLoginInfo(@RequestParam String email, @RequestParam String password) {
-    App_User data;
-    Connection conn;
-    Statement stmt;
-    ResultSet rs;
-    String sql = "SELECT * FROM app_user WHERE email = '" + email + "' AND password = '" + password + "'";
-
-    //  Check if a User with this login information exists or nor
-    try {
-        conn = DriverManager.getConnection("jdbc:h2:mem:sio_db_proj1;DB_CLOSE_DELAY=-1;NON_KEYWORDS=KEY,VALUE", "Spring_User", "springDB");
-        stmt = conn.createStatement();
-        rs = stmt.executeQuery(sql);
-
-        rs.next();
-        return rs.getArray(1);
-    } 
-    catch (Exception e) {
-      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
-    } 
-  } */
 
   //  Update the password of a specific object based on ID
   @PostMapping(path = "/updatePassword")

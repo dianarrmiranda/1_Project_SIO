@@ -430,6 +430,31 @@
 					"response": []
 				},
 				{
+					"name": "List Products By Name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/product/listByName?name=Wizard",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"product",
+								"listByName"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Wizard"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Update Product Stock",
 					"request": {
 						"method": "POST",
