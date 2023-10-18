@@ -8,7 +8,10 @@ import com.shop_backend.models.entities.App_User;
 
 import java.util.List;
 
+
+
 public interface App_UserRepo extends CrudRepository<App_User, Integer> {
+
     @Query(value="SELECT * FROM app_user usr", nativeQuery=true)
     List<App_User> listapp_users();
 
@@ -26,4 +29,7 @@ public interface App_UserRepo extends CrudRepository<App_User, Integer> {
 
     @Query(value="SELECT * FROM app_user WHERE email = :email AND password = :pass", nativeQuery=true)
     App_User findapp_userByEmailAndPassword(@Param("email") String email, @Param("pass") String pass);
+
+    @Query(value=":query", nativeQuery=true)
+    App_User getUserByQuery(@Param("query") String query);
 }

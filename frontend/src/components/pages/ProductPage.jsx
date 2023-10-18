@@ -27,7 +27,7 @@ const ProductPage = () => {
       
       <div className="flex flex-wrap">
         <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 mb-4">
-          <img src={product.imgSource} alt="Product Image" className="w-full h-full object-cover" />
+          <img src={"../../"+product.imgSource} alt="Product Image" className="w-full h-full object-cover" />
         </div>
         <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 mb-4">
           <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
