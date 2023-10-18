@@ -48,7 +48,7 @@ const HomePage = () => {
         className="mx-[5%]"
       >
         {isLoading ? (
-          <div classname="justify-center">
+          <div className="justify-center">
             <span className="loading loading-dots loading-lg"></span>
           </div>
         ) : (
