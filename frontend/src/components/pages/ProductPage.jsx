@@ -4,12 +4,15 @@ import Navbar from '../layout/Navbar';
 
 import { fetchData } from '../../utils';
 import Footer from '../layout/Footer';
+import ProductComments from '../layout/ProductComments';
 
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [product, setProduct] = useState({});
+  const [username, setUsername] = useState('');
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     const initialize = async () => {
@@ -29,12 +32,17 @@ const ProductPage = () => {
         <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 mb-4">
           <img src={"../../"+product.imgSource} alt="Product Image" className="w-full h-full object-cover" />
         </div>
-        <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 mb-4">
+        <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 relative left-2 mb-4">
           <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
           <p className="text-lg mb-2">{product.description}</p>
           <p className="font-bold text-lg mb-2">{product.price}€</p>
+          <ProductComments
+            comments={comments}
+            onCommentSubmit={(comment) => setComments([...comments, comment])}
+            username = {username}
+          />
           <button
-            className="btn btn-accent mb-2"
+            className="btn btn-accent relative top-8 mb-2"
             onClick={() => navigate(-1)}
           >
             Go Back
