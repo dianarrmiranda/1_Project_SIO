@@ -11,37 +11,31 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
-    try {
-      const response = await fetchData(
-        `/user/checkLogin?email=${email}&password=${password}`
-      );
-      console.log('==================');
-      console.log('response -> ', response);
-      console.log('==================');
-
-      if (response != []) {
-        console.log('Login successful');
-        setEmail('');
-        setPassword('');
-        localStorage.setItem('user', JSON.stringify(response));
-        //navigate('/');
-      } else {
-        console.error('Login failed');
-      }
-    } catch (error) {
-      console.error('Error during API call', error);
-    }
-  };
-
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
+    const handleLogin = async (event) => {
+        event.preventDefault();
+        try {
+          const response = await fetchData(`/user/checkLogin?email=${email}&password=${password}`);
+          if (response.length != 0) {
+            console.log('Login successful');
+            setEmail('');
+            setPassword('');
+            localStorage.setItem('user', JSON.stringify(response));
+            navigate('/');
+          } else {
+            console.error('Login failed');
+          }
+        } catch (error) {
+          console.error('Error during API call', error);
+        }
+    };
+    
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value);
+      };
+    
+      const handlePasswordChange = (e) => {
+        setPassword(e.target.value);
+      };
 
   return (
     <div>
