@@ -34,6 +34,7 @@ const Navbar = () => {
   }, [theme]);
 
   const user = JSON.parse(localStorage.getItem('user'));
+  console.log('user -> ', user);
   
   return (
     <div className="navbar bg-secondary w-full flex justify-between items-center p-2 top-0">
@@ -75,10 +76,10 @@ const Navbar = () => {
           {user ? <RiShoppingBag2Line className="text-xl" /> : ""}
         </button>
         
-        <button className="flex items-center m-2 p-2" onClick={user ? () => navigate(`/user/${user[0].id}`) : () => navigate('/login')}>
-          <p className="mr-2">{user ? `Hello ${user[0].name}!  ` : ""}  </p>
+        {true && <button className="flex items-center m-2 p-2" onClick={user ? () => navigate(`/user/${user[0]?.id}`) : () => navigate('/login')}>
+          <p className="mr-2">{user ? `Hello ${user[0]?.name}!  ` : ""}  </p>
           <RiAccountCircleLine className="text-xl" />
-        </button>
+        </button>}
       </div>
     </div>
   );
