@@ -71,8 +71,12 @@ const Navbar = () => {
           <RiSunFill className="swap-off" />
         </label>
 
-        <button className="flex items-center m-2 p-2" onClick={user ? () => navigate(`/user/${user.id}`) : () => navigate('/login')}>
-          <p className="mr-2">{user ? `Hello ${user.name}!  ` : "  "}  </p>
+        <button className="flex items-center m-2 p-2" >
+          {user ? <RiShoppingBag2Line className="text-xl" /> : ""}
+        </button>
+        
+        <button className="flex items-center m-2 p-2" onClick={user ? () => navigate(`/user/${user[0].id}`) : () => navigate('/login')}>
+          <p className="mr-2">{user ? `Hello ${user[0].name}!  ` : ""}  </p>
           <RiAccountCircleLine className="text-xl" />
         </button>
       </div>
