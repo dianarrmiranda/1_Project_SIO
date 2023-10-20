@@ -14,8 +14,18 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "img",
+									"type": "file",
+									"src": "/home/frostywolf/Pictures/7e607de5553d95a84a5d4095e6cbcb5a.jpg"
+								}
+							]
+						},
 						"url": {
-							"raw": "localhost:8080/user/add?name=Josefino&email=jose@fino.com&password=123&cartao=123212331233&role=user&img=src/assets/prod_images/11.jpg",
+							"raw": "localhost:8080/user/add?name=Joana&email=jo@ana.com&password=123&cartao=123212331233&role=user",
 							"host": [
 								"localhost"
 							],
@@ -27,11 +37,11 @@
 							"query": [
 								{
 									"key": "name",
-									"value": "Josefino"
+									"value": "Joana"
 								},
 								{
 									"key": "email",
-									"value": "jose@fino.com"
+									"value": "jo@ana.com"
 								},
 								{
 									"key": "password",
@@ -44,10 +54,6 @@
 								{
 									"key": "role",
 									"value": "user"
-								},
-								{
-									"key": "img",
-									"value": "src/assets/prod_images/11.jpg"
 								}
 							]
 						}
@@ -104,7 +110,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/user/listByRole?role=user",
+							"raw": "localhost:8080/user/listByRole?role=admin",
 							"host": [
 								"localhost"
 							],
@@ -116,7 +122,7 @@
 							"query": [
 								{
 									"key": "role",
-									"value": "user"
+									"value": "admin"
 								}
 							]
 						}
