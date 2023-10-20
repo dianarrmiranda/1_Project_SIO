@@ -9,10 +9,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,6 +28,7 @@ import java.util.LinkedList;
 import com.shop_backend.models.repos.App_UserRepo;
 import com.shop_backend.models.repos.RequestRepo;
 import com.shop_backend.models.repos.ShoppingCartItemRepo;
+
 import com.shop_backend.models.repos.ProductRepo;
 
 import com.shop_backend.models.entities.App_User;
@@ -51,10 +60,10 @@ public class App_UserController {
   private ProductRepo productRepository;
 
   //  Create and save a new app_user object to the repository (database)
-  @PostMapping(path="/add")
+  @PostMapping(path="/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public @ResponseBody String addapp_user (@RequestParam String name,     @RequestParam String email,
                                        @RequestParam String password, @RequestParam String cartao,  
-                                       @RequestParam String role,     @RequestParam String img) {
+                                       @RequestParam String role,     @RequestParam MultipartFile img) {
 
     //  Check if any required value is empty
     if (name == null || name.equals("") || email == null || email.equals("") 
@@ -81,7 +90,30 @@ public class App_UserController {
       usr.setPassword(password);
       usr.setCredit_Card(cartao);
       usr.setRole(role);
-      usr.setImage(img);
+
+      String folder = "../../frontend/src/assets/prod_images/";
+      String filename = usr.getName().replace("\s", "") + usr.getID() + ".jpg";
+
+      Path path = Paths.get(folder + filename);
+
+      // Create the directory if it does not exist
+      if (!Files.exists(path.getParent())) {
+          Files.createDirectories(path.getParent());
+      }
+
+      // Create the file if it does not exist
+      if (!Files.exists(path)) {
+          Files.createFile(path);
+      }
+
+      try (InputStream inputStream = img.getInputStream()) {
+          Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
+      } catch (IOException e) {
+          throw new IOException("Could not save image file: " + filename, e);
+      }
+      
+      usr.setImage("/src/assets/prod_images/" + filename);
+
       app_userRepository.save(usr);
       return "Saved";
     }

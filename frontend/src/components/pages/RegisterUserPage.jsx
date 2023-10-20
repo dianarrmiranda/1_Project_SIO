@@ -2,8 +2,6 @@ import { useState } from 'react';
 import Navbar from '../layout/Navbar';
 import Footer from '../layout/Footer';
 
-import { fetchData } from '../../utils';
-
 function RegisterUserPage() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -29,28 +27,44 @@ function RegisterUserPage() {
     };
 
     const handleImageChange = (event) => {
-        setImage(event.target.value);
+        setImage(event.target.files[0]);
     };
-
+    
     const handleRegister = async (event) => {
         event.preventDefault();
         try {
-          const response = await fetchData(`/user/add?name=${username}&email=${email}&password=${password}&cardNumber=${cardNumber}&image=${image}`);
-          console.log(response);
-          if (response) {
-            console.log('Register successful');
-            setUsername('');
-            setEmail('');
-            setPassword('');
-            setCardNumber('');
-            setImage('');
-          } else {
-            console.error('Register failed');
-          }
+            const formData = new FormData();
+            formData.append('name', username);
+            formData.append('email', email);
+            formData.append('password', password);
+            formData.append('cartao', cardNumber);
+            formData.append('role', 'user');
+            formData.append('img', image);
+    
+            const response = await fetch('http://localhost:8080/user/add', {
+                method: 'POST',
+                body: formData,
+            });
+    
+            const data = await response.text();
+            console.log(data);
+            if (response.ok) {
+                console.log('Register successful');
+                setUsername('');
+                setEmail('');
+                setPassword('');
+                setCardNumber('');
+                setImage('');
+            } else {
+                console.error('Register failed');
+            }
         } catch (error) {
-          console.error('Error during API call', error);
+            console.error('Error during API call', error);
         }
     };
+    
+    
+    
     
     return (
         <div>
@@ -90,7 +104,7 @@ function RegisterUserPage() {
                         <label className="label">
                             <span className="label-text">Image</span>
                         </label>
-                        <input type="file" placeholder="Image" className="input input-bordered" value={image} onChange={handleImageChange}/>
+                        <input type="file" placeholder="Image" className="input input-bordered" onChange={handleImageChange}/>
                         </div>
                         <div className="form-control mt-6 flex justify-center items-center">
                         <button className="btn btn-primary" onClick={handleRegister}>Register</button>
