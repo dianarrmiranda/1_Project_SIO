@@ -39,6 +39,7 @@ import com.shop_backend.models.entities.ShoppingCartItem;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 import jakarta.persistence.Query;
 
 @Controller
@@ -224,24 +225,19 @@ public class App_UserController {
 
   //  Update the password of a specific object based on ID
   @PostMapping(path = "/updatePassword")
+  @Transactional
   public @ResponseBody String updatePassword(@RequestParam Integer id, @RequestParam String newPassword) {
+    Query typedQuery;
     App_User usr;
+    usr = app_userRepository.findapp_userByID(id);
+    String name = usr.getName();
 
-    //  Check if a User with this ID exists
-    try {
-      usr = app_userRepository.findapp_userByID(id);
-    }
-    catch (Exception e) {
-      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
-    }
-
-    if (usr == null) {
+    String query = "UPDATE App_User set Password = '" + newPassword + "' where Name= '" + name + "'";
+    typedQuery = entityManager.createNativeQuery(query);
+    if (typedQuery == null) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A user with the specified ID does not exist!");
     }
-
-    //  Set the new password and save the User Object (overwrite old object)
-    usr.setPassword(newPassword);
-    app_userRepository.save(usr);
+    System.out.println(typedQuery.executeUpdate());
 
     return "Saved";
   }

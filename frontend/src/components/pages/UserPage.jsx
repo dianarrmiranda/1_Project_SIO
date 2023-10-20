@@ -26,16 +26,29 @@ const ProductPage = () => {
     navigate("/login");
   };
 
-  const handleChangePass = () => {
+  const handleChangePass = async (event) => {
+    event.preventDefault();
+
     if (password === newPassword) {
-      const initialize = async () => {
-        const data = await fetchData(`/user/changePass?id=${id}&pass=${password}`);
-        setUser(data);
-      };
-      initialize();
+      try {
+        const formData = new FormData();
+        formData.append("id", id);
+        formData.append("newPassword", password);
+
+        const response = await fetch(
+          "http://localhost:8080/user/updatePassword",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );  
+        const data = await response;
+        console.log(data);
+      } catch (error) {
+        console.error("Error during API call", error);
+      }
     }
   };
-
 
   console.log("User ->", user);
 
@@ -89,6 +102,7 @@ const ProductPage = () => {
               className="input input-bordered"
               required
               value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div className="form-control">
@@ -101,11 +115,17 @@ const ProductPage = () => {
               className="input input-bordered"
               required
               value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
             />
           </div>
           <div className="modal-action flex">
             <form method="dialog">
-              <button className="btn btn-primary mr-2" onClick={handleChangePass}>Submit</button>
+              <button
+                className="btn btn-primary mr-2"
+                onClick={handleChangePass}
+              >
+                Submit
+              </button>
             </form>
             <form method="dialog">
               <button className="btn">Close</button>
