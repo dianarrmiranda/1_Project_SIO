@@ -28,12 +28,21 @@ import com.shop_backend.models.entities.Category;
 import com.shop_backend.models.entities.App_User;
 import com.shop_backend.models.entities.Review;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
+import jakarta.persistence.Query;
+
 
 @Controller
 @CrossOrigin("*")
 @RestController
 @RequestMapping(path="/product")
 public class ProductController {
+  @PersistenceContext
+  private EntityManager entityManager;
   @Autowired
   private ProductRepo productRepository;
   @Autowired
@@ -189,44 +198,19 @@ public class ProductController {
 
   //  List produtos from the repository by Name (database)
   @GetMapping(path = "/listByName")
-  public @ResponseBody LinkedList<HashMap<String, String>> listProductByName(@RequestParam String name ) {
+  public @ResponseBody List listProductByName(@RequestParam String name ) {
 
     //  Check if any required value is empty
     if (name == null || name.equals("")) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Provide all a valid name!");
     }
 
-    //  Create a sort of "JSON" like object and fill it
-    LinkedList<HashMap<String, String>> data = new LinkedList<HashMap<String, String>>();
-    List<Product> returnedVals = productRepository.listProducts();
+    Query typedQuery;
 
-    for (Product prod : returnedVals) {
-      HashMap<String, String> temp = new HashMap<String, String>();
+    String query = "SELECT id, name, IMG_SOURCE, price, in_stock, categoryID FROM product WHERE name LIKE '%" + name + "%'";
+    typedQuery = entityManager.createNativeQuery(query);
 
-      if (!prod.getName().contains(name)) {
-        continue;
-      }
-
-      //  Select what values to give to the app_user
-      temp.put("id", prod.getID().toString());
-      temp.put("name", prod.getName());
-      temp.put("img", prod.getImgSource());
-      temp.put("price", prod.getPrice().toString());
-      temp.put("in_stock", prod.getIn_Stock().toString());
-      temp.put("category", prod.getCategory().getName());
-      
-      //  If the product has no reviews (and stars) give '---'
-      if (prod.getAverage_Stars() != null) {
-        temp.put("avg_stars", prod.getAverage_Stars().toString());
-      }
-      else {
-        temp.put("avg_stars", "---");
-      }
-
-      data.add(temp);
-    }
-
-    return data;
+    return typedQuery.getResultList();
   }
 
   //  Get the number of total products in the repository (database)

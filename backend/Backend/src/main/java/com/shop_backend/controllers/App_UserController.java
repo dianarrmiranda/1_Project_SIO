@@ -38,6 +38,7 @@ import com.shop_backend.models.entities.ShoppingCartItem;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceException;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import jakarta.persistence.Query;
@@ -189,32 +190,44 @@ public class App_UserController {
 
   //  View all information of a specific object based on ID
   @GetMapping(path = "/view")
-  public @ResponseBody App_User viewapp_userByID(@RequestParam Integer id) {
-    App_User data;
-
-    //  Check if a User with this ID exists
-    try {
-       data = app_userRepository.findapp_userByID(id);
-    }
-    catch (Exception e) {
-      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
-    }
-
-    if (data == null) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "An entity the specified ID does not exist!");
-    }
-
-    return data;
-  }
-
-  //  View all app_user info IF email and password check out, else return bad login info
-  @GetMapping(path = "/checkLogin")
-  public @ResponseBody List checkLoginInfo(@RequestParam String email, @RequestParam String password) {
+  public @ResponseBody App_User viewapp_userByID(@RequestParam String id) {
     Query typedQuery;
 
     //  Check if a User with this login information exists or nor
-      String query = "SELECT u FROM App_User u WHERE (u.Email = '" + email + "') AND (u.Password = '" + password + "')";
-      typedQuery = entityManager.createQuery(query);
+      String query = "SELECT * FROM app_user WHERE id = '" + id + "'";
+      typedQuery = entityManager.createNativeQuery(query, App_User.class);
+
+    if (typedQuery == null) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A User with this id does not exist!");
+    }
+
+    return (App_User)typedQuery.getResultList().get(0);
+  }
+
+    //  View all information of a specific object based on ID
+    @GetMapping(path = "/viewByName")
+    public @ResponseBody App_User viewapp_userByName(@RequestParam String name) {
+      Query typedQuery;
+  
+      //  Check if a User with this login information exists or nor
+        String query = "SELECT * FROM app_user WHERE name = '" + name + "'";
+        typedQuery = entityManager.createNativeQuery(query, App_User.class);
+  
+      if (typedQuery == null) {
+        throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A User with this name does not exist!");
+      }
+  
+      return (App_User)typedQuery.getResultList().get(0);
+    }
+
+  //  View all app_user info IF email and password check out, else return bad login info
+  @GetMapping(path = "/checkLogin")
+  public @ResponseBody List<App_User> checkLoginInfo(@RequestParam String email, @RequestParam String password) {
+    Query typedQuery;
+
+    //  Check if a User with this login information exists or nor
+      String query = "SELECT * FROM app_user WHERE (email = '" + email + "') AND (password = '" + password + "')";
+      typedQuery = entityManager.createNativeQuery(query, App_User.class);
 
     if (typedQuery == null) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "User authentication is incorrect!");
@@ -226,20 +239,26 @@ public class App_UserController {
   //  Update the password of a specific object based on ID
   @PostMapping(path = "/updatePassword")
   @Transactional
-  public @ResponseBody String updatePassword(@RequestParam Integer id, @RequestParam String newPassword) {
-    Query typedQuery;
+  public @ResponseBody List updatePassword(@RequestParam Integer id, @RequestParam String newPassword) {
+    Query typedQuery, typedUpdate;
     App_User usr;
     usr = app_userRepository.findapp_userByID(id);
     String name = usr.getName();
 
-    String query = "UPDATE App_User set Password = '" + newPassword + "' where Name= '" + name + "'";
-    typedQuery = entityManager.createNativeQuery(query);
-    if (typedQuery == null) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A user with the specified ID does not exist!");
-    }
-    System.out.println(typedQuery.executeUpdate());
+    String query = "UPDATE app_user SET password = '" + newPassword + "' WHERE ID = '" + id + "'";
 
-    return "Saved";
+    try {
+      typedUpdate = entityManager.createNativeQuery(query);
+      typedUpdate.executeUpdate();
+
+      query = "SELECT name, email, password FROM app_user where name = '" + name + "'";
+      typedQuery = entityManager.createNativeQuery(query);
+    
+    }
+    catch (Exception e) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getCause().getMessage());
+    }
+    return typedQuery.getResultList();
   }
 
   //  Add a product to this app_user's cart

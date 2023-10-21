@@ -7,6 +7,6 @@ import org.springframework.data.repository.query.Param;
 import com.shop_backend.models.entities.Review;
 
 public interface ReviewRepo extends CrudRepository<Review, Integer> {
-    @Query(value="SELECT * FROM Review WHERE id = :id", nativeQuery=true)
+    @Query(value="SELECT * FROM review WHERE id = :id", nativeQuery=true)
     Review findReviewByID(@Param("id") Integer id);
 }

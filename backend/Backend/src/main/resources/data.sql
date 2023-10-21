@@ -46,9 +46,9 @@ INSERT INTO product (NAME, DESCRIPTION, IMG_SOURCE, IN_STOCK, IS_HOT_DEAL, ORIGI
 VALUES ('Caneca Tech Retro Pro', 'Caneca retrô com ícones clássicos de tecnologia', 'src/assets/prod_images/20a.webp', 42, 0, 'Local', 11.99, 2, '2023-10-18');
 
 
-INSERT INTO APP_USER (NAME, EMAIL, PASSWORD, IMAGE, ROLE, CREDIT_CARD) VALUES ('Admin', 'admin@deti_store.com', 'adminPass', 'src/assets/prod_images/2.jpg', 'admin', '000000000');
-INSERT INTO APP_USER (NAME, EMAIL, PASSWORD, IMAGE, ROLE, CREDIT_CARD) VALUES ('Josefino Calças', 'jose@fino.com', '123', 'src/assets/prod_images/11.jpg', 'user', '123123123123');
-INSERT INTO APP_USER (NAME, EMAIL, PASSWORD, IMAGE, ROLE, CREDIT_CARD) VALUES ('Alice Johnson', 'alice@example.com', 'password123', 'src/assets/prod_images/2.jpg', 'user', '456456456456');
-INSERT INTO APP_USER (NAME, EMAIL, PASSWORD, IMAGE, ROLE, CREDIT_CARD) VALUES ('John Smith', 'john@example.com', 'securepassword', 'src/assets/prod_images/3.jpg', 'user', '789789789789');
-INSERT INTO APP_USER (NAME, EMAIL, PASSWORD, IMAGE, ROLE, CREDIT_CARD) VALUES ('Emily Davis', 'emily@example.com', 'mysecretpass', 'src/assets/prod_images/4.jpg', 'user', '9876543210');
-INSERT INTO APP_USER (NAME, EMAIL, PASSWORD, IMAGE, ROLE, CREDIT_CARD) VALUES ('David Wilson', 'david@example.com', 'strongpassword', 'src/assets/prod_images/5.jpg', 'user', '1029384756');
+INSERT INTO app_user (NAME, EMAIL, PASSWORD, IMAGE, ROLE, CREDIT_CARD) VALUES ('Admin', 'admin@deti_store.com', 'adminPass', 'src/assets/prod_images/2.jpg', 'admin', '000000000');
+INSERT INTO app_user (NAME, EMAIL, PASSWORD, IMAGE, ROLE, CREDIT_CARD) VALUES ('Josefino Calças', 'jose@fino.com', '123', 'src/assets/prod_images/11.jpg', 'user', '123123123123');
+INSERT INTO app_user (NAME, EMAIL, PASSWORD, IMAGE, ROLE, CREDIT_CARD) VALUES ('Alice Johnson', 'alice@example.com', 'password123', 'src/assets/prod_images/2.jpg', 'user', '456456456456');
+INSERT INTO app_user (NAME, EMAIL, PASSWORD, IMAGE, ROLE, CREDIT_CARD) VALUES ('John Smith', 'john@example.com', 'securepassword', 'src/assets/prod_images/3.jpg', 'user', '789789789789');
+INSERT INTO app_user (NAME, EMAIL, PASSWORD, IMAGE, ROLE, CREDIT_CARD) VALUES ('Emily Davis', 'emily@example.com', 'mysecretpass', 'src/assets/prod_images/4.jpg', 'user', '9876543210');
+INSERT INTO app_user (NAME, EMAIL, PASSWORD, IMAGE, ROLE, CREDIT_CARD) VALUES ('David Wilson', 'david@example.com', 'strongpassword', 'src/assets/prod_images/5.jpg', 'user', '1029384756');

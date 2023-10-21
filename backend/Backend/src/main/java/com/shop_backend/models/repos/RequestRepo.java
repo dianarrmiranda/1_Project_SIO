@@ -7,6 +7,6 @@ import org.springframework.data.repository.query.Param;
 import com.shop_backend.models.entities.Request;
 
 public interface RequestRepo extends CrudRepository<Request, Integer> {
-    @Query(value="SELECT * FROM Request WHERE id = :id", nativeQuery=true)
+    @Query(value="SELECT * FROM request WHERE id = :id", nativeQuery=true)
     Request findRequestByID(@Param("id") Integer id);
 }
