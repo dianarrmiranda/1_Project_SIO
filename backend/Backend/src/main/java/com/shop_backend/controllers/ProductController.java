@@ -309,7 +309,7 @@ public class ProductController {
     rev.setHeader(header);
     rev.setDescription(description);
     rev.setNumStars(stars);
-    rev.setUser(user.getID());
+    rev.setUser(user.getName());
     reviewRepository.save(rev);
 
     prod.addReview(rev);

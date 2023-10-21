@@ -11,7 +11,7 @@ public class Review {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer ID;
 
-    private Integer UserID;
+    private String UserName;
     private String Header;
     private String Description;
     private Integer NumStars;
@@ -22,11 +22,11 @@ public class Review {
     public void setID(Integer iD) {
         ID = iD;
     }
-    public Integer getUser() {
-        return UserID;
+    public String getUser() {
+        return UserName;
     }
-    public void setUser(Integer userID) {
-        UserID = userID;
+    public void setUser(String userID) {
+        UserName = userID;
     }
     public String getHeader() {
         return Header;
