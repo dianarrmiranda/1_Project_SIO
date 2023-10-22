@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
-import { fetchData, getSearchParams } from '../../utils';
+import { fetchData, getUrlParams } from '../../utils';
 
 import Navbar from '../layout/Navbar';
 import Footer from '../layout/Footer';
@@ -10,8 +10,14 @@ import Filter from '../layout/Filter';
 
 const StorePage = () => {
   const navigate = useNavigate();
-  const search_query = getSearchParams();
+  const search_query = getUrlParams().get('search');
+  const minPrice = getUrlParams().get('min');
+  const maxPrice = getUrlParams().get('max');
+  const catFilter = getUrlParams().getAll('category');
   console.log('search params -> ', search_query);
+  console.log('minPrice -> ', minPrice);
+  console.log('maxPrice -> ', maxPrice);
+  console.log('catFilter -> ', catFilter);
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -34,6 +40,7 @@ const StorePage = () => {
   }, []);
 
   console.log('Products -> ', products);
+  console.log('Categories -> ', categories);
 
   return (
     <div>
@@ -50,7 +57,12 @@ const StorePage = () => {
       )}
       <div className="flex justify-between mx-[5%]">
         <div className="w-[20vw] flex-none">
-          <Filter categories={categories} />
+          <Filter
+            categories={categories}
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+            categoryFilter={catFilter}
+          />
         </div>
         {isLoading ? (
           <div className="flex justify-center">
@@ -58,13 +70,38 @@ const StorePage = () => {
           </div>
         ) : (
           <div className="flex flex-wrap justify-evenly">
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                isStore
-              />
-            ))}
+            {products
+              .filter((product) => {
+                if (search_query) {
+                  console.log('product.name -> ', product.name);
+                  return product.name
+                    .toLowerCase()
+                    .includes(search_query.toLowerCase());
+                }
+                return true;
+              })
+              .filter((product) => {
+                if (minPrice && maxPrice) {
+                  return (
+                    parseFloat(product.price) >= minPrice &&
+                    parseFloat(product.price) <= maxPrice
+                  );
+                }
+                if (minPrice) {
+                  return parseFloat(product.price) >= minPrice;
+                }
+                if (maxPrice) {
+                  return parseFloat(product.price) <= maxPrice;
+                }
+                return true;
+              })
+              .map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  isStore
+                />
+              ))}
           </div>
         )}
       </div>

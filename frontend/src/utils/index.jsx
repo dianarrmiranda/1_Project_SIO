@@ -10,8 +10,8 @@ const fetchData = async (endpoint) => {
   }
 };
 
-const getSearchParams = () => {
-  return new URLSearchParams(window.location.search).get('search');
+const getUrlParams = () => {
+  return new URLSearchParams(window.location.search);
 };
 
-export { fetchData, getSearchParams };
+export { fetchData, getUrlParams };

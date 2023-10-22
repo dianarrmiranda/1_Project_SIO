@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import Footer from '../layout/Footer';
 import Navbar from '../layout/Navbar';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; 
+
+import shopping from '../../assets/shopping.jpg';
 
 import { fetchData } from '../../utils';
 
@@ -40,7 +42,7 @@ const LoginPage = () => {
   return (
     <div>
       <Navbar />
-      <div className="hero min-h-screen bg-base-200">
+      <div className="hero min-h-screen bg-[url('/frontend/src/assets/shopping.jpg')]">
         <div className="hero-content flex-col w-full lg:flex-row-reverse justify-center items-center">
           <div className="text-center bg:text-left">
             <h1 className="text-5xl font-bold">Login now!</h1>
