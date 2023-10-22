@@ -113,6 +113,7 @@ public class ProductController {
       temp.put("price", prod.getPrice().toString());
       temp.put("in_stock", prod.getIn_Stock().toString());
       temp.put("category", prod.getCategory().getName());
+      temp.put("categoryID", prod.getCategory().getID().toString());
 
       if (prod.getAverage_Stars() != null) {
         temp.put("avg_stars", prod.getAverage_Stars().toString());
@@ -150,6 +151,7 @@ public class ProductController {
       temp.put("price", prod.getPrice().toString());
       temp.put("in_stock", prod.getIn_Stock().toString());
       temp.put("category", prod.getCategory().getName());
+      temp.put("categoryID", prod.getCategory().getID().toString());
       
       //  If the product has no reviews (and stars) give '---'
       if (prod.getAverage_Stars() != null) {
@@ -181,6 +183,7 @@ public class ProductController {
       temp.put("price", prod.getPrice().toString());
       temp.put("in_stock", prod.getIn_Stock().toString());
       temp.put("category", prod.getCategory().getName());
+      temp.put("categoryID", prod.getCategory().getID().toString());
       
       //  If the product has no reviews (and stars) give '---'
       if (prod.getAverage_Stars() != null) {
