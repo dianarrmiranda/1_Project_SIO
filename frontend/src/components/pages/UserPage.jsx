@@ -56,7 +56,7 @@ const ProductPage = () => {
     <div>
       <Navbar />
 
-      <div className="flex flex-wrap">
+      <div className="flex flex-wrap mx-[5%]">
         <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 mb-4">
           <h1 className="text-2xl font-bold mb-2">{user.name}</h1>
           <p className="text-lg mb-2">{user.email}</p>
