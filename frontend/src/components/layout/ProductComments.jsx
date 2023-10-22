@@ -9,7 +9,6 @@ const ProductComments = ({ comments, user_id, product, setComments}) => {
     try {
       const formData = new FormData();
       formData.append('productID', product.id);
-      console.log("user_id - " + user_id);
       formData.append('userID', user_id);
       formData.append('header', newHeader);
       formData.append('description', newComment);
@@ -26,7 +25,7 @@ const ProductComments = ({ comments, user_id, product, setComments}) => {
         console.log('Review sucessfully added');
         setNewHeader('');
         setNewComment('');
-        setComments([...comments, {user: user_id, header: newHeader, comment: newComment}]);
+        setComments([...comments, {header: newHeader, comment: newComment}]);
       } else {
         console.error('Review failed to be added');
       }
@@ -42,14 +41,11 @@ const ProductComments = ({ comments, user_id, product, setComments}) => {
         <>
           <h2>What our customers think about this...</h2>
           <ul>
-            {/* {comments.map((comment, index) => (
-              <li key={index}>{comment}</li>
-            ))} */}
             {comments.map((comment, index) => (
               <li key={index}>
                 <p>{comment.user}</p>
                 <p>{comment.header}</p>
-                <p>{comment.comment}</p>
+                <p>{comment.description}</p>
               </li>
             ))}
           </ul>

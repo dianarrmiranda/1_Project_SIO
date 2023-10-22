@@ -18,6 +18,7 @@ const ProductPage = () => {
     const initialize = async () => {
       const data = await fetchData(`/product/view?id=${id}`);
       setProduct(data);
+      setComments(data.reviews);
       const username = JSON.parse(localStorage.getItem('user'));
       setUser_id(username[0].id);
     };
