@@ -23,6 +23,7 @@ const StorePage = () => {
   const [categories, setCategories] = useState([]);
 
   const [isLoading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     const initialize = async () => {
@@ -39,6 +40,19 @@ const StorePage = () => {
     initialize();
   }, []);
 
+  useEffect(() => {
+    if (search_query) {
+      document.getElementById('show_query_results').innerHTML = search_query;
+      products.forEach((product) => {
+        if (product.name.toLowerCase().includes(search_query.toLowerCase())) {
+          setNotFound(false);
+        } else {
+          setNotFound(true);
+        }
+      });
+    }
+  }, []);
+
   console.log('Products -> ', products);
   console.log('Categories -> ', categories);
 
@@ -47,12 +61,19 @@ const StorePage = () => {
       <Navbar />
       {search_query && (
         <div className=" bg-accent mx-[5%] m-2 p-4 rounded-xl  ">
-          <h3>
-            You searched for:{' '}
-            <b>
-              <span dangerouslySetInnerHTML={{ __html: search_query }} />
-            </b>
-          </h3>
+          {notFound ? (
+            <h1>
+              Your search <b className="font-extrabold">{search_query}</b> did
+              not generated any results{' '}
+            </h1>
+          ) : (
+            <h3>
+              You searched for:{' '}
+              <b>
+                <span id='show_query_results' />
+              </b>
+            </h3>
+          )}
         </div>
       )}
       <div className="flex justify-between mx-[5%]">
@@ -68,12 +89,16 @@ const StorePage = () => {
           <div className="flex justify-center">
             <span className="loading loading-dots loading-lg"></span>
           </div>
+        ) : notFound ? (
+          <div className="justify-center w-full h-full m-48">
+            <h1 className="text-center text-xl font-bold">No products found</h1>
+          </div>
         ) : (
-          <div className="flex flex-wrap justify-evenly">
+          <div className="flex flex-wrap justify-start">
             {products
               .filter((product) => {
+                let found = false;
                 if (search_query) {
-                  console.log('product.name -> ', product.name);
                   return product.name
                     .toLowerCase()
                     .includes(search_query.toLowerCase());
@@ -92,6 +117,12 @@ const StorePage = () => {
                 }
                 if (maxPrice) {
                   return parseFloat(product.price) <= maxPrice;
+                }
+                return true;
+              })
+              .filter((product) => {
+                if (catFilter.length > 0) {
+                  return catFilter.includes(product.categoryID);
                 }
                 return true;
               })

@@ -45,10 +45,12 @@ const Filter = ({ categories, minPrice, maxPrice, categoryFilter }) => {
       <div className="divider">Categoria</div>
       <div className="flex flex-wrap justify-start">
         {categories?.map((cat) => (
-          <span className="m-1">
+          <span
+            className="m-1"
+            key={cat.id}
+          >
             <input
               id={`cat-${cat.id}`}
-              key={cat.id}
               type="checkbox"
               value={cat.id}
               className="checkbox checkbox-sm checkbox-accent align-middle"
@@ -77,10 +79,12 @@ const Filter = ({ categories, minPrice, maxPrice, categoryFilter }) => {
       <div className="divider">Stock</div>
       <div className="flex flex-wrap justify-start">
         {stock?.map((s) => (
-          <span className="m-1">
+          <span
+            className="m-1"
+            key={s.id}
+          >
             <input
               id={`status-${s.id}`}
-              key={s.id}
               type="checkbox"
               value={s.id}
               className="checkbox checkbox-sm checkbox-accent align-middle"
