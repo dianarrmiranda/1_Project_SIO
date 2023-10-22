@@ -1,13 +1,39 @@
 import React, { useState } from 'react';
 
-const ProductComments = ({ comments, onCommentSubmit, username }) => {
+const ProductComments = ({ comments, user_id, product, setComments}) => {
+  const [newHeader, setNewHeader] = useState('');
   const [newComment, setNewComment] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleReviewSubmit = async (e) => {
     e.preventDefault();
-    const userComment = `${username}: ${newComment}`;
-    onCommentSubmit(userComment);
-    setNewComment('');
+    try {
+      const formData = new FormData();
+      formData.append('productID', product.id);
+      console.log("user_id - " + user_id);
+      formData.append('userID', user_id);
+      formData.append('header', newHeader);
+      formData.append('description', newComment);
+      formData.append('stars', 4);
+
+      const response = await fetch('http://localhost:8080/product/addReview', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.text();
+      console.log(data);
+      if (response.ok) {
+        console.log('Review sucessfully added');
+        setNewHeader('');
+        setNewComment('');
+        setComments([...comments, {user: user_id, header: newHeader, comment: newComment}]);
+      } else {
+        console.error('Review failed to be added');
+      }
+
+    } catch (error) {
+      console.error('Error during API call', error);
+    }
   };
 
   return (
@@ -16,8 +42,15 @@ const ProductComments = ({ comments, onCommentSubmit, username }) => {
         <>
           <h2>What our customers think about this...</h2>
           <ul>
-            {comments.map((comment, index) => (
+            {/* {comments.map((comment, index) => (
               <li key={index}>{comment}</li>
+            ))} */}
+            {comments.map((comment, index) => (
+              <li key={index}>
+                <p>{comment.user}</p>
+                <p>{comment.header}</p>
+                <p>{comment.comment}</p>
+              </li>
             ))}
           </ul>
           <h2>Let us know what you think</h2>
@@ -26,14 +59,22 @@ const ProductComments = ({ comments, onCommentSubmit, username }) => {
         <p>Be the first to comment about this product!</p> // Mensagem se não houver comentários
       )}
       {/* Formulário para adicionar comentários */}
-      <form onSubmit={handleSubmit}>
-        {username && <p>Logged in as: {username}</p>}
-        <textarea
-          className="h-32 p-2 border rounded-lg"
-          placeholder="Write your comment here"
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
+      <form onSubmit={handleReviewSubmit}>
+        <input 
+          className="p-2 border rounded-lg"
+          type="text"
+          placeholder="Title"
+          value={newHeader}
+          onChange={(e) => setNewHeader(e.target.value)} // Campo para o título
         />
+        <div className="mt-2 ">
+          <textarea
+            className="h-32 p-2 border rounded-lg w-full" style={{maxWidth: "80ch"}}
+            placeholder="Write your comment here"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)} // Campo para a descrição
+          />
+        </div>
         <div className="mt-2">
             <button type="submit" className="btn btn-primary">Submit Comment</button>
         </div>

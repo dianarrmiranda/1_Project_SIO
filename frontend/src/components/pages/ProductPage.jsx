@@ -11,13 +11,15 @@ const ProductPage = () => {
   const navigate = useNavigate();
 
   const [product, setProduct] = useState({});
-  const [username, setUsername] = useState('');
+  const [user_id, setUser_id] = useState('');
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
     const initialize = async () => {
       const data = await fetchData(`/product/view?id=${id}`);
       setProduct(data);
+      const username = JSON.parse(localStorage.getItem('user'));
+      setUser_id(username[0].id);
     };
     initialize();
   }, []);
@@ -38,8 +40,9 @@ const ProductPage = () => {
           <p className="font-bold text-lg mb-2">{product.price}€</p>
           <ProductComments
             comments={comments}
-            onCommentSubmit={(comment) => setComments([...comments, comment])}
-            username = {username}
+            user_id={user_id}
+            product = {product}
+            setComments={setComments}
           />
           <button
             className="btn btn-accent relative top-8 mb-2"
