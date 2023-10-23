@@ -371,8 +371,21 @@ public class ProductController {
 
   //  Add and List methods for any Category Object
   @PostMapping(path="/category/add")
-  public @ResponseBody String addCategory (@RequestParam String name, @RequestParam(required=false) String description) {
+  public @ResponseBody String addCategory (@RequestParam String name, @RequestParam(required=false) String description,
+                                           @RequestParam Integer userID, @RequestParam String token) {
 
+    App_User user;
+
+    user = userRepository.findapp_userByID(userID);
+    
+    if (!user.getActive_Token().equals(token)) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Token does not match the given user ID!");
+    }
+        
+    if (!user.getRole().equals("admin")) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Given user does not have the required permissions for this command!");
+    }
+      
     //  Check if the required variables are empty  
     if (name == null || name.equals("")) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Provide all the required data fields!");
