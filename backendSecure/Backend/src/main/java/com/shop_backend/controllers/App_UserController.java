@@ -1,5 +1,7 @@
 package com.shop_backend.controllers;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,15 +61,14 @@ public class App_UserController {
   private ProductRepo productRepository;
 
   // Create and save a new app_user object to the repository (database)
-  @PostMapping(path = "/add")
-  public @ResponseBody App_User addapp_user(@RequestParam String name, @RequestParam String email,
+  @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public @ResponseBody String addapp_user(@RequestParam String name, @RequestParam String email,
       @RequestParam String password, @RequestParam String cartao,
-      @RequestParam String role, @RequestParam MultipartFile img) {
+      @RequestParam String role, @RequestParam(required = false) MultipartFile img) {
 
     // Check if any required value is empty
     if (name == null || name.equals("") || email == null || email.equals("")
-        || password == null || password.equals("") || img == null || img.equals("")
-        || cartao == null || cartao.equals("") || role == null || role.equals("")) {
+        || password == null || password.equals("") || cartao == null || cartao.equals("") || role == null || role.equals("")) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Provide all the required data fields!");
     }
 
@@ -96,26 +97,29 @@ public class App_UserController {
 
       Path path = Paths.get(folder + filename);
 
-      // Create the directory if it does not exist
-      if (!Files.exists(path.getParent())) {
-        Files.createDirectories(path.getParent());
-      }
+      if (img != null) {
+        // Create the directory if it does not exist
+        if (!Files.exists(path.getParent())) {
+          Files.createDirectories(path.getParent());
+        }
 
-      // Create the file if it does not exist
-      if (!Files.exists(path)) {
-        Files.createFile(path);
-      }
+        // Create the file if it does not exist
+        if (!Files.exists(path)) {
+          Files.createFile(path);
+        }
+        try (InputStream inputStream = img.getInputStream()) {
+          Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+          throw new IOException("Could not save image file: " + filename, e);
+        }
 
-      try (InputStream inputStream = img.getInputStream()) {
-        Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
-      } catch (IOException e) {
-        throw new IOException("Could not save image file: " + filename, e);
+        usr.setImage("/src/assets/prod_images/" + filename);
       }
-
-      usr.setImage("/src/assets/prod_images/" + filename);
+      else{
+        usr.setImage("");
+      }
 
       Encoder encoder = Base64.getUrlEncoder().withoutPadding();
-
       //  Generate the password
       SecureRandom random = new SecureRandom();
       byte[] salt = new byte[16];
@@ -136,7 +140,17 @@ public class App_UserController {
       usr.setActive_Token(token);
       app_userRepository.save(usr);
 
-      return usr;
+      //  Generate the output user object for the frontend
+      JSONObject out = new JSONObject();
+      out.put("id", usr.getID().toString());
+      out.put("name", usr.getName());
+      out.put("email", usr.getEmail());
+      out.put("image", usr.getImage());
+      out.put("token", usr.getActive_Token());
+      out.put("shopping_Cart", usr.getShopping_Cart());
+      out.put("request_History", usr.getRequest_History());
+      
+      return out.toString(1);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -234,7 +248,7 @@ public class App_UserController {
   // View all app_user info IF email and password check out, else return bad login
   // info
   @GetMapping(path = "/checkLogin")
-  public @ResponseBody App_User checkLoginInfo(@RequestParam String email, @RequestParam String password) {
+  public @ResponseBody String checkLoginInfo(@RequestParam String email, @RequestParam String password) {
     App_User user;
 
     // Check if a User with this login information exists or nor
@@ -274,7 +288,17 @@ public class App_UserController {
     user.setActive_Token(encoder.encodeToString(bytes));
     app_userRepository.save(user);
 
-    return user;
+    //  Generate the output user object for the frontend
+    JSONObject out = new JSONObject();
+    out.put("id", user.getID().toString());
+    out.put("name", user.getName());
+    out.put("email", user.getEmail());
+    out.put("image", user.getImage());
+    out.put("token", user.getActive_Token());
+    out.put("shopping_Cart", user.getShopping_Cart());
+    out.put("request_History", user.getRequest_History());
+    
+    return out.toString(1);
   }
 
   // Update the password of a specific object based on ID

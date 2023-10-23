@@ -29,7 +29,7 @@ public class StartupRequest {
         ObjectMapper mapper = new ObjectMapper();
         try {
             JsonNode root = mapper.readTree(response.getBody());
-            token = root.path("active_Token").asText();
+            token = root.path("token").asText();
         }
         catch(Exception e) {
             e.printStackTrace();
