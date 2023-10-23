@@ -46,10 +46,10 @@ import jakarta.persistence.Query;
 @Controller
 @CrossOrigin("*")
 @RestController
-@RequestMapping(path="/user")
+@RequestMapping(path = "/user")
 public class App_UserController {
 
-  //  Needed repositories (database tables)
+  // Needed repositories (database tables)
   @PersistenceContext
   private EntityManager entityManager;
   @Autowired
@@ -61,30 +61,24 @@ public class App_UserController {
   @Autowired
   private ProductRepo productRepository;
 
-  //  Create and save a new app_user object to the repository (database)
-  @PostMapping(path="/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public @ResponseBody String addapp_user (@RequestParam String name,     @RequestParam String email,
-                                       @RequestParam String password, @RequestParam String cartao,  
-                                       @RequestParam String role,     @RequestParam MultipartFile img) {
+  // Create and save a new app_user object to the repository (database)
+  @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public @ResponseBody String addapp_user(@RequestParam String name, @RequestParam String email,
+      @RequestParam String password, @RequestParam String cartao,
+      @RequestParam String role, @RequestParam MultipartFile img) {
 
-    //  Check if any required value is empty
-    if (name == null || name.equals("") || email == null || email.equals("") 
-        || password == null || password.equals("") || img == null || img.equals("") 
-        || cartao == null || cartao.equals("") || role == null || role.equals("")) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Provide all the required data fields!");
-    }
-    
-    //  Check the role is app_user or admin
+    // Check the role is app_user or admin
     if (!role.equals("user") && !role.equals("admin")) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The role value must either be 'user' or 'admin'!");
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+          "The role value must either be 'user' or 'admin'!");
     }
 
-    //  Check the given email is already associated with another user
+    // Check the given email is already associated with another user
     if (app_userRepository.findapp_userByEmail(email) != null) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A user with this email already exists!");
     }
-    
-    //  Register the App_User Object
+
+    // Register the App_User Object
     try {
       App_User usr = new App_User();
       usr.setName(name);
@@ -94,50 +88,49 @@ public class App_UserController {
       usr.setRole(role);
 
       String folder = "../../frontend/src/assets/prod_images/";
-      String filename = usr.getName().replace("\s", "") + usr.getID() + ".jpg";
+      String filename = usr.getName().replace("\s", "") + ".jpg";
 
       Path path = Paths.get(folder + filename);
 
       // Create the directory if it does not exist
       if (!Files.exists(path.getParent())) {
-          Files.createDirectories(path.getParent());
+        Files.createDirectories(path.getParent());
       }
 
       // Create the file if it does not exist
       if (!Files.exists(path)) {
-          Files.createFile(path);
+        Files.createFile(path);
       }
 
       try (InputStream inputStream = img.getInputStream()) {
-          Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
       } catch (IOException e) {
-          throw new IOException("Could not save image file: " + filename, e);
+        throw new IOException("Could not save image file: " + filename, e);
       }
-      
+
       usr.setImage("/src/assets/prod_images/" + filename);
 
       app_userRepository.save(usr);
       return "Saved";
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
   }
 
-  //  List produtos from the repository (database)
+  // List produtos from the repository (database)
   @GetMapping(path = "/list")
   public @ResponseBody LinkedList<HashMap<String, String>> listapp_user() {
     LinkedList<HashMap<String, String>> data = new LinkedList<HashMap<String, String>>();
 
-    //  Get all Users
+    // Get all Users
     List<App_User> returnedVals = app_userRepository.listapp_users();
 
-    //  Create an array of maps with the intended values (like a JSON object)
+    // Create an array of maps with the intended values (like a JSON object)
     for (App_User usr : returnedVals) {
       HashMap<String, String> temp = new HashMap<String, String>();
 
-      //  Select what values to give to the app_user
+      // Select what values to give to the app_user
       temp.put("id", usr.getID().toString());
       temp.put("name", usr.getName());
       temp.put("email", usr.getEmail());
@@ -148,13 +141,14 @@ public class App_UserController {
     return data;
   }
 
-  //  List produtos from the repository (database)
+  // List produtos from the repository (database)
   @GetMapping(path = "/listByRole")
   public @ResponseBody LinkedList<HashMap<String, String>> listapp_userRole(@RequestParam String role) {
-    
-    //  Check the role is app_user or admin
+
+    // Check the role is app_user or admin
     if (!role.equals("user") && !role.equals("admin")) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The role value must either be 'user' or 'admin'!");
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+          "The role value must either be 'user' or 'admin'!");
     }
 
     LinkedList<HashMap<String, String>> data = new LinkedList<HashMap<String, String>>();
@@ -163,7 +157,7 @@ public class App_UserController {
     for (App_User usr : returnedVals) {
       HashMap<String, String> temp = new HashMap<String, String>();
 
-      //  Select what values to give to the app_user
+      // Select what values to give to the app_user
       temp.put("id", usr.getID().toString());
       temp.put("name", usr.getName());
       temp.put("email", usr.getEmail());
@@ -174,11 +168,11 @@ public class App_UserController {
     return data;
   }
 
-  //  Get the number of total app_users in the repository (database)
+  // Get the number of total app_users in the repository (database)
   @GetMapping(path = "/number")
   public @ResponseBody LinkedList<HashMap<String, String>> numberOfapp_users() {
-    
-    //  Create a "JSON"ish object
+
+    // Create a "JSON"ish object
     LinkedList<HashMap<String, String>> data = new LinkedList<HashMap<String, String>>();
     HashMap<String, String> temp = new HashMap<String, String>();
 
@@ -188,46 +182,47 @@ public class App_UserController {
     return data;
   }
 
-  //  View all information of a specific object based on ID
+  // View all information of a specific object based on ID
   @GetMapping(path = "/view")
   public @ResponseBody App_User viewapp_userByID(@RequestParam String id) {
     Query typedQuery;
 
-    //  Check if a User with this login information exists or nor
-      String query = "SELECT * FROM app_user WHERE id = '" + id + "'";
-      typedQuery = entityManager.createNativeQuery(query, App_User.class);
+    // Check if a User with this login information exists or nor
+    String query = "SELECT * FROM app_user WHERE id = '" + id + "'";
+    typedQuery = entityManager.createNativeQuery(query, App_User.class);
 
     if (typedQuery == null) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A User with this id does not exist!");
     }
 
-    return (App_User)typedQuery.getResultList().get(0);
+    return (App_User) typedQuery.getResultList().get(0);
   }
 
-    //  View all information of a specific object based on ID
-    @GetMapping(path = "/viewByName")
-    public @ResponseBody App_User viewapp_userByName(@RequestParam String name) {
-      Query typedQuery;
-  
-      //  Check if a User with this login information exists or nor
-        String query = "SELECT * FROM app_user WHERE name = '" + name + "'";
-        typedQuery = entityManager.createNativeQuery(query, App_User.class);
-  
-      if (typedQuery == null) {
-        throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A User with this name does not exist!");
-      }
-  
-      return (App_User)typedQuery.getResultList().get(0);
+  // View all information of a specific object based on ID
+  @GetMapping(path = "/viewByName")
+  public @ResponseBody App_User viewapp_userByName(@RequestParam String name) {
+    Query typedQuery;
+
+    // Check if a User with this login information exists or nor
+    String query = "SELECT * FROM app_user WHERE name = '" + name + "'";
+    typedQuery = entityManager.createNativeQuery(query, App_User.class);
+
+    if (typedQuery == null) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A User with this name does not exist!");
     }
 
-  //  View all app_user info IF email and password check out, else return bad login info
+    return (App_User) typedQuery.getResultList().get(0);
+  }
+
+  // View all app_user info IF email and password check out, else return bad login
+  // info
   @GetMapping(path = "/checkLogin")
   public @ResponseBody List<App_User> checkLoginInfo(@RequestParam String email, @RequestParam String password) {
     Query typedQuery;
 
-    //  Check if a User with this login information exists or nor
-      String query = "SELECT * FROM app_user WHERE (email = '" + email + "') AND (password = '" + password + "')";
-      typedQuery = entityManager.createNativeQuery(query, App_User.class);
+    // Check if a User with this login information exists or nor
+    String query = "SELECT * FROM app_user WHERE (email = '" + email + "') AND (password = '" + password + "')";
+    typedQuery = entityManager.createNativeQuery(query, App_User.class);
 
     if (typedQuery == null) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "User authentication is incorrect!");
@@ -236,7 +231,7 @@ public class App_UserController {
     return typedQuery.getResultList();
   }
 
-  //  Update the password of a specific object based on ID
+  // Update the password of a specific object based on ID
   @PostMapping(path = "/updatePassword")
   @Transactional
   public @ResponseBody List updatePassword(@RequestParam Integer id, @RequestParam String newPassword) {
@@ -253,24 +248,23 @@ public class App_UserController {
 
       query = "SELECT name, email, password FROM app_user where name = '" + name + "'";
       typedQuery = entityManager.createNativeQuery(query);
-    
-    }
-    catch (Exception e) {
+
+    } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getCause().getMessage());
     }
     return typedQuery.getResultList();
   }
 
-  //  Add a product to this app_user's cart
+  // Add a product to this app_user's cart
   @PostMapping(path = "/addToCart")
-  public @ResponseBody String addProdToCart(@RequestParam Integer userID, @RequestParam Product prod, @RequestParam Integer quantity) {
+  public @ResponseBody String addProdToCart(@RequestParam Integer userID, @RequestParam Product prod,
+      @RequestParam Integer quantity) {
     App_User usr;
 
-    //  Check if a User with this ID exists
+    // Check if a User with this ID exists
     try {
-       usr = app_userRepository.findapp_userByID(userID);
-    }
-    catch (Exception e) {
+      usr = app_userRepository.findapp_userByID(userID);
+    } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
 
@@ -278,34 +272,32 @@ public class App_UserController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The specified User does not exist!");
     }
 
-    //  Create a new shopping cart item
+    // Create a new shopping cart item
     try {
       ShoppingCartItem item = new ShoppingCartItem();
       item.setProd(prod);
       item.setQuantity(quantity);
       itemRepository.save(item);
 
-      //  Add the item to the user's cart
+      // Add the item to the user's cart
       usr.addProdToCart(item);
       app_userRepository.save(usr);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
 
     return "Saved";
   }
 
-  //  Remove a product from this app_user's cart
+  // Remove a product from this app_user's cart
   @PostMapping(path = "/removeFromCart")
   public @ResponseBody String removeProdFromCart(@RequestParam Integer userID, @RequestParam Product prod) {
     App_User usr;
 
-    //  Check if a User with this ID exists
+    // Check if a User with this ID exists
     try {
-       usr = app_userRepository.findapp_userByID(userID);
-    }
-    catch (Exception e) {
+      usr = app_userRepository.findapp_userByID(userID);
+    } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
 
@@ -313,29 +305,27 @@ public class App_UserController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The specified User does not exist!");
     }
 
-    //  Remove the item from the cart
+    // Remove the item from the cart
     try {
-       usr.removeProdFromCart(prod);
-       app_userRepository.save(usr);
-    }
-    catch (Exception e) {
+      usr.removeProdFromCart(prod);
+      app_userRepository.save(usr);
+    } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
 
     return "Saved";
   }
 
-  //  Request the current cart as an order
+  // Request the current cart as an order
   @PostMapping(path = "/requestCurrentCart")
   public @ResponseBody String RequestCart(@RequestParam Integer userID) {
     App_User usr;
     String receipt = "";
 
-    //  Check if a User with this ID exists
+    // Check if a User with this ID exists
     try {
-       usr = app_userRepository.findapp_userByID(userID);
-    }
-    catch (Exception e) {
+      usr = app_userRepository.findapp_userByID(userID);
+    } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
 
@@ -343,7 +333,7 @@ public class App_UserController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The specified User does not exist!");
     }
 
-    //  Create the receipt String object
+    // Create the receipt String object
     receipt += "------------ Client ----------\n";
     receipt += "Client Name: " + usr.getName() + "\n";
     receipt += "Client Email: " + usr.getEmail() + "\n";
@@ -354,38 +344,41 @@ public class App_UserController {
     double total = 0;
     int i = 0;
 
-
-    //  Check if the user has any items in its cart
+    // Check if the user has any items in its cart
     if (currentCart.size() < 1) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The current shopping cart of this user is empty!");
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+          "The current shopping cart of this user is empty!");
     }
 
-    //  Add the current items in the shopping cart to an order object
+    // Add the current items in the shopping cart to an order object
     receipt += "------------ Products ----------\n";
     for (ShoppingCartItem item : currentCart) {
-        ShoppingCartItem orderItem = item;
-        orderCart.add(orderItem);
-        total += item.getProd().getPrice() * item.getQuantity();
+      ShoppingCartItem orderItem = item;
+      orderCart.add(orderItem);
+      total += item.getProd().getPrice() * item.getQuantity();
 
-        //  Check if requested item quantity is available
-        if (item.getProd().getIn_Stock() < item.getQuantity()) {
-          throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Only " + item.getProd().getIn_Stock() + " items of type " + item.getProd().getName() + " are in stock, but " + item.getQuantity() + " where requested!");
-        }
+      // Check if requested item quantity is available
+      if (item.getProd().getIn_Stock() < item.getQuantity()) {
+        throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+            "Only " + item.getProd().getIn_Stock() + " items of type " + item.getProd().getName()
+                + " are in stock, but " + item.getQuantity() + " where requested!");
+      }
 
-        receipt += "\n ----- Product " + i + " ------\n";
-        receipt += "Name: " + item.getProd().getName() + "\n";
-        receipt += "Price: " + item.getProd().getPrice() + "€\n";
-        receipt += "Quantity: " + item.getQuantity() + "\n";
+      receipt += "\n ----- Product " + i + " ------\n";
+      receipt += "Name: " + item.getProd().getName() + "\n";
+      receipt += "Price: " + item.getProd().getPrice() + "€\n";
+      receipt += "Quantity: " + item.getQuantity() + "\n";
 
-        item.getProd().setIn_Stock(item.getProd().getIn_Stock() - item.getQuantity());
-        productRepository.save(item.getProd());
-        i++;
+      item.getProd().setIn_Stock(item.getProd().getIn_Stock() - item.getQuantity());
+      productRepository.save(item.getProd());
+      i++;
     }
 
     receipt += "\n------------ Total ----------\n";
     receipt += "Total: " + total + "€\n";
 
-    //  Save the new order request and update the user's shopping history and clear the shopping cart
+    // Save the new order request and update the user's shopping history and clear
+    // the shopping cart
     Request ord = new Request();
     ord.setItem(orderCart);
     ord.setTotal(total);
