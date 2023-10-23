@@ -10,6 +10,8 @@ const ProductPage = () => {
   const { token } = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
 
+  console.log("id -> ", id);
+
   const [user, setUser] = useState({});
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -17,6 +19,7 @@ const ProductPage = () => {
   const [showAlertPass, setShowAlertPass] = useState(false);
   const [showAlertSamePass, setShowAlertSamePass] = useState(false);
   const [changeSuccess, setchangeSuccess] = useState(false);
+  const [showChangeFail, setShowChangeFail] = useState(false);
 
   useEffect(() => {
     const initialize = async () => {
@@ -57,6 +60,7 @@ const ProductPage = () => {
       formData.append("id", id);
       formData.append("token", token);
       formData.append("newPassword", password);
+      formData.append("oldPassword", actualPassword);
       const response = await fetch(
         "http://localhost:8080/user/updatePassword",
         {
@@ -67,11 +71,14 @@ const ProductPage = () => {
       const data = await response;
       console.log(data);
       if (data.status === 200) {
+        setShowChangeFail(false);
         setchangeSuccess(true);
         setTimeout(() => {
           document.getElementById("modal_ChangePass").close();
           setchangeSuccess(false);
         }, 2000);
+      } else {
+        setShowChangeFail(true);
       }
     } catch (error) {
       console.error("Error during API call", error);
@@ -133,6 +140,23 @@ const ProductPage = () => {
               onChange={(e) => setActualPassword(e.target.value)}
             />
           </div>
+          {showChangeFail && (
+            <div className="alert alert-error">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeWidth="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>Error! Wrong Password!</span>
+            </div>
+          )}
           <div className="form-control">
             <label className="label">
               <span className="label-text">New Password</span>
