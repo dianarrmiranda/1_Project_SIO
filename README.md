@@ -11,7 +11,7 @@ Currently, two official plugins are available:
 
 * Clone the repo locally
 ```bash
-git clone git@github.com:Dan1m4D/sio-project.git
+git clone git@github.com:detiuaveiro/1st-project-group_02.git
 ```
 
 
@@ -73,4 +73,23 @@ To test the api, make sure you have spingboot running and make the needed calls.
 * DaisyUI -> Component plugin for Tailwind
 * Axios -> For api interaction
 * SpringBooot -> API creation
-* M2 -> BackEnd DB
+* H2 -> BackEnd DB
+
+# Vulnerabilities implemented:
+
+* CWE-79 (Cross-Site Scripting)
+* CWE-89 (SQL Injection)
+* CWE-20 (Improper Input Validation)
+* CWE-521 (Weak Password Requirements)
+* CWE-434 (Unrestricted Upload of File with Dangerous Type)
+* CWE-862 (Missing Authorization)
+
+# Authors 
+
+* Daniel Madureira ()
+* Diana Miranda (107457)
+* Miguel Pinto ()
+* Pedro Ramos ()
+
+
+
