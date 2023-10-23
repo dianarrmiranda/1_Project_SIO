@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import Footer from '../layout/Footer';
-import Navbar from '../layout/Navbar';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import Footer from "../layout/Footer";
+import Navbar from "../layout/Navbar";
+import { useNavigate } from "react-router-dom";
 
-import shopping from '../../assets/shopping.jpg';
+import shopping from "../../assets/shopping.jpg";
 
-import { fetchData } from '../../utils';
+import { fetchData } from "../../utils";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
 
@@ -19,17 +19,18 @@ const LoginPage = () => {
       const response = await fetchData(
         `/user/checkLogin?email=${email}&password=${password}`
       );
+      console.log(response);
       if (response.length != 0) {
-        console.log('Login successful');
-        setEmail('');
-        setPassword('');
-        localStorage.setItem('user', JSON.stringify(response));
-        navigate('/');
+        console.log("Login successful");
+        setEmail("");
+        setPassword("");
+        localStorage.setItem("user", JSON.stringify(response));
+        navigate("/");
       } else {
-        console.error('Login failed');
+        console.error("Login failed");
       }
     } catch (error) {
-      console.error('Error during API call', error);
+      console.error("Error during API call", error);
     }
   };
 
@@ -49,14 +50,14 @@ const LoginPage = () => {
           <div className="text-center bg:text-left">
             <h1 className="text-5xl font-bold">Login now!</h1>
             <p className="py-6">
-              New here?{' '}
+              New here?{" "}
               <a
                 href=""
-                onClick={() => navigate('/registerUser')}
+                onClick={() => navigate("/registerUser")}
                 className="link link-primary"
               >
                 Sign up
-              </a>{' '}
+              </a>{" "}
               for an account to get started.
             </p>
           </div>
@@ -89,10 +90,7 @@ const LoginPage = () => {
                 />
               </div>
               <div className="form-control mt-6">
-                <button
-                  className="btn btn-primary"
-                  onClick={handleLogin}
-                >
+                <button className="btn btn-primary" onClick={handleLogin}>
                   Login
                 </button>
               </div>
