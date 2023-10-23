@@ -14,10 +14,6 @@ const StorePage = () => {
   const minPrice = getUrlParams().get('min');
   const maxPrice = getUrlParams().get('max');
   const catFilter = getUrlParams().getAll('category');
-  console.log('search params -> ', search_query);
-  console.log('minPrice -> ', minPrice);
-  console.log('maxPrice -> ', maxPrice);
-  console.log('catFilter -> ', catFilter);
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -42,7 +38,6 @@ const StorePage = () => {
 
   useEffect(() => {
     if (search_query) {
-      document.getElementById('show_query_results').innerHTML = search_query;
       products.forEach((product) => {
         if (product.name.toLowerCase().includes(search_query.toLowerCase())) {
           setNotFound(false);
@@ -68,10 +63,10 @@ const StorePage = () => {
             </h1>
           ) : (
             <h3>
-              You searched for:{' '}
-              <b>
-                <span id='show_query_results' />
-              </b>
+              You've searched for:{' '}
+              <span className="font-extrabold" id="show_query_results">
+                {search_query}
+              </span>
             </h3>
           )}
         </div>
@@ -97,7 +92,6 @@ const StorePage = () => {
           <div className="flex flex-wrap justify-start">
             {products
               .filter((product) => {
-                let found = false;
                 if (search_query) {
                   return product.name
                     .toLowerCase()
