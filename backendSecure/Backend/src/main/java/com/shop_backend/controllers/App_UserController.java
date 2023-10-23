@@ -1,7 +1,5 @@
 package com.shop_backend.controllers;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import jakarta.persistence.PersistenceException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +24,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import org.json.JSONObject;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Base64.Encoder;
@@ -278,7 +276,7 @@ public class App_UserController {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
     if (!hashedPassword.equals(hashedPassToCheck)) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "User authentication is incorrect > " + hashedPassword + " -|- " + hashedPassToCheck);
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "User authentication is incorrect >");
     }
 
     SecureRandom rng = new SecureRandom();
@@ -303,28 +301,59 @@ public class App_UserController {
 
   // Update the password of a specific object based on ID
   @PostMapping(path = "/updatePassword")
-  public @ResponseBody String updatePassword(@RequestParam Integer id, @RequestParam String token, @RequestParam String newPassword) {
-    App_User usr;
+  public @ResponseBody String updatePassword(@RequestParam Integer id, @RequestParam String token, @RequestParam String oldPassword, @RequestParam String newPassword) {
+    App_User user;
 
     // Check if a User with this ID exists
     try {
-      usr = app_userRepository.findapp_userByID(id);
+      user = app_userRepository.findapp_userByID(id);
     } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
 
-    if (usr == null) {
+    if (user == null) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
           "A user with the specified ID does not exist!");
     }
 
-    if (!usr.getActive_Token().equals(token)) {
+    if (!user.getActive_Token().equals(token)) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Token does not match the given user ID!");
     }
 
+    String currentHashedPass = user.getPassword();
+    String oldHashedPassToCheck = "";
+    String newHashedPass = "";
+
+    Encoder encoder = Base64.getUrlEncoder().withoutPadding();
+    KeySpec spec = new PBEKeySpec(oldPassword.toCharArray(), user.getSalt().getBytes(), 65536, 128);
+    try {
+      SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+      byte[] hash = factory.generateSecret(spec).getEncoded();
+      oldHashedPassToCheck = encoder.encodeToString(hash);
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
+    }
+    if (!currentHashedPass.equals(oldHashedPassToCheck)) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "User authentication is incorrect");
+    }
+
+    spec = new PBEKeySpec(newPassword.toCharArray(), user.getSalt().getBytes(), 65536, 128);
+    try {
+      SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+      byte[] hash = factory.generateSecret(spec).getEncoded();
+      newHashedPass = encoder.encodeToString(hash);
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
+    }
+        
+
     //  Set the new password and save the User Object (overwrite old object)
-    usr.setPassword(newPassword);
-    app_userRepository.save(usr);
+    user.setPassword(newHashedPass);
+    app_userRepository.save(user);
 
     return "Saved";
   }

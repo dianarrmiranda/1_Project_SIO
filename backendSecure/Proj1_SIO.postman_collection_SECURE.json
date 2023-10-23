@@ -192,7 +192,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/user/updatePassword?id=2&token=_xkuEWrz1Ld4xMox1ySJpk8Fbtn8yEE183XerTQ_PSgrk2a6xl3_qWSr2ILlaI8nk-6QI3v9_EGRqghfwvVzuA&newPassword=newpass",
+							"raw": "localhost:8080/user/updatePassword?id=2&token=AlU2UDEy6Bsjb7Xek7MKz1x4yT1rWqDkr7FE68xZeErL6FUoYl14PYb4qIX7qDcdJp0y0QNlW8RrjnA2snHiPg&newPassword=newpass&oldPassword=123",
 							"host": [
 								"localhost"
 							],
@@ -208,11 +208,15 @@
 								},
 								{
 									"key": "token",
-									"value": "_xkuEWrz1Ld4xMox1ySJpk8Fbtn8yEE183XerTQ_PSgrk2a6xl3_qWSr2ILlaI8nk-6QI3v9_EGRqghfwvVzuA"
+									"value": "AlU2UDEy6Bsjb7Xek7MKz1x4yT1rWqDkr7FE68xZeErL6FUoYl14PYb4qIX7qDcdJp0y0QNlW8RrjnA2snHiPg"
 								},
 								{
 									"key": "newPassword",
 									"value": "newpass"
+								},
+								{
+									"key": "oldPassword",
+									"value": "123"
 								}
 							]
 						}
