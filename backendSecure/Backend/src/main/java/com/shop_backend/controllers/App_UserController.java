@@ -360,7 +360,7 @@ public class App_UserController {
 
   // Add a product to this app_user's cart
   @PostMapping(path = "/addToCart")
-  public @ResponseBody String addProdToCart(@RequestParam Integer userID, @RequestParam String token, @RequestParam Product prod, @RequestParam Integer quantity) {
+  public @ResponseBody List<ShoppingCartItem> addProdToCart(@RequestParam Integer userID, @RequestParam String token, @RequestParam Product prod, @RequestParam Integer quantity) {
     App_User usr;
 
     // Check if a User with this ID exists
@@ -392,12 +392,12 @@ public class App_UserController {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
 
-    return "Saved";
+    return usr.getShopping_Cart();
   }
 
   // Remove a product from this app_user's cart
   @PostMapping(path = "/removeFromCart")
-  public @ResponseBody String removeProdFromCart(@RequestParam Integer userID, @RequestParam String token, @RequestParam Product prod) {
+  public @ResponseBody List<ShoppingCartItem> removeProdFromCart(@RequestParam Integer userID, @RequestParam String token, @RequestParam Product prod) {
     App_User usr;
 
     // Check if a User with this ID exists
@@ -422,8 +422,8 @@ public class App_UserController {
     } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
-
-    return "Saved";
+    
+    return usr.getShopping_Cart();
   }
 
   // Request the current cart as an order

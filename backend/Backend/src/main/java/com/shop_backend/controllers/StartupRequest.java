@@ -21,7 +21,7 @@ public class StartupRequest {
         RestTemplate restTemplate = new RestTemplate();
     
         //  Add two items to user 1's shopping cart
-/*         restTemplate.exchange("http://localhost:8080/user/addToCart?userID=1&prod=3&quantity=3", HttpMethod.POST, null, String.class);
+        restTemplate.exchange("http://localhost:8080/user/addToCart?userID=1&prod=3&quantity=3", HttpMethod.POST, null, String.class);
         restTemplate.exchange("http://localhost:8080/user/addToCart?userID=1&prod=11&quantity=1", HttpMethod.POST, null, String.class);
         
         //  Request user 1's cart
@@ -29,7 +29,7 @@ public class StartupRequest {
 
         //  Add a Review by user 1 to product 11
         restTemplate.exchange("http://localhost:8080/product/addReview?productID=11&userID=1&header=Adorei o Produto&description=Completamente mudou a minha vida!&stars=4", HttpMethod.POST, null, String.class);
- */
+
         return;
     }
 }
