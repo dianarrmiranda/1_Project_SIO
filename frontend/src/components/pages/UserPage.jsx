@@ -35,15 +35,19 @@ const ProductPage = () => {
         formData.append("id", id);
         formData.append("newPassword", password);
 
-        const response = await fetch(
+        const res = await fetch(
           "http://localhost:8080/user/updatePassword",
           {
             method: "POST",
             body: formData,
           }
+        ).then(
+          response => response.json(),
+          error => console.log('An error occurred.', error)
+        ).then(
+          res => console.log(res)
         );  
-        const data = await response;
-        console.log(data);
+        const data = await res;
       } catch (error) {
         console.error("Error during API call", error);
       }
