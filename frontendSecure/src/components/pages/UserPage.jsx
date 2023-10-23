@@ -41,7 +41,7 @@ const ProductPage = () => {
             method: "POST",
             body: formData,
           }
-        );  
+        );
         const data = await response;
         console.log(data);
       } catch (error) {
