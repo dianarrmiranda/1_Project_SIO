@@ -76,7 +76,7 @@ const HomePage = () => {
             Find more products on our store page
           </h1>
           <button
-            className="btn gradient-green hover:ring hover:ring-primary w-[10vw] font-bold text-white"
+            className="btn gradient-green hover:ring hover:ring-primary w-[10vw] font-bold text-black"
             onClick={() => navigate('/store')}
           >
             GO TO STORE

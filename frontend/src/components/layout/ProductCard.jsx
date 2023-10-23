@@ -10,6 +10,7 @@ const ProductCard = ({ product, className, isStore }) => {
       className={`card compact ${
         isStore ? 'w-48 ' : 'w-96'
       } -bg-card-color my-2 ${className} m-2`}
+      onClick={() => navigate(`/store/product/${product.id}`)}
     >
       <figure>
         <img
@@ -21,22 +22,31 @@ const ProductCard = ({ product, className, isStore }) => {
         />
       </figure>
       <div className="card-body">
-        <h3 className={`card-title ${isStore? 'text-sm' : 'text-md'} line-clamp-1 hover:line-clamp-none`}>{product.name}</h3>
-        <p>{product.description}</p>
-        <p className="text-accent font-bold">{product.price}€</p>
-        <div className="card-actions justify-start">
-          <button className=' badge badge-outline'>{product.category}</button>
-          
-          <button className=' bottom-0 right-5 m-5 absolute '>
-            <RiShoppingCartLine />
-          </button>
-          <button
-            className=" bottom-0 right-0 m-5 absolute "
-            onClick={() => navigate(`/store/product/${product.id}`)}
+        <div className="flex flex-col justify-around">
+          <h3
+            className={`card-title ${
+              isStore ? 'text-sm' : 'text-md'
+            } line-clamp-1 hover:line-clamp-none`}
           >
-            <RiEyeLine />
-          </button>
+            {product.name}
+          </h3>
+          <p>{product.description}</p>
+          <div className='flex justify-between py-2 align-text-bottom'>
+            <p className="text-accent font-bold">{product.price}€</p>
+            <div className="card-actions justify-end">
+              <button className=" btn-accent p-1 rounded-md  ">
+                <RiShoppingCartLine />
+              </button>
+              <button
+                className=" btn-primary p-1 rounded-md "
+                onClick={() => navigate(`/store/product/${product.id}`)}
+              >
+                <RiEyeLine />
+              </button>
+            </div>
+          </div>
         </div>
+        <button className=" badge badge-outline">{product.category}</button>
       </div>
     </div>
   );

@@ -42,16 +42,16 @@ const LoginPage = () => {
   return (
     <div>
       <Navbar />
-      <div className="hero min-h-screen bg-[url('/frontend/src/assets/shopping.jpg')]">
+      <div className="hero min-h-screen bg-[url('/src/assets/shopping2.jpg')]">
         <div className="hero-content flex-col w-full lg:flex-row-reverse justify-center items-center">
-          <div className="text-center bg:text-left">
+          <div className="text-center bg:text-left bg-secondary bg-opacity-80 p-2 rounded-md">
             <h1 className="text-5xl font-bold">Login now!</h1>
             <p className="py-6">
               New here?{' '}
               <a
                 href=""
                 onClick={() => navigate('/registerUser')}
-                className="link link-primary"
+                className="link link-accent"
               >
                 Sign up
               </a>{' '}
