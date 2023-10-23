@@ -6,17 +6,21 @@ import { fetchData } from "../../utils";
 import Footer from "../layout/Footer";
 
 const ProductPage = () => {
-  const { id } = useParams();
+  const { id } = JSON.parse(localStorage.getItem("user"));
+  const { token } = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
 
   const [user, setUser] = useState({});
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [actualPassword, setActualPassword] = useState("");
+  const [showAlertPass, setShowAlertPass] = useState(false);
+  const [showAlertSamePass, setShowAlertSamePass] = useState(false);
+  const [changeSuccess, setchangeSuccess] = useState(false);
 
   useEffect(() => {
     const initialize = async () => {
-      const data = await fetchData(`/user/view?id=${id}`);
+      const data = await fetchData(`/user/view?id=${id}&token=${token}`);
       setUser(data);
     };
     initialize();
@@ -30,26 +34,47 @@ const ProductPage = () => {
   const handleChangePass = async (event) => {
     event.preventDefault();
 
-    if (password === newPassword) {
-      try {
-        const formData = new FormData();
-        formData.append("id", id);
-        formData.append("token", user.token);
-        formData.append("actualPassword", actualPassword);
-        formData.append("newPassword", password);
+    const passwordRegex =
+      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+]).{8,}$/;
 
-        const response = await fetch(
-          "http://localhost:8080/user/updatePassword",
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-        const data = await response;
-        console.log(data);
-      } catch (error) {
-        console.error("Error during API call", error);
+    if (!passwordRegex.test(password)) {
+      setShowAlertPass(true);
+    } else {
+      setShowAlertPass(false);
+    }
+    if (password !== newPassword) {
+      setShowAlertSamePass(true);
+    } else {
+      setShowAlertSamePass(false);
+    }
+
+    if (showAlertPass || showAlertSamePass) {
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("id", id);
+      formData.append("token", token);
+      formData.append("newPassword", password);
+      const response = await fetch(
+        "http://localhost:8080/user/updatePassword",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response;
+      console.log(data);
+      if (data.status === 200) {
+        setchangeSuccess(true);
+        setTimeout(() => {
+          document.getElementById("modal_ChangePass").close();
+          setchangeSuccess(false);
+        }, 2000);
       }
+    } catch (error) {
+      console.error("Error during API call", error);
     }
   };
 
@@ -121,6 +146,26 @@ const ProductPage = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          {showAlertPass && (
+            <div className="alert alert-warning">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeWidth="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <span>
+                Warning: Password must have at least 8 characters, 1 uppercase,
+                1 lowercase, 1 number and 1 special character!
+              </span>
+            </div>
+          )}
           <div className="form-control">
             <label className="label">
               <span className="label-text">Confirm New Password</span>
@@ -134,6 +179,40 @@ const ProductPage = () => {
               onChange={(e) => setNewPassword(e.target.value)}
             />
           </div>
+          {showAlertSamePass && (
+            <div className="alert alert-error">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeWidth="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>Error! The passwords are not the same!</span>
+            </div>
+          )}
+          {changeSuccess && (
+            <div className="alert alert-success">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>Pass Changed Successfully!</span>
+            </div>
+          )}
           <div className="modal-action flex">
             <form method="dialog">
               <button

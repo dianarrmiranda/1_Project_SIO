@@ -19,7 +19,7 @@ const LoginPage = () => {
       const response = await fetchData(
         `/user/checkLogin?email=${email}&password=${password}`
       );
-      console.log(response);
+      console.log("res - ", response);
       if (response.length != 0) {
         console.log("Login successful");
         setEmail("");

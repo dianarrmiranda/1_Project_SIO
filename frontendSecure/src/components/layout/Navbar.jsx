@@ -81,11 +81,7 @@ const Navbar = () => {
         {true && (
           <button
             className="flex items-center m-2 p-2"
-            onClick={
-              user
-                ? () => navigate(`/user/${user.id}`)
-                : () => navigate("/login")
-            }
+            onClick={user ? () => navigate(`/user`) : () => navigate("/login")}
           >
             <p className="mr-2">{user ? `Hello ${user.name}!  ` : ""} </p>
             <RiAccountCircleLine className="text-xl" />
