@@ -48,13 +48,26 @@ public class ProductController {
   public @ResponseBody String addProduct (@RequestParam String name,      @RequestParam String description,
                                           @RequestParam String origin,    @RequestParam Double price,  
                                           @RequestParam Integer in_stock, @RequestParam  Category category,
-                                          @RequestParam String img) {
+                                          @RequestParam String img,
+                                          @RequestParam Integer userID, @RequestParam String token) {
 
     //  Check if any required value is empty
     if (name == null || name.equals("") || description == null || description.equals("") 
         || origin == null || origin.equals("") || img == null || img.equals("") 
         || price == null || category == null) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Provide all the required data fields!");
+    }
+    
+    App_User user;
+
+    user = userRepository.findapp_userByID(userID);
+    
+    if (!user.getActive_Token().equals(token)) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Token does not match the given user ID!");
+    }
+       
+    if (!user.getRole().equals("admin")) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Given user does not have the required permissions for this command!");
     }
     
     //  Check the given Categoria exists
@@ -104,6 +117,7 @@ public class ProductController {
       temp.put("price", prod.getPrice().toString());
       temp.put("in_stock", prod.getIn_Stock().toString());
       temp.put("category", prod.getCategory().getName());
+      temp.put("categoryID", prod.getCategory().getID().toString());
 
       if (prod.getAverage_Stars() != null) {
         temp.put("avg_stars", prod.getAverage_Stars().toString());
@@ -141,6 +155,7 @@ public class ProductController {
       temp.put("price", prod.getPrice().toString());
       temp.put("in_stock", prod.getIn_Stock().toString());
       temp.put("category", prod.getCategory().getName());
+      temp.put("categoryID", prod.getCategory().getID().toString());
       
       //  If the product has no reviews (and stars) give '---'
       if (prod.getAverage_Stars() != null) {
@@ -172,6 +187,7 @@ public class ProductController {
       temp.put("price", prod.getPrice().toString());
       temp.put("in_stock", prod.getIn_Stock().toString());
       temp.put("category", prod.getCategory().getName());
+      temp.put("categoryID", prod.getCategory().getID().toString());
       
       //  If the product has no reviews (and stars) give '---'
       if (prod.getAverage_Stars() != null) {
@@ -189,7 +205,7 @@ public class ProductController {
 
   //  List produtos from the repository by Name (database)
   @GetMapping(path = "/listByName")
-  public @ResponseBody LinkedList<HashMap<String, String>> listProductByName(@RequestParam String name ) {
+  public @ResponseBody LinkedList<HashMap<String, String>> listProductByName(@RequestParam String name) {
 
     //  Check if any required value is empty
     if (name == null || name.equals("")) {
@@ -265,24 +281,37 @@ public class ProductController {
 
   //  Update the in_stock of a specific object based on ID
   @PostMapping(path = "/updateStock")
-  public @ResponseBody String updateStock(@RequestParam Integer id, @RequestParam Integer stock) {
-    Product data;
+  public @ResponseBody String updateStock(@RequestParam Integer id, @RequestParam Integer stock,
+                                          @RequestParam Integer userID, @RequestParam String token) {
+    Product prod;
+    App_User user;
 
     //  Check if a Product with this ID exists
     try {
-       data = productRepository.findProductByID(id);
+      prod = productRepository.findProductByID(id);
+      user = userRepository.findapp_userByID(userID);
     }
     catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
 
-    if (data == null) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "An entity the specified ID does not exist!");
+
+    if (prod == null) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A Product with the specified ID does not exist!");
+    }
+    if (user == null) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A User with the specified ID does not exist!");
+    }
+    if (!user.getActive_Token().equals(token)) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Token does not match the given user ID!");
+    }       
+    if (!user.getRole().equals("admin")) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Given user does not have the required permissions for this command!");
     }
 
     //  Update the Product's stock and save it in the repository (database) (overwrites the old row)
-    data.setIn_Stock(stock);
-    productRepository.save(data);
+    prod.setIn_Stock(stock);
+    productRepository.save(prod);
 
     return "Saved";
   }
@@ -291,7 +320,7 @@ public class ProductController {
   @PostMapping(path = "/addReview")
   public @ResponseBody String addReview(@RequestParam Integer productID, @RequestParam Integer userID,
                                         @RequestParam String header, @RequestParam String description,
-                                        @RequestParam Integer stars) {
+                                        @RequestParam Integer stars, @RequestParam String token) {
     Product prod;
     App_User user;
 
@@ -320,12 +349,15 @@ public class ProductController {
     if (user == null) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A User with the specified ID does not exist!");
     }
+    if (!user.getActive_Token().equals(token)) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Token does not match the given user ID!");
+    }
 
     Review rev = new Review();
     rev.setHeader(header);
     rev.setDescription(description);
     rev.setNumStars(stars);
-    rev.setUser(user.getID());
+    rev.setUser(user.getName());
     reviewRepository.save(rev);
 
     prod.addReview(rev);

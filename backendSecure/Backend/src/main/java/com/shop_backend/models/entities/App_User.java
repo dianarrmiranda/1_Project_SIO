@@ -8,7 +8,6 @@ import jakarta.persistence.OneToMany;
 
 import java.util.List;
 import java.util.LinkedList;
-
 @Entity // This tells Hibernate to make a table out of this class
 public class App_User {
     @Id
@@ -21,6 +20,9 @@ public class App_User {
     private String Password;
     private String Credit_Card;
     private String Role;
+
+    private String Active_Token;
+    private String Salt;
 
     @OneToMany
     private List<ShoppingCartItem> Shopping_Cart = new LinkedList<ShoppingCartItem>();
@@ -127,5 +129,21 @@ public class App_User {
 
     public void addToRequestHistory(Request Request) {
         Request_History.add(Request);
+    }
+
+    public String getActive_Token() {
+        return Active_Token;
+    }
+
+    public void setActive_Token(String active_Token) {
+        Active_Token = active_Token;
+    }
+
+    public String getSalt() {
+        return Salt;
+    }
+
+    public void setSalt(String salt) {
+        Salt = salt;
     }
 }

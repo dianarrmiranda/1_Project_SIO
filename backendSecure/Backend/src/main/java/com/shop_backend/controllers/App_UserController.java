@@ -9,13 +9,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import jakarta.persistence.PersistenceException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.security.SecureRandom;
+import java.util.Base64;
+import java.util.Base64.Encoder;
+import java.security.spec.KeySpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.SecretKeyFactory;
 
 import com.shop_backend.models.repos.App_UserRepo;
 import com.shop_backend.models.repos.RequestRepo;
@@ -45,14 +60,14 @@ public class App_UserController {
   private ProductRepo productRepository;
 
   //  Create and save a new app_user object to the repository (database)
-  @PostMapping(path="/add")
+  @PostMapping(path="/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public @ResponseBody String addapp_user (@RequestParam String name,     @RequestParam String email,
-                                       @RequestParam String password, @RequestParam String cartao,  
-                                       @RequestParam String role,     @RequestParam String img) {
+                                           @RequestParam String password, @RequestParam String cartao,  
+                                           @RequestParam String role,     @RequestParam(required = false) MultipartFile img) {
 
     //  Check if any required value is empty
     if (name == null || name.equals("") || email == null || email.equals("") 
-        || password == null || password.equals("") || img == null || img.equals("") 
+        || password == null || password.equals("")
         || cartao == null || cartao.equals("") || role == null || role.equals("")) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Provide all the required data fields!");
     }
@@ -75,9 +90,53 @@ public class App_UserController {
       usr.setPassword(password);
       usr.setCredit_Card(cartao);
       usr.setRole(role);
-      usr.setImage(img);
+      
+      String folder = "../../frontend/src/assets/prod_images/";
+      String filename = usr.getName().replace("\s", "") + usr.getID() + ".jpg";
+
+      Path path = Paths.get(folder + filename);
+
+      // Create the directory if it does not exist
+      if (!Files.exists(path.getParent())) {
+          Files.createDirectories(path.getParent());
+      }
+
+      // Create the file if it does not exist
+      if (!Files.exists(path)) {
+          Files.createFile(path);
+      }
+
+      try (InputStream inputStream = img.getInputStream()) {
+          Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
+      } catch (IOException e) {
+          throw new IOException("Could not save image file: " + filename, e);
+      }
+
+      usr.setImage("/src/assets/prod_images/" + filename);
+
+      Encoder encoder = Base64.getUrlEncoder().withoutPadding();
+
+      //  Generate the password
+      SecureRandom random = new SecureRandom();
+      byte[] salt = new byte[16];
+      random.nextBytes(salt);
+      KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
+      SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+      byte[] hash = factory.generateSecret(spec).getEncoded();
+
+      usr.setSalt(encoder.encodeToString(salt));
+      usr.setPassword(encoder.encodeToString(hash));
+
+      //  Generate the token
+      SecureRandom rng = new SecureRandom();
+      byte bytes[] = new byte[64];
+      rng.nextBytes(bytes);
+      String token = encoder.encodeToString(bytes);
+
+      usr.setActive_Token(token);
       app_userRepository.save(usr);
-      return "Saved";
+
+      return token;
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -150,47 +209,75 @@ public class App_UserController {
 
   //  View all information of a specific object based on ID
   @GetMapping(path = "/view")
-  public @ResponseBody App_User viewapp_userByID(@RequestParam Integer id) {
-    App_User data;
+  public @ResponseBody App_User viewapp_userByID(@RequestParam Integer id, @RequestParam String token) {
+    App_User user;
 
     //  Check if a User with this ID exists
     try {
-       data = app_userRepository.findapp_userByID(id);
+      user = app_userRepository.findapp_userByID(id);
     }
     catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
 
-    if (data == null) {
+    if (user == null) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "An entity the specified ID does not exist!");
+    }   
+    if (!user.getActive_Token().equals(token)) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Token does not match the given user ID!");
     }
 
-    return data;
+    return user;
   }
 
   //  View all app_user info IF email and password check out, else return bad login info
   @GetMapping(path = "/checkLogin")
   public @ResponseBody App_User checkLoginInfo(@RequestParam String email, @RequestParam String password) {
-    App_User data;
+    App_User user;
 
     //  Check if a User with this login information exists or nor
     try {
-       data = app_userRepository.findapp_userByEmailAndPassword(email, password);
+      user = app_userRepository.findapp_userByEmail(email);
     }
     catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
 
-    if (data == null) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "User authentication is incorrect!");
+    if (user == null) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "User email has no account associated!");
     }
 
-    return data;
+    String hashedPassword = user.getPassword();
+    String hashedPassToCheck = "";
+
+    Encoder encoder = Base64.getUrlEncoder().withoutPadding();
+    KeySpec spec = new PBEKeySpec(password.toCharArray(), user.getSalt().getBytes(), 65536, 128);
+    try {
+      SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+      byte[] hash = factory.generateSecret(spec).getEncoded();
+      hashedPassToCheck = encoder.encodeToString(hash);
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
+    }
+    if (!hashedPassword.equals(hashedPassToCheck)) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "User authentication is incorrect > " + hashedPassword + " -|- " + hashedPassToCheck);
+    }
+
+    SecureRandom rng = new SecureRandom();
+    byte bytes[] = new byte[64];
+    rng.nextBytes(bytes);
+
+    user.setActive_Token(encoder.encodeToString(bytes));
+    app_userRepository.save(user);
+
+    return user;
   }
 
   //  Update the password of a specific object based on ID
   @PostMapping(path = "/updatePassword")
-  public @ResponseBody String updatePassword(@RequestParam Integer id, @RequestParam String newPassword) {
+  public @ResponseBody String updatePassword(@RequestParam Integer id, @RequestParam String token, @RequestParam String newPassword) {
     App_User usr;
 
     //  Check if a User with this ID exists
@@ -205,6 +292,10 @@ public class App_UserController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A user with the specified ID does not exist!");
     }
 
+    if (!usr.getActive_Token().equals(token)) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Token does not match the given user ID!");
+    }
+
     //  Set the new password and save the User Object (overwrite old object)
     usr.setPassword(newPassword);
     app_userRepository.save(usr);
@@ -214,7 +305,7 @@ public class App_UserController {
 
   //  Add a product to this app_user's cart
   @PostMapping(path = "/addToCart")
-  public @ResponseBody String addProdToCart(@RequestParam Integer userID, @RequestParam Product prod, @RequestParam Integer quantity) {
+  public @ResponseBody String addProdToCart(@RequestParam Integer userID, @RequestParam String token, @RequestParam Product prod, @RequestParam Integer quantity) {
     App_User usr;
 
     //  Check if a User with this ID exists
@@ -227,6 +318,10 @@ public class App_UserController {
 
     if (usr == null) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The specified User does not exist!");
+    }
+
+    if (!usr.getActive_Token().equals(token)) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Token does not match the given user ID!> " + usr.getActive_Token() + " -|- " + token);
     }
 
     //  Create a new shopping cart item
@@ -249,7 +344,7 @@ public class App_UserController {
 
   //  Remove a product from this app_user's cart
   @PostMapping(path = "/removeFromCart")
-  public @ResponseBody String removeProdFromCart(@RequestParam Integer userID, @RequestParam Product prod) {
+  public @ResponseBody String removeProdFromCart(@RequestParam Integer userID, @RequestParam String token, @RequestParam Product prod) {
     App_User usr;
 
     //  Check if a User with this ID exists
@@ -262,6 +357,10 @@ public class App_UserController {
 
     if (usr == null) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The specified User does not exist!");
+    }
+
+    if (!usr.getActive_Token().equals(token)) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Token does not match the given user ID!");
     }
 
     //  Remove the item from the cart
@@ -278,7 +377,7 @@ public class App_UserController {
 
   //  Request the current cart as an order
   @PostMapping(path = "/requestCurrentCart")
-  public @ResponseBody String RequestCart(@RequestParam Integer userID) {
+  public @ResponseBody String RequestCart(@RequestParam Integer userID, @RequestParam String token) {
     App_User usr;
     String receipt = "";
 
@@ -292,6 +391,10 @@ public class App_UserController {
 
     if (usr == null) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "The specified User does not exist!");
+    }
+
+    if (!usr.getActive_Token().equals(token)) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Token does not match the given user ID!");
     }
 
     //  Create the receipt String object
