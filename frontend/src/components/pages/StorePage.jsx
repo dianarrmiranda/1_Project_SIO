@@ -14,7 +14,7 @@ const StorePage = () => {
   const minPrice = getUrlParams().get('min');
   const maxPrice = getUrlParams().get('max');
   const catFilter = getUrlParams().getAll('category');
-
+  
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
 
@@ -38,6 +38,7 @@ const StorePage = () => {
 
   useEffect(() => {
     if (search_query) {
+      document.getElementById("show_query_results").innerHTML = search_query;
       products.forEach((product) => {
         if (product.name.toLowerCase().includes(search_query.toLowerCase())) {
           setNotFound(false);
@@ -65,13 +66,12 @@ const StorePage = () => {
             <h3>
               You've searched for:{' '}
               <span className="font-extrabold" id="show_query_results">
-                {search_query}
               </span>
             </h3>
           )}
         </div>
       )}
-      <div className="flex justify-between mx-[5%]">
+      <div className="flex justify-between mx-[5%] h-full">
         <div className="w-[20vw] flex-none">
           <Filter
             categories={categories}
@@ -89,7 +89,7 @@ const StorePage = () => {
             <h1 className="text-center text-xl font-bold">No products found</h1>
           </div>
         ) : (
-          <div className="flex flex-wrap justify-start">
+          <div className="flex flex-wrap justify-evenly h-full">
             {products
               .filter((product) => {
                 if (search_query) {

@@ -5,13 +5,13 @@ INSERT INTO category (NAME, DESCRIPTION) VALUES ('T-Shirts', 'T-shirts com desig
 INSERT INTO category (NAME, DESCRIPTION) VALUES ('Pen-drives', 'Pen-drives com o logo da empresa para armazenamento de dados com estilo.');
 
 INSERT INTO product (NAME, DESCRIPTION, IMG_SOURCE, IN_STOCK, IS_HOT_DEAL, ORIGIN, PRICE, CATEGORYID, DATE)
-VALUES ('Caneca Tech Logo', 'Caneca personalizada com o logotipo da empresa de tecnologia', 'src/assets/prod_images/1a.webp', 100, 0, 'Local', 10.99, 1, '2023-10-18');
+VALUES ('Caneca Tech Logo', 'Caneca personalizada com o logotipo da empresa de tecnologia', 'src/assets/prod_images/1a.webp', 100, 0, 'Local', 10.99, 2, '2023-10-18');
 INSERT INTO product (NAME, DESCRIPTION, IMG_SOURCE, IN_STOCK, IS_HOT_DEAL, ORIGIN, PRICE, CATEGORYID, DATE)
-VALUES ('T-shirt Tech Geek', 'T-shirt com design geek de tecnologia', 'src/assets/prod_images/2a.webp', 50, 1, 'Local', 19.99, 2, '2023-10-18');
+VALUES ('T-shirt Tech Geek', 'T-shirt com design geek de tecnologia', 'src/assets/prod_images/2a.webp', 50, 1, 'Local', 19.99, 4, '2023-10-18');
 INSERT INTO product (NAME, DESCRIPTION, IMG_SOURCE, IN_STOCK, IS_HOT_DEAL, ORIGIN, PRICE, CATEGORYID, DATE)
-VALUES ('Autocolante Logo', 'Autocolante personalizado com o logotipo da empresa', 'src/assets/prod_images/3a.webp', 200, 0, 'Local', 2.99, 3, '2023-10-18');
+VALUES ('Autocolante Logo', 'Autocolante personalizado com o logotipo da empresa', 'src/assets/prod_images/3a.webp', 200, 0, 'Local', 2.99, 1, '2023-10-18');
 INSERT INTO product (NAME, DESCRIPTION, IMG_SOURCE, IN_STOCK, IS_HOT_DEAL, ORIGIN, PRICE, CATEGORYID, DATE)
-VALUES ('Mousepad Tech Comfort', 'Mousepad temático para maior conforto e precisão', 'src/assets/prod_images/4a.webp', 75, 0, 'Local', 12.99, 4, '2023-10-18');
+VALUES ('Mousepad Tech Comfort', 'Mousepad temático para maior conforto e precisão', 'src/assets/prod_images/4a.webp', 75, 0, 'Local', 12.99, 3, '2023-10-18');
 INSERT INTO product (NAME, DESCRIPTION, IMG_SOURCE, IN_STOCK, IS_HOT_DEAL, ORIGIN, PRICE, CATEGORYID, DATE)
 VALUES ('Pen-drive Logo', 'Pen-drive com o logo da empresa para armazenamento de dados com estilo', 'src/assets/prod_images/5a.webp', 150, 1, 'Local', 24.99, 5, '2023-10-18');
 INSERT INTO product (NAME, DESCRIPTION, IMG_SOURCE, IN_STOCK, IS_HOT_DEAL, ORIGIN, PRICE, CATEGORYID, DATE)

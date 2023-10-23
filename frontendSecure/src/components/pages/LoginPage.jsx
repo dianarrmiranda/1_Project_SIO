@@ -19,6 +19,7 @@ const LoginPage = () => {
       const response = await fetchData(
         `/user/checkLogin?email=${email}&password=${password}`
       );
+      console.log(response);
       if (response.length != 0) {
         console.log("Login successful");
         setEmail("");
@@ -44,7 +45,7 @@ const LoginPage = () => {
   return (
     <div>
       <Navbar />
-      <div className="hero min-h-screen bg-[url('/frontend/src/assets/shopping.jpg')]">
+      <div className="hero min-h-screen bg-[url('/src/assets/shopping2.jpg')]">
         <div className="hero-content flex-col w-full lg:flex-row-reverse justify-center items-center">
           <div className="text-center bg:text-left">
             <h1 className="text-5xl font-bold">Login now!</h1>

@@ -10,6 +10,15 @@ const fetchData = async (endpoint) => {
   }
 };
 
+const postData = async (endpoint, data) => {
+  try {
+    const res = await axios.post(`${API_BASE_URL}${endpoint}`, data);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 const getUrlParams = () => {
   return new URLSearchParams(window.location.search);
 };

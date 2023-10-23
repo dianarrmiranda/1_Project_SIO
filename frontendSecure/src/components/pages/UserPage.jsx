@@ -12,6 +12,7 @@ const ProductPage = () => {
   const [user, setUser] = useState({});
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [actualPassword, setActualPassword] = useState("");
 
   useEffect(() => {
     const initialize = async () => {
@@ -33,6 +34,8 @@ const ProductPage = () => {
       try {
         const formData = new FormData();
         formData.append("id", id);
+        formData.append("token", user.token);
+        formData.append("actualPassword", actualPassword);
         formData.append("newPassword", password);
 
         const response = await fetch(
@@ -92,6 +95,19 @@ const ProductPage = () => {
       <dialog id="modal_ChangePass" className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Change Password!</h3>
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Actual Password</span>
+            </label>
+            <input
+              type="password"
+              placeholder="password"
+              className="input input-bordered"
+              required
+              value={actualPassword}
+              onChange={(e) => setActualPassword(e.target.value)}
+            />
+          </div>
           <div className="form-control">
             <label className="label">
               <span className="label-text">New Password</span>
