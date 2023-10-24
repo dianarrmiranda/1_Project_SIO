@@ -111,7 +111,7 @@ const ProductPage = () => {
             setComments={setComments}
           />
           <button
-            className="btn btn-accent  top-8 mb-2"
+            className="btn btn-accent  top-8 mb-2 mt-4"
             onClick={() => navigate(-1)}
           >
             Go Back
