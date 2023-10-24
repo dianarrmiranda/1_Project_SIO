@@ -1,26 +1,26 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import Navbar from '../layout/Navbar';
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import Navbar from "../layout/Navbar";
 
-import { fetchData } from '../../utils';
-import Footer from '../layout/Footer';
-import ProductComments from '../layout/ProductComments';
+import { fetchData } from "../../utils";
+import Footer from "../layout/Footer";
+import ProductComments from "../layout/ProductComments";
 
-import axios from 'axios';
-import { API_BASE_URL } from '../../constants';
+import axios from "axios";
+import { API_BASE_URL } from "../../constants";
 
 import {
   RiFlashlightLine,
   RiShoppingCartFill,
   RiRocketLine,
-} from 'react-icons/ri';
+} from "react-icons/ri";
 
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [product, setProduct] = useState({});
-  const [user_id, setUser_id] = useState('');
+  const [user_id, setUser_id] = useState("");
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
@@ -28,8 +28,8 @@ const ProductPage = () => {
       const data = await fetchData(`/product/view?id=${id}`);
       setProduct(data);
       setComments(data.reviews);
-      const username = JSON.parse(localStorage.getItem('user'));
-      setUser_id(username[0].id);
+      const username = JSON.parse(localStorage.getItem("user"));
+      setUser_id(username.id);
     };
     initialize();
   }, []);
@@ -37,27 +37,24 @@ const ProductPage = () => {
   const handleAddToCart = () => {
     axios
       .post(
-        `${API_BASE_URL}/user/addToCart?prod=${product.id}&userID=${
-          user_id
-        }&quantity=${document.getElementById('qty').value}}`
+        `${API_BASE_URL}/user/addToCart?prod=${
+          product.id
+        }&userID=${user_id}&quantity=${document.getElementById("qty").value}}`
       )
       .then((res) => {
         console.log(res);
       });
   };
 
-  console.log('Product ->', product);
+  console.log("Product ->", product);
   return (
     <div className="bg-base-200">
       <Navbar />
-      <div
-        id="content-body"
-        className="mx-[10%] bg-base-100 p-4"
-      >
+      <div id="content-body" className="mx-[10%] bg-base-100 p-4">
         <div className="flex flex-row">
           <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 mb-4">
             <img
-              src={'../../' + product.imgSource}
+              src={"../../" + product.imgSource}
               alt={`${product.name}-from-deti-store`}
               className="w-[30vw]  object-cover mx-[10%] rounded-xl"
             />
@@ -75,7 +72,7 @@ const ProductPage = () => {
             </button>
 
             <h2 className="text-lg">
-              From:{' '}
+              From:{" "}
               <span className="font-bold text-accent">{product.origin}</span>
             </h2>
 
@@ -84,7 +81,7 @@ const ProductPage = () => {
                 {product.price}€
               </p>
               <span className="text-lg text-accent mx-10 flex-row ">
-                qty:{' '}
+                qty:{" "}
                 <input
                   type="number"
                   id="qty"
@@ -98,7 +95,10 @@ const ProductPage = () => {
               Free shipping for national orders
               <RiFlashlightLine className="mx-2" />
             </div>
-            <button className="btn btn-primary relative top-8 mb-2" onClick={handleAddToCart}>
+            <button
+              className="btn btn-primary relative top-8 mb-2"
+              onClick={handleAddToCart}
+            >
               Add to cart <RiShoppingCartFill className="ml-2" />
             </button>
           </div>
