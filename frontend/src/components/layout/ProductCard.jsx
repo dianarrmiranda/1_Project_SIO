@@ -9,7 +9,7 @@ const ProductCard = ({ product, className, isStore }) => {
     <div
       className={`card compact ${
         isStore ? 'w-48 ' : 'w-96'
-      } -bg-card-color my-2 ${className} m-2`}
+      } -bg-card-color m-1 ${className}`}
       onClick={() => navigate(`/store/product/${product.id}`)}
     >
       <figure>

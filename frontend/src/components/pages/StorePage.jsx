@@ -89,7 +89,7 @@ const StorePage = () => {
             <h1 className="text-center text-xl font-bold">No products found</h1>
           </div>
         ) : (
-          <div className="flex flex-wrap justify-evenly h-full">
+          <div className="flex flex-wrap justify-start h-full mb-4">
             {products
               .filter((product) => {
                 if (search_query) {

@@ -22,12 +22,14 @@ const ProductPage = () => {
   const [product, setProduct] = useState({});
   const [user_id, setUser_id] = useState('');
   const [comments, setComments] = useState([]);
+  const [cart, setCart] = useState([]);
 
   useEffect(() => {
     const initialize = async () => {
       const data = await fetchData(`/product/view?id=${id}`);
       setProduct(data);
       setComments(data.reviews);
+      console.log(localStorage.getItem('user'));
       const username = JSON.parse(localStorage.getItem('user'));
       setUser_id(username[0].id);
     };
@@ -39,12 +41,18 @@ const ProductPage = () => {
       .post(
         `${API_BASE_URL}/user/addToCart?prod=${product.id}&userID=${
           user_id
-        }&quantity=${document.getElementById('qty').value}}`
+        }&quantity=${document.getElementById('qty').value}`
       )
       .then((res) => {
         console.log(res);
+        setCart(res.data);
       });
   };
+
+  const handleCart = () => {
+    console.log('Cart ->', cart);
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }
 
   console.log('Product ->', product);
   return (
@@ -63,10 +71,10 @@ const ProductPage = () => {
             />
           </div>
           <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 left-2 my-4 flex flex-col justify-between">
-            <h1 className="text-4xl font-extrabold ">{product.name}</h1>
+            <h1 className="text-2xl font-extrabold ">{product.name}</h1>
             <span className="divider my-0" />
             <button
-              className="text-xl font-bold my-2 badge badge-outline p-4"
+              className="text-lg font-bold my-2 badge badge-outline p-3"
               onClick={() => {
                 navigate(`/store?category=${product.category?.id}`);
               }}
@@ -89,6 +97,7 @@ const ProductPage = () => {
                   type="number"
                   id="qty"
                   min={1}
+                  defaultValue={1}
                   className="input input-sm input-accent input-bordered border-2 w-[5vw] "
                 />
               </span>
@@ -100,6 +109,9 @@ const ProductPage = () => {
             </div>
             <button className="btn btn-primary relative top-8 mb-2" onClick={handleAddToCart}>
               Add to cart <RiShoppingCartFill className="ml-2" />
+            </button>
+            <button className="btn btn-accent relative top-8 mb-2" onClick={handleCart}>
+              Buy Now <RiRocketLine className="ml-2" />
             </button>
           </div>
         </div>
