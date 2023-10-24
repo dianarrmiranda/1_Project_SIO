@@ -66,7 +66,8 @@ public class App_UserController {
 
     // Check if any required value is empty
     if (name == null || name.equals("") || email == null || email.equals("")
-        || password == null || password.equals("") || cartao == null || cartao.equals("") || role == null || role.equals("")) {
+        || password == null || password.equals("") || cartao == null || cartao.equals("") || role == null
+        || role.equals("")) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Provide all the required data fields!");
     }
 
@@ -89,9 +90,9 @@ public class App_UserController {
       usr.setPassword(password);
       usr.setCredit_Card(cartao);
       usr.setRole(role);
-      
-      String folder = "../../frontend/src/assets/prod_images/";
-      String filename = usr.getName().replace("\s", "") + usr.getID() + ".jpg";
+
+      String folder = "../../frontendSecure/src/assets/prod_images/";
+      String filename = usr.getName().replace("\s", "") + ".jpg";
 
       Path path = Paths.get(folder + filename);
 
@@ -112,13 +113,12 @@ public class App_UserController {
         }
 
         usr.setImage("/src/assets/prod_images/" + filename);
-      }
-      else{
+      } else {
         usr.setImage("");
       }
 
       Encoder encoder = Base64.getUrlEncoder().withoutPadding();
-      //  Generate the password
+      // Generate the password
       SecureRandom random = new SecureRandom();
       byte[] salt = new byte[16];
       random.nextBytes(salt);
@@ -129,7 +129,7 @@ public class App_UserController {
       usr.setSalt(encoder.encodeToString(salt));
       usr.setPassword(encoder.encodeToString(hash));
 
-      //  Generate the token
+      // Generate the token
       SecureRandom rng = new SecureRandom();
       byte bytes[] = new byte[64];
       rng.nextBytes(bytes);
@@ -138,7 +138,7 @@ public class App_UserController {
       usr.setActive_Token(token);
       app_userRepository.save(usr);
 
-      //  Generate the output user object for the frontend
+      // Generate the output user object for the frontend
       JSONObject out = new JSONObject();
       out.put("id", usr.getID().toString());
       out.put("name", usr.getName());
@@ -147,10 +147,9 @@ public class App_UserController {
       out.put("token", usr.getActive_Token());
       out.put("shopping_Cart", usr.getShopping_Cart());
       out.put("request_History", usr.getRequest_History());
-      
+
       return out.toString(1);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
@@ -228,14 +227,13 @@ public class App_UserController {
     // Check if a User with this ID exists
     try {
       user = app_userRepository.findapp_userByID(id);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
 
     if (user == null) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "An entity the specified ID does not exist!");
-    }   
+    }
     if (!user.getActive_Token().equals(token)) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Token does not match the given user ID!");
     }
@@ -252,8 +250,7 @@ public class App_UserController {
     // Check if a User with this login information exists or nor
     try {
       user = app_userRepository.findapp_userByEmail(email);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
 
@@ -270,8 +267,7 @@ public class App_UserController {
       SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
       byte[] hash = factory.generateSecret(spec).getEncoded();
       hashedPassToCheck = encoder.encodeToString(hash);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
@@ -286,7 +282,7 @@ public class App_UserController {
     user.setActive_Token(encoder.encodeToString(bytes));
     app_userRepository.save(user);
 
-    //  Generate the output user object for the frontend
+    // Generate the output user object for the frontend
     JSONObject out = new JSONObject();
     out.put("id", user.getID().toString());
     out.put("name", user.getName());
@@ -295,13 +291,14 @@ public class App_UserController {
     out.put("token", user.getActive_Token());
     out.put("shopping_Cart", user.getShopping_Cart());
     out.put("request_History", user.getRequest_History());
-    
+
     return out.toString(1);
   }
 
   // Update the password of a specific object based on ID
   @PostMapping(path = "/updatePassword")
-  public @ResponseBody String updatePassword(@RequestParam Integer id, @RequestParam String token, @RequestParam String oldPassword, @RequestParam String newPassword) {
+  public @ResponseBody String updatePassword(@RequestParam Integer id, @RequestParam String token,
+      @RequestParam String oldPassword, @RequestParam String newPassword) {
     App_User user;
 
     // Check if a User with this ID exists
@@ -330,8 +327,7 @@ public class App_UserController {
       SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
       byte[] hash = factory.generateSecret(spec).getEncoded();
       oldHashedPassToCheck = encoder.encodeToString(hash);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
@@ -344,14 +340,12 @@ public class App_UserController {
       SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
       byte[] hash = factory.generateSecret(spec).getEncoded();
       newHashedPass = encoder.encodeToString(hash);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
-        
 
-    //  Set the new password and save the User Object (overwrite old object)
+    // Set the new password and save the User Object (overwrite old object)
     user.setPassword(newHashedPass);
     app_userRepository.save(user);
 
@@ -360,7 +354,8 @@ public class App_UserController {
 
   // Add a product to this app_user's cart
   @PostMapping(path = "/addToCart")
-  public @ResponseBody List<ShoppingCartItem> addProdToCart(@RequestParam Integer userID, @RequestParam String token, @RequestParam Product prod, @RequestParam Integer quantity) {
+  public @ResponseBody List<ShoppingCartItem> addProdToCart(@RequestParam Integer userID, @RequestParam String token,
+      @RequestParam Product prod, @RequestParam Integer quantity) {
     App_User usr;
 
     // Check if a User with this ID exists
@@ -375,10 +370,11 @@ public class App_UserController {
     }
 
     if (!usr.getActive_Token().equals(token)) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Token does not match the given user ID!> " + usr.getActive_Token() + " -|- " + token);
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+          "Token does not match the given user ID!> " + usr.getActive_Token() + " -|- " + token);
     }
 
-    //  Create a new shopping cart item
+    // Create a new shopping cart item
     try {
       ShoppingCartItem item = new ShoppingCartItem();
       item.setProd(prod);
@@ -397,7 +393,8 @@ public class App_UserController {
 
   // Remove a product from this app_user's cart
   @PostMapping(path = "/removeFromCart")
-  public @ResponseBody List<ShoppingCartItem> removeProdFromCart(@RequestParam Integer userID, @RequestParam String token, @RequestParam Product prod) {
+  public @ResponseBody List<ShoppingCartItem> removeProdFromCart(@RequestParam Integer userID,
+      @RequestParam String token, @RequestParam Product prod) {
     App_User usr;
 
     // Check if a User with this ID exists
@@ -415,14 +412,14 @@ public class App_UserController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Token does not match the given user ID!");
     }
 
-    //  Remove the item from the cart
+    // Remove the item from the cart
     try {
       usr.removeProdFromCart(prod);
       app_userRepository.save(usr);
     } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal processing error!");
     }
-    
+
     return usr.getShopping_Cart();
   }
 
@@ -447,7 +444,7 @@ public class App_UserController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Token does not match the given user ID!");
     }
 
-    //  Create the receipt String object
+    // Create the receipt String object
     receipt += "------------ Client ----------\n";
     receipt += "Client Name: " + usr.getName() + "\n";
     receipt += "Client Email: " + usr.getEmail() + "\n";

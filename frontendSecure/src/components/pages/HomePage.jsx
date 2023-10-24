@@ -1,20 +1,25 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { fetchData } from '../../utils';
+import { fetchData } from "../../utils";
 
-import './../../utils/styles.css';
+import "./../../utils/styles.css";
 
-import Navbar from '../layout/Navbar';
-import Carousel from '../layout/Carousel';
-import ProductCard from '../layout/ProductCard';
-import Footer from '../layout/Footer';
+import Navbar from "../layout/Navbar";
+import Carousel from "../layout/Carousel";
+import ProductCard from "../layout/ProductCard";
+import Footer from "../layout/Footer";
 
 const imgs = [
-  'https://i.imgur.com/bRJ9Eki.jpeg',
-  'https://i.imgur.com/ffDXQcD.jpeg',
-  'https://i.imgur.com/ULExX9s.jpeg',
+  "https://i.imgur.com/bRJ9Eki.jpeg",
+  "https://i.imgur.com/ffDXQcD.jpeg",
+  "https://i.imgur.com/ULExX9s.jpeg",
 ];
+
+window.addEventListener("beforeunload", () => {
+  sessionStorage.removeItem("username");
+  sessionStorage.removeItem("token");
+});
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -25,8 +30,8 @@ const HomePage = () => {
 
   useEffect(() => {
     const initialize = async () => {
-      const data_products = await fetchData('/product/list');
-      const data_hot = await fetchData('/product/listHotDeals');
+      const data_products = await fetchData("/product/list");
+      const data_hot = await fetchData("/product/listHotDeals");
       setProducts(data_products);
       setHotDeals(data_hot);
       if (data_products && data_hot) {
@@ -37,16 +42,13 @@ const HomePage = () => {
     initialize();
   }, []);
 
-  console.log('products -> ', products);
+  console.log("products -> ", products);
 
   return (
     <div>
       <Navbar />
       <Carousel images={imgs} />
-      <div
-        id="body"
-        className="mx-[5%]"
-      >
+      <div id="body" className="mx-[5%]">
         {isLoading ? (
           <div className="justify-center">
             <span className="loading loading-dots loading-lg"></span>
@@ -60,7 +62,7 @@ const HomePage = () => {
               {hotDeals.map((product) => (
                 <ProductCard
                   key={product.id}
-                  className={'m-2 flex-none w-80 snap-end'}
+                  className={"m-2 flex-none w-80 snap-end"}
                   product={product}
                 />
               ))}
@@ -77,7 +79,7 @@ const HomePage = () => {
           </h1>
           <button
             className="btn gradient-green hover:ring hover:ring-primary w-[10vw] font-bold text-white"
-            onClick={() => navigate('/store')}
+            onClick={() => navigate("/store")}
           >
             GO TO STORE
           </button>

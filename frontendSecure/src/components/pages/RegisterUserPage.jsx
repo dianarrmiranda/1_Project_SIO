@@ -2,6 +2,7 @@ import { useState } from "react";
 import Navbar from "../layout/Navbar";
 import Footer from "../layout/Footer";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function RegisterUserPage() {
   const [username, setUsername] = useState("");
@@ -105,25 +106,22 @@ function RegisterUserPage() {
       formData.append("role", "user");
       formData.append("img", image);
 
-      const response = await fetch("http://localhost:8080/user/add", {
-        method: "POST",
-        body: formData,
+      axios.post("http://localhost:8080/user/add", formData).then((res) => {
+        const data = res.text();
+        console.log(data);
+        if (res.ok) {
+          console.log("Register successful");
+          setUsername("");
+          setEmail("");
+          setPassword("");
+          setCardNumber("");
+          setImage("");
+          localStorage.setItem("user", data);
+          navigate("/");
+        } else {
+          console.error("Register failed");
+        }
       });
-
-      const data = await response.text();
-      console.log(data);
-      if (response.ok) {
-        console.log("Register successful");
-        setUsername("");
-        setEmail("");
-        setPassword("");
-        setCardNumber("");
-        setImage("");
-        localStorage.setItem("user", data);
-        navigate("/");
-      } else {
-        console.error("Register failed");
-      }
     } catch (error) {
       console.error("Error during API call", error);
     }

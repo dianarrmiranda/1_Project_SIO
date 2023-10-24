@@ -35,7 +35,10 @@ const Navbar = () => {
   }, [theme]);
 
   const user = JSON.parse(localStorage.getItem("user"));
-  console.log("user -> ", user);
+
+  useEffect(() => {
+    console.log("user -> ", user);
+  }, []);
 
   return (
     <div className="navbar bg-secondary w-full flex justify-between items-center p-2 top-0">
