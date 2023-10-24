@@ -86,10 +86,10 @@ To test the api, make sure you have spingboot running and make the needed calls.
 
 # Authors 
 
-* Daniel Madureira ()
+* Daniel Madureira (107603)
 * Diana Miranda (107457)
-* Miguel Pinto ()
-* Pedro Ramos ()
+* Miguel Pinto (107449)
+* Pedro Ramos (107348)
 
 
 
