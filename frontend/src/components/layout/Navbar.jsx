@@ -80,7 +80,7 @@ const Navbar = ({ categories }) => {
         </label>
 
         {user && (
-          <button className="flex items-center m-2 p-2">
+          <button className="flex items-center m-2 p-2" onClick={() => navigate('user/cart')}>
             <RiShoppingBag2Line className="text-xl" />
           </button>
         )}

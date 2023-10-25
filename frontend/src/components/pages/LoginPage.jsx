@@ -22,7 +22,7 @@ const LoginPage = () => {
             setEmail('');
             setPassword('');
             localStorage.setItem('user', JSON.stringify(response));
-            navigate('/');
+            navigate(-1);
           } else {
             console.error('Login failed');
           }
