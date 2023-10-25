@@ -31,8 +31,18 @@ const StorePage = () => {
   const [stock, setStock] = useState(0);
   const [newCategory, setNewCategory] = useState("");
 
+  const [showAlertName, setShowAlertName] = useState(false);
+  const [showAlertDescription, setShowAlertDescription] = useState(false);
+  const [showAlertPrice, setShowAlertPrice] = useState(false);
+  const [showAlertCategory, setShowAlertCategory] = useState(false);
+  const [showAlertImage, setShowAlertImage] = useState(false);
+  const [showAlertStock, setShowAlertStock] = useState(false);
+  const [showAlertNewCategory, setShowAlertNewCategory] = useState(false);
+
   const [addCategory, setAddCategory] = useState(false);
   const [catDescription, setCatDescription] = useState("");
+
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     const initialize = async () => {
@@ -76,10 +86,114 @@ const StorePage = () => {
     initialize();
   }, []);
 
+  const handleNameChange = (event) => {
+    setName(event.target.value);
+    if (event.target.value.length > 3) {
+      setShowAlertName(false);
+    }
+  };
+
+  const handleDescriptionChange = (event) => {
+    setDescription(event.target.value);
+    if (event.target.value.length > 3) {
+      setShowAlertDescription(false);
+    }
+  };
+
+  const handlePriceChange = (event) => {
+    setPrice(event.target.value);
+    if (event.target.value > 0) {
+      setShowAlertPrice(false);
+    }
+  };
+
+  const handleCategoryChange = (event) => {
+    setCategory(event.target.value);
+    if (event.target.value.length > 0) {
+      setShowAlertCategory(false);
+      setShowAlertNewCategory(false);
+    }
+  };
+
+  const handleImageChange = (event) => {
+    setImage(event.target.files[0]);
+    const imageRegex = /\.(jpe?g|tiff?|png|webp)$/i;
+    if (event.target.files[0].size < 5000000 || imageRegex.test(image.name)) {
+      setShowAlertImage(false);
+    }
+  };
+
+  const handleStockChange = (event) => {
+    setStock(event.target.value);
+    if (event.target.value > 0) {
+      setShowAlertStock(false);
+    }
+  };
+
+  const handleNewCategoryChange = (event) => {
+    setNewCategory(event.target.value);
+    if (event.target.value.length > 0) {
+      setShowAlertNewCategory(false);
+      setShowAlertCategory(false);
+    }
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const user = JSON.parse(localStorage.getItem("user"));
     const { id, token } = user;
+
+    const imageRegex = /\.(jpe?g|tiff?|png|webp)$/i;
+    const nameRegex = /^[a-zA-Z0-9 ]{3,30}$/;
+
+    if (!nameRegex.test(name)) {
+      setShowAlertName(true);
+    } else {
+      setShowAlertName(false);
+    }
+    if (description.length < 1) {
+      setShowAlertDescription(true);
+    } else {
+      setShowAlertDescription(false);
+    }
+    if (price.valueOf() <= 0) {
+      setShowAlertPrice(true);
+    } else {
+      setShowAlertPrice(false);
+    }
+    if (category.length < 1) {
+      setShowAlertCategory(true);
+    } else {
+      setShowAlertCategory(false);
+    }
+    if (!imageRegex.test(image.name) || image.size > 5000000) {
+      setShowAlertImage(true);
+    } else {
+      setShowAlertImage(false);
+    }
+    if (stock.valueOf() <= 0) {
+      setShowAlertStock(true);
+    } else {
+      setShowAlertStock(false);
+    }
+    if (addCategory && newCategory.length < 1) {
+      setShowAlertNewCategory(true);
+    } else {
+      setShowAlertNewCategory(false);
+    }
+
+    if (
+      showAlertCategory ||
+      showAlertDescription ||
+      showAlertImage ||
+      showAlertName ||
+      showAlertPrice ||
+      showAlertStock ||
+      showAlertNewCategory
+    ) {
+      return;
+    }
+
     if (addCategory) {
       const formData = new FormData();
       formData.append("name", newCategory);
@@ -95,44 +209,50 @@ const StorePage = () => {
         .catch(console.error);
     }
 
-    const formData2 = new FormData();
-    formData2.append("name", name);
-    formData2.append("description", description);
-    formData2.append("img", image);
-    formData2.append("origin", origin);
-    formData2.append("price", price);
-    formData2.append("in_stock", stock);
-    if (addCategory) {
-      console.log("categories.length -> ", (categories.length + 1).toString());
+    try {
+      const formData2 = new FormData();
+      formData2.append("name", name);
+      formData2.append("description", description);
+      formData2.append("img", image);
+      formData2.append("origin", origin);
+      formData2.append("price", price);
+      formData2.append("in_stock", stock);
+      if (addCategory) {
+        console.log(
+          "categories.length -> ",
+          (categories.length + 1).toString()
+        );
 
-      formData2.append("category", (categories.length + 1).toString());
-    } else {
-      formData2.append("category", category);
-    }
-    formData2.append("userID", id);
-    formData2.append("token", token);
-
-    axios
-      .post("http://localhost:8080/product/add", formData2)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch(console.error);
-
-    document.getElementById("modal_AddProduct").close();
-
-    const initialize = async () => {
-      const data_products = await fetchData("/product/list");
-      const data_categories = await fetchData("/product/category/list");
-
-      if (data_products && data_categories) {
-        setLoading(false);
+        formData2.append("category", (categories.length + 1).toString());
+      } else {
+        formData2.append("category", category);
       }
-      setProducts(data_products);
-      setCategories(data_categories);
-    };
+      formData2.append("userID", id);
+      formData2.append("token", token);
 
-    initialize();
+      axios
+        .post("http://localhost:8080/product/add", formData2)
+        .then((res) => {
+          console.log(res);
+          setShowSuccess(true);
+          document.getElementById("modal_AddProduct").close();
+          const initialize = async () => {
+            const data_products = await fetchData("/product/list");
+            const data_categories = await fetchData("/product/category/list");
+
+            if (data_products && data_categories) {
+              setLoading(false);
+            }
+            setProducts(data_products);
+            setCategories(data_categories);
+          };
+
+          initialize();
+        })
+        .catch(console.error);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -143,6 +263,23 @@ const StorePage = () => {
   return (
     <div>
       <Navbar />
+      {showSuccess && (
+        <div className="alert alert-success">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="stroke-current shrink-0 h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>Product Added Successfully!</span>
+        </div>
+      )}
       {search_query && (
         <div className=" bg-accent mx-[5%] m-2 p-4 rounded-xl  ">
           {notFound ? (
@@ -241,9 +378,26 @@ const StorePage = () => {
               className="input input-bordered"
               required
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={handleNameChange}
             />
           </div>
+          {showAlertName && (
+            <div className="alert alert-warning">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeWidth="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <span>Warning: Name not valid!</span>
+            </div>
+          )}
           <div className="form-control">
             <label className="label">
               <span className="label-text">Description</span>
@@ -254,9 +408,26 @@ const StorePage = () => {
               className="input input-bordered"
               required
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={handleDescriptionChange}
             />
           </div>
+          {showAlertDescription && (
+            <div className="alert alert-warning">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeWidth="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <span>Warning: Description not valid!</span>
+            </div>
+          )}
           <div className="form-control">
             <label className="label">
               <span className="label-text">Origin</span>
@@ -280,9 +451,26 @@ const StorePage = () => {
               className="input input-bordered"
               required
               value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              onChange={handlePriceChange}
             />
           </div>
+          {showAlertPrice && (
+            <div className="alert alert-warning">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeWidth="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <span>Warning: Price must be higher than 0!</span>
+            </div>
+          )}
           <div className="form-control">
             <label className="label">
               <span className="label-text">stock</span>
@@ -293,16 +481,33 @@ const StorePage = () => {
               className="input input-bordered"
               required
               value={stock}
-              onChange={(e) => setStock(e.target.value)}
+              onChange={handleStockChange}
             />
           </div>
+          {showAlertStock && (
+            <div className="alert alert-warning">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeWidth="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <span>Warning: Stock must be higher than 0!</span>
+            </div>
+          )}
           <div className="form-control">
             <label className="label">
               <span className="label-text">Category</span>
             </label>
             <select
               className="select select-bordered w-full"
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={handleCategoryChange}
               defaultValue={-1}
             >
               <option disabled="disabled" key={-1}>
@@ -321,6 +526,23 @@ const StorePage = () => {
                 + Add Category
               </option>
             </select>
+            {showAlertCategory && (
+              <div className="alert alert-warning">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="stroke-current shrink-0 h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeWidth="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+                <span>Warning: Category not valid!</span>
+              </div>
+            )}
             {addCategory && (
               <div className="form-control">
                 <label className="label">
@@ -332,8 +554,9 @@ const StorePage = () => {
                   className="input input-bordered"
                   required
                   value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
+                  onChange={handleNewCategoryChange}
                 />
+
                 <div className="form-control">
                   <label className="label">
                     <span className="label-text">Category Description</span>
@@ -342,11 +565,27 @@ const StorePage = () => {
                     type="text"
                     placeholder="Description"
                     className="input input-bordered"
-                    required
                     value={catDescription}
                     onChange={(e) => setCatDescription(e.target.value)}
                   />
                 </div>
+                {showAlertNewCategory && (
+                  <div className="alert alert-warning">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="stroke-current shrink-0 h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeWidth="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                      />
+                    </svg>
+                    <span>Warning: Category not valid!</span>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -359,9 +598,29 @@ const StorePage = () => {
               placeholder="image"
               className="input input-bordered"
               required
-              onChange={(e) => setImage(e.target.files[0])}
+              onChange={handleImageChange}
             />
           </div>
+          {showAlertImage && (
+            <div className="alert alert-error">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeWidth="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>
+                Error: Image must be a .jpg, .jpeg, .png or .webp file and the
+                size should be less than 5mb!
+              </span>
+            </div>
+          )}
           <button
             type="submit"
             className="btn btn-accent btn-sm w-full p-2 mt-4 "
