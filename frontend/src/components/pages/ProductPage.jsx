@@ -5,6 +5,7 @@ import Navbar from '../layout/Navbar';
 import { fetchData } from '../../utils';
 import Footer from '../layout/Footer';
 import ProductComments from '../layout/ProductComments';
+import { Rating } from '@mui/material';
 
 import axios from 'axios';
 import { API_BASE_URL } from '../../constants';
@@ -24,13 +25,20 @@ const ProductPage = () => {
   const [comments, setComments] = useState([]);
   const [cart, setCart] = useState([]);
 
+  const [toggleResponse, setToggleResponse] = useState(false);
+
   useEffect(() => {
     const initialize = async () => {
+      const username = JSON.parse(localStorage.getItem('user'));
+      
       const data = await fetchData(`/product/view?id=${id}`);
+      const user = await fetchData(`/user/view?id=${username[0].id}`);
+
+      console.log('User ->', user);
+
       setProduct(data);
       setComments(data.reviews);
       console.log(localStorage.getItem('user'));
-      const username = JSON.parse(localStorage.getItem('user'));
       setUser_id(username[0].id);
     };
     initialize();
@@ -39,9 +47,9 @@ const ProductPage = () => {
   const handleAddToCart = () => {
     axios
       .post(
-        `${API_BASE_URL}/user/addToCart?prod=${product.id}&userID=${
-          user_id
-        }&quantity=${document.getElementById('qty').value}`
+        `${API_BASE_URL}/user/addToCart?prod=${
+          product.id
+        }&userID=${user_id}&quantity=${document.getElementById('qty').value}`
       )
       .then((res) => {
         console.log(res);
@@ -52,7 +60,7 @@ const ProductPage = () => {
   const handleCart = () => {
     console.log('Cart ->', cart);
     localStorage.setItem('cart', JSON.stringify(cart));
-  }
+  };
 
   console.log('Product ->', product);
   return (
@@ -86,9 +94,17 @@ const ProductPage = () => {
               From:{' '}
               <span className="font-bold text-accent">{product.origin}</span>
             </h2>
+            <div className='flex flex-row justify-items-center my-2'>
+              <Rating
+                value={parseFloat(product.average_Stars).toFixed(1)}
+                precision={0.1}
+                readOnly
+                size="small"
+              />
+            </div>
 
             <div className="flex flex-wrap justify-start align-items-bottom">
-              <p className="font-extrabold text-primary text-2xl mb-2">
+              <p className="font-extrabold text-primary-focus text-2xl mb-2">
                 {product.price}€
               </p>
               <span className="text-lg text-accent mx-10 flex-row ">
@@ -107,21 +123,56 @@ const ProductPage = () => {
               Free shipping for national orders
               <RiFlashlightLine className="mx-2" />
             </div>
-            <button className="btn btn-primary relative top-8 mb-2" onClick={handleAddToCart}>
+            <button
+              className="btn btn-primary relative top-8 mb-2"
+              onClick={handleAddToCart}
+            >
               Add to cart <RiShoppingCartFill className="ml-2" />
             </button>
-            <button className="btn btn-accent relative top-8 mb-2" onClick={handleCart}>
+            <button
+              className="btn btn-accent relative top-8 mb-2"
+              onClick={() => {navigate('/user/cart')}}
+            >
               Buy Now <RiRocketLine className="ml-2" />
             </button>
           </div>
         </div>
+
+        <div className='my-8'>
+          <div className="mb-4 flex flex-wrap ">
+            <button
+              className={`font-medium ${
+                toggleResponse ? 'text-accent' : 'underline underline-offset-8'
+              } ease-in-out cursor-context-menu mx-2`}
+              onClick={() => setToggleResponse(false)}
+            >
+              Description
+            </button>
+            <button
+              className={`font-medium ${
+                toggleResponse ? 'underline underline-offset-8' : 'text-accent'
+              } cursor-context-menu mx-2 ease-in-out`}
+              onClick={() => setToggleResponse(true)}
+            >
+              Discusion
+            </button>
+          </div>
+
+          {toggleResponse ? (
+            <div>
+              <ProductComments
+                comments={comments}
+                user_id={user_id}
+                product={product}
+                setComments={setComments}
+              />
+            </div>
+          ) : (
+            <div>{product.description}</div>
+          )}
+        </div>
+
         <div>
-          <ProductComments
-            comments={comments}
-            user_id={user_id}
-            product={product}
-            setComments={setComments}
-          />
           <button
             className="btn btn-accent  top-8 mb-2 mt-4"
             onClick={() => navigate(-1)}
