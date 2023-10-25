@@ -1,43 +1,50 @@
 import React, { useState } from 'react';
 import Footer from '../layout/Footer';
 import Navbar from '../layout/Navbar';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 
 import shopping from '../../assets/shopping.jpg';
 
 import { fetchData } from '../../utils';
+import { RiEyeLine, RiEyeCloseLine } from 'react-icons/ri';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [failed, setFailed] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
-    const handleLogin = async (event) => {
-        event.preventDefault();
-        try {
-          const response = await fetchData(`/user/checkLogin?email=${email}&password=${password}`);
-          if (response.length != 0) {
-            console.log('Login successful');
-            setEmail('');
-            setPassword('');
-            localStorage.setItem('user', JSON.stringify(response));
-            navigate(-1);
-          } else {
-            console.error('Login failed');
-          }
-        } catch (error) {
-          console.error('Error during API call', error);
-        }
-    };
-    
-    const handleEmailChange = (e) => {
-        setEmail(e.target.value);
-      };
-    
-      const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
-      };
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await fetchData(
+        `/user/checkLogin?email=${email}&password=${password}`
+      );
+      if (response.length != 0) {
+        console.log('Login successful');
+        setEmail('');
+        setPassword('');
+        setFailed(false);
+        localStorage.setItem('user', JSON.stringify(response));
+        navigate('/user/' + response[0].id);
+      } else {
+        console.error('Login failed');
+        setFailed(true);
+      }
+    } catch (error) {
+      console.error('Error during API call', error);
+    }
+  };
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
 
   return (
     <div>
@@ -77,14 +84,23 @@ const LoginPage = () => {
                 <label className="label">
                   <span className="label-text">Password</span>
                 </label>
-                <input
-                  type="password"
-                  placeholder="password"
-                  className="input input-bordered"
-                  required
-                  value={password}
-                  onChange={handlePasswordChange}
-                />
+                <div className="join w-full">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="password"
+                    className="input input-bordered join-item"
+                    required
+                    value={password}
+                    onChange={handlePasswordChange}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-bordered join-item"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <RiEyeCloseLine /> : <RiEyeLine />}
+                  </button>
+                </div>
                 <label className="label">
                   <a
                     href="#"
@@ -93,6 +109,10 @@ const LoginPage = () => {
                     Forgot password?
                   </a>
                 </label>
+
+                {failed && (
+                  <p className="text-error">Login failed. Please try again.</p>
+                )}
               </div>
               <div className="form-control mt-6">
                 <button

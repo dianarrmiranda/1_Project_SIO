@@ -25,6 +25,15 @@ const CartPage = () => {
     initialize();
   }, []);
 
+    useEffect(() => {
+      const updateCart = async () => {
+        const updatedCart = await axios.post(
+          `${API_BASE_URL}/user/updateCart`,
+        )
+      }
+    }, [cart]);
+
+
   console.log('Cart ->', cart);
 
   return (
@@ -47,18 +56,20 @@ const CartPage = () => {
                 <tr
                   key={item?.id}
                   className="hover:bg-secondary hover:shadow-lg"
-                  onClick={() => {
-                    navigate(`/store/product/${item?.prod?.id}`);
-                  }}
                 >
                   <td>
-                    <div className="flex flex-row align-middle">
+                    <div
+                      className="flex flex-row align-middle"
+                      onClick={() => {
+                        navigate(`/store/product/${item?.prod?.id}`);
+                      }}
+                    >
                       <img
                         src={'../../../' + item?.prod?.imgSource}
                         alt=""
                         className="w-12 h-12 object-cover rounded-lg mr-2"
                       />
-                      <h1 className='font-bold text-lg'>{item?.prod?.name}</h1>
+                      <h1 className="font-bold text-lg">{item?.prod?.name}</h1>
                     </div>
                   </td>
                   <td>
@@ -97,7 +108,7 @@ const CartPage = () => {
             {cart.reduce(
               (acc, item) => (acc += item.prod.price * item.quantity),
               0
-            )}
+            ).toFixed(2)}
           </h2>
           <button className="btn btn-primary">Checkout</button>
         </div>

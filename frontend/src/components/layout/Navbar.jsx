@@ -65,7 +65,7 @@ const Navbar = ({ categories }) => {
           Search
         </button>
       </form>
-      <p className="mr-2">{user ? `Hello ${user[0]?.name}!  ` : ''} </p>
+      <p onClick={()=>navigate(`/user/${user[0]?.id}`)} className="mr-2 cursor-grab">{user ? `Hello ${user[0]?.name}!  ` : ''} </p>
 
       <div className="flex flex-wrap justify-end">
         <label className="swap swap-rotate m-2 p-2 ">
@@ -80,7 +80,7 @@ const Navbar = ({ categories }) => {
         </label>
 
         {user && (
-          <button className="flex items-center m-2 p-2" onClick={() => navigate('user/cart')}>
+          <button className="flex items-center m-2 p-2" onClick={() => navigate('/user/cart')}>
             <RiShoppingBag2Line className="text-xl" />
           </button>
         )}

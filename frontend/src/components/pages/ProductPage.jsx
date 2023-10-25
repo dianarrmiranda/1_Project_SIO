@@ -30,7 +30,7 @@ const ProductPage = () => {
   useEffect(() => {
     const initialize = async () => {
       const username = JSON.parse(localStorage.getItem('user'));
-      
+
       const data = await fetchData(`/product/view?id=${id}`);
       const user = await fetchData(`/user/view?id=${username[0].id}`);
 
@@ -94,13 +94,19 @@ const ProductPage = () => {
               From:{' '}
               <span className="font-bold text-accent">{product.origin}</span>
             </h2>
-            <div className='flex flex-row justify-items-center my-2'>
-              <Rating
-                value={parseFloat(product.average_Stars).toFixed(1)}
-                precision={0.1}
-                readOnly
-                size="small"
-              />
+            <div>
+              <h2 className="text-lg text-accent-focus">Score</h2>
+              <div className="flex flex-row justify-items-center mb-2">
+                <Rating
+                  precision={0.1}
+                  value={parseFloat(product.average_Stars).toFixed(2)}
+                  readOnly
+                  size="small"
+                />
+                <span className="text-accent-focus ml-2">
+                  ({product.average_Stars ? parseFloat(product.average_Stars).toFixed(1) : "No reviews yet"})
+                </span>
+              </div>
             </div>
 
             <div className="flex flex-wrap justify-start align-items-bottom">
@@ -131,19 +137,21 @@ const ProductPage = () => {
             </button>
             <button
               className="btn btn-accent relative top-8 mb-2"
-              onClick={() => {navigate('/user/cart')}}
+              onClick={() => {
+                navigate('/user/cart');
+              }}
             >
               Buy Now <RiRocketLine className="ml-2" />
             </button>
           </div>
         </div>
 
-        <div className='my-8'>
+        <div className="my-8">
           <div className="mb-4 flex flex-wrap ">
             <button
               className={`font-medium ${
                 toggleResponse ? 'text-accent' : 'underline underline-offset-8'
-              } ease-in-out cursor-context-menu mx-2`}
+              } ease-in-out cursor-grab mx-2`}
               onClick={() => setToggleResponse(false)}
             >
               Description
@@ -151,10 +159,10 @@ const ProductPage = () => {
             <button
               className={`font-medium ${
                 toggleResponse ? 'underline underline-offset-8' : 'text-accent'
-              } cursor-context-menu mx-2 ease-in-out`}
+              } cursor-grab mx-2 ease-in-out`}
               onClick={() => setToggleResponse(true)}
             >
-              Discusion
+              Discusion({comments.length})
             </button>
           </div>
 

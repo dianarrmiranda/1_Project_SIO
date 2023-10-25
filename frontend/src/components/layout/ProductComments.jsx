@@ -95,9 +95,8 @@ const ProductComments = ({ comments, user_id, product, setComments }) => {
               precision={0.5}
               size="large"
               onChange={(e) => {
-                setNewRating(e.target.value);
+                setNewRating(e.target.value ? e.target.value : 0);
               }}
-              
             />
           </span>
 
@@ -120,12 +119,15 @@ const ProductComments = ({ comments, user_id, product, setComments }) => {
               onChange={(e) => setNewComment(e.target.value)} // Campo para a descrição
             />
           </div>
-          <div className="mt-2 text-right">
+          <div className="my-2 text-right flex">
             <button
               type="submit"
               className="btn btn-primary"
+              disabled={
+                newRating === '' || newHeader === '' || newComment === ''
+              }
             >
-              Submit Comment
+              Submit
             </button>
           </div>
         </form>
