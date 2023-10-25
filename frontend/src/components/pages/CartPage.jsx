@@ -110,7 +110,7 @@ const CartPage = () => {
               0
             ).toFixed(2)}
           </h2>
-          <button className="btn btn-primary">Checkout</button>
+          <button className="btn btn-primary" onClick={() => {navigate('/user/checkout')}}>Checkout</button>
         </div>
       </div>
       <Footer />
