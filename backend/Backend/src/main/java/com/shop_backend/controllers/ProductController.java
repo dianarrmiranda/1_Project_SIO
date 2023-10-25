@@ -304,12 +304,12 @@ public class ProductController {
   @PostMapping(path = "/addReview")
   public @ResponseBody String addReview(@RequestParam Integer productID, @RequestParam Integer userID,
       @RequestParam String header, @RequestParam String description,
-      @RequestParam Integer stars) {
+      @RequestParam Double stars) {
     Product prod;
     App_User user;
 
     // Check if given stars are between 1 and 5 (inclusive)
-    if (!(1 <= stars && stars <= 5)) {
+    if (!(1.0 <= stars && stars <= 5.0)) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
           "The number of Review stars must be between 1 and 5!");
     }

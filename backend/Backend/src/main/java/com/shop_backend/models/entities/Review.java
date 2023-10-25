@@ -14,7 +14,7 @@ public class Review {
     private String UserName;
     private String Header;
     private String Description;
-    private Integer NumStars;
+    private Double NumStars;
     
     public Integer getID() {
         return ID;
@@ -40,10 +40,10 @@ public class Review {
     public void setDescription(String description) {
         Description = description;
     }
-    public Integer getNumStars() {
+    public Double getNumStars() {
         return NumStars;
     }
-    public void setNumStars(Integer numStars) {
+    public void setNumStars(Double numStars) {
         NumStars = numStars;
     }
 }
