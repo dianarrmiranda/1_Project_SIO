@@ -134,10 +134,8 @@ const StorePage = () => {
     initialize();
   };
 
-  useEffect(() => {
-    console.log('Products -> ', products);
-    console.log('Categories -> ', categories);
-  }, []);
+  console.log('Products -> ', products);
+  console.log('Categories -> ', categories);
 
   return (
     <div>
@@ -381,7 +379,7 @@ const StorePage = () => {
               onChange={(e) => setImage(e.target.files[0])}
             />
           </div>
-          <div className='flex flex-wrap mt-4 justify-between'>
+          <div className="flex flex-wrap mt-4 justify-between">
             <button
               type="submit"
               className="btn btn-accent btn-md w-[48%]"

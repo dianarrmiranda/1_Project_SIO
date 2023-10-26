@@ -5,8 +5,13 @@ import Navbar from '../layout/Navbar';
 import Footer from '../layout/Footer';
 import { useNavigate } from 'react-router-dom';
 
+import axios from 'axios';
+import { API_BASE_URL } from '../../constants';
+
 const CartPage = () => {
   const [cart, setCart] = useState([]);
+  const [user, setUser] = useState({});
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,6 +20,7 @@ const CartPage = () => {
       console.log('Username ->', username[0].id);
 
       const user = await fetchData(`/user/view?id=${username[0].id}`);
+      setUser(user);
       console.log('User ->', user);
 
       if (user) {
@@ -24,15 +30,6 @@ const CartPage = () => {
 
     initialize();
   }, []);
-
-    useEffect(() => {
-      const updateCart = async () => {
-        const updatedCart = await axios.post(
-          `${API_BASE_URL}/user/updateCart`,
-        )
-      }
-    }, [cart]);
-
 
   console.log('Cart ->', cart);
 
@@ -84,6 +81,9 @@ const CartPage = () => {
                           newCart[idx].quantity = e.target.value;
                           return newCart;
                         });
+                        axios.post(
+                          `${API_BASE_URL}/user/addToCart?prod=${item?.prod.id}&userID=${user.id}&quantity=${e.target.value}`
+                        );
                       }}
                     />
                   </td>
@@ -105,12 +105,21 @@ const CartPage = () => {
         <div>
           <h2>
             Total:{' '}
-            {cart.reduce(
-              (acc, item) => (acc += item.prod.price * item.quantity),
-              0
-            ).toFixed(2)}
+            {cart
+              .reduce(
+                (acc, item) => (acc += item.prod.price * item.quantity),
+                0
+              )
+              .toFixed(2)}
           </h2>
-          <button className="btn btn-primary" onClick={() => {navigate('/user/checkout')}}>Checkout</button>
+          <button
+            className="btn btn-primary"
+            onClick={() => {
+              navigate('/user/checkout');
+            }}
+          >
+            Checkout
+          </button>
         </div>
       </div>
       <Footer />

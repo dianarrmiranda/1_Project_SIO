@@ -23,4 +23,4 @@ const getUrlParams = () => {
   return new URLSearchParams(window.location.search);
 };
 
-export { fetchData, getUrlParams };
+export { fetchData, getUrlParams, postData };
