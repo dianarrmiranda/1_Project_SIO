@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Rating from '@mui/material/Rating';
 
 const ProductComments = ({ comments, user_id, product, setComments }) => {
   const [newHeader, setNewHeader] = useState('');
   const [newComment, setNewComment] = useState('');
   const [newRating, setNewRating] = useState('');
+
+  useEffect(() => {
+    comments.map((comment, i) => {
+      document.getElementById(`comment_body-${i}`).innerHTML =
+        comment.description;
+    });
+  }, []);
 
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
@@ -64,7 +71,10 @@ const ProductComments = ({ comments, user_id, product, setComments }) => {
                     <h3 className="text-accent font-medium">
                       {comment.header}
                     </h3>
-                    <p className="text-sm font-light">{comment.description}</p>
+                    <p
+                      id={`comment_body-${index}`}
+                      className="text-sm font-light"
+                    />
                   </li>
                 ))}
               </ul>
