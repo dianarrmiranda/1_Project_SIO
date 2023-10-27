@@ -38,18 +38,15 @@ const ProductPage = () => {
         formData.append("id", id);
         formData.append("newPassword", password);
 
-        const res = await fetch(
-          "http://localhost:8080/user/updatePassword",
-          {
-            method: "POST",
-            body: formData,
-          }
-        ).then(
-          response => response.json(),
-          error => console.log('An error occurred.', error)
-        ).then(
-          res => console.log(res)
-        );  
+        const res = await fetch("http://localhost:8080/user/updatePassword", {
+          method: "POST",
+          body: formData,
+        })
+          .then(
+            (response) => response.json(),
+            (error) => console.log("An error occurred.", error)
+          )
+          .then((res) => console.log(res));
         const data = res;
       } catch (error) {
         console.error("Error during API call", error);
@@ -60,7 +57,7 @@ const ProductPage = () => {
   const handleViewDetails = (purchase) => {
     setSelectedOrder(purchase.items);
     document.getElementById("modal_viewDetails").showModal();
-  };  
+  };
 
   console.log("User ->", user);
 
@@ -118,10 +115,12 @@ const ProductPage = () => {
                     <td>Delivered</td>
                     <td>{purchase.total}€</td>
                     <td>
-                      <button 
+                      <button
                         className="btn btn-accent"
                         onClick={() => handleViewDetails(purchase)}
-                      >View Details</button>
+                      >
+                        View Details
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -129,7 +128,6 @@ const ProductPage = () => {
             </table>
           )}
         </div>
-
       </div>
       <div style={{ position: "fixed", bottom: "0", width: "100%" }}>
         <Footer />
@@ -210,7 +208,6 @@ const ProductPage = () => {
           </div>
         </div>
       </dialog>
-      
     </div>
   );
 };

@@ -1,55 +1,75 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import Navbar from '../layout/Navbar';
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import Navbar from "../layout/Navbar";
 
-import { fetchData } from '../../utils';
-import Footer from '../layout/Footer';
-import ProductComments from '../layout/ProductComments';
-import { Rating } from '@mui/material';
+import { fetchData, getUrlParams } from "../../utils";
+import Footer from "../layout/Footer";
+import ProductComments from "../layout/ProductComments";
+import { Rating } from "@mui/material";
 
-import axios from 'axios';
-import { API_BASE_URL } from '../../constants';
+import axios from "axios";
+import { API_BASE_URL } from "../../constants";
 
 import {
   RiFlashlightLine,
   RiShoppingCartFill,
   RiRocketLine,
-} from 'react-icons/ri';
+} from "react-icons/ri";
 
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [product, setProduct] = useState({});
-  const [user_id, setUser_id] = useState('');
+  const [user_id, setUser_id] = useState("");
   const [comments, setComments] = useState([]);
   const [cart, setCart] = useState([]);
+  const [stock, setStock] = useState(product.in_stock);
+  const [role, setRole] = useState("");
+  console.log("Stock ->", stock);
 
   const [toggleResponse, setToggleResponse] = useState(false);
 
+  function showModal() {
+    const modal = document.getElementById("modalStock");
+    modal.showModal();
+  }
+
   useEffect(() => {
     const initialize = async () => {
-      const username = JSON.parse(localStorage.getItem('user'));
+      const username = JSON.parse(localStorage.getItem("user"));
 
       const data = await fetchData(`/product/view?id=${id}`);
       const user = await fetchData(`/user/view?id=${username[0].id}`);
 
-      console.log('User ->', user);
-
+      console.log("User ->", user);
+      getUrlParams().get("isAdmin") === "true"
+        ? setRole("admin")
+        : setRole("user");
       setProduct(data);
       setComments(data.reviews);
-      console.log(localStorage.getItem('user'));
+      console.log(localStorage.getItem("user"));
       setUser_id(username[0].id);
     };
     initialize();
   }, []);
+
+  const handleStock = () => {
+    axios
+      .post(
+        `${API_BASE_URL}/product/updateStock?id=${product.id}&stock=${stock}`
+      )
+      .then((res) => {
+        console.log(res);
+      });
+  };
 
   const handleAddToCart = () => {
     axios
       .post(
         `${API_BASE_URL}/user/addToCart?prod=${
           product.id
-        }&userID=${user_id}&quantity=${document.getElementById('qty').value}`
+        }&userID=${user_id}&quantity=${document.getElementById("qty").value}`
       )
       .then((res) => {
         console.log(res);
@@ -58,22 +78,19 @@ const ProductPage = () => {
   };
 
   const handleCart = () => {
-    console.log('Cart ->', cart);
-    localStorage.setItem('cart', JSON.stringify(cart));
+    console.log("Cart ->", cart);
+    localStorage.setItem("cart", JSON.stringify(cart));
   };
 
-  console.log('Product ->', product);
+  console.log("Product ->", product);
   return (
     <div className="bg-base-200">
       <Navbar />
-      <div
-        id="content-body"
-        className="mx-[10%] bg-base-100 p-4"
-      >
+      <div id="content-body" className="mx-[10%] bg-base-100 p-4">
         <div className="flex flex-row">
           <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 mb-4">
             <img
-              src={'../../' + product.imgSource}
+              src={"../../" + product.imgSource}
               alt={`${product.name}-from-deti-store`}
               className="w-[30vw]  object-cover mx-[10%] rounded-xl"
             />
@@ -91,7 +108,7 @@ const ProductPage = () => {
             </button>
 
             <h2 className="text-lg">
-              From:{' '}
+              From:{" "}
               <span className="font-bold text-accent">{product.origin}</span>
             </h2>
             <div>
@@ -104,7 +121,11 @@ const ProductPage = () => {
                   size="small"
                 />
                 <span className="text-accent-focus ml-2">
-                  ({product.average_Stars ? parseFloat(product.average_Stars).toFixed(1) : "No reviews yet"})
+                  (
+                  {product.average_Stars
+                    ? parseFloat(product.average_Stars).toFixed(1)
+                    : "No reviews yet"}
+                  )
                 </span>
               </div>
             </div>
@@ -114,7 +135,7 @@ const ProductPage = () => {
                 {product.price}€
               </p>
               <span className="text-lg text-accent mx-10 flex-row ">
-                qty:{' '}
+                qty:{" "}
                 <input
                   type="number"
                   id="qty"
@@ -138,11 +159,19 @@ const ProductPage = () => {
             <button
               className="btn btn-accent relative top-8 mb-2"
               onClick={() => {
-                navigate('/user/cart');
+                navigate("/user/cart");
               }}
             >
               Buy Now <RiRocketLine className="ml-2" />
             </button>
+            {role === "admin" && (
+              <button
+                className="btn btn-accent relative top-8 mb-2"
+                onClick={showModal}
+              >
+                Change Stock
+              </button>
+            )}
           </div>
         </div>
 
@@ -150,7 +179,7 @@ const ProductPage = () => {
           <div className="mb-4 flex flex-wrap ">
             <button
               className={`font-medium ${
-                toggleResponse ? 'text-accent' : 'underline underline-offset-8'
+                toggleResponse ? "text-accent" : "underline underline-offset-8"
               } ease-in-out cursor-grab mx-2`}
               onClick={() => setToggleResponse(false)}
             >
@@ -158,7 +187,7 @@ const ProductPage = () => {
             </button>
             <button
               className={`font-medium ${
-                toggleResponse ? 'underline underline-offset-8' : 'text-accent'
+                toggleResponse ? "underline underline-offset-8" : "text-accent"
               } cursor-grab mx-2 ease-in-out`}
               onClick={() => setToggleResponse(true)}
             >
@@ -191,6 +220,33 @@ const ProductPage = () => {
       </div>
 
       <Footer />
+      <dialog id="modalStock" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Change Stock</h3>
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">New Stock</span>
+            </label>
+            <input
+              type="number"
+              className="input input-bordered"
+              defaultValue={product.in_Stock}
+              onChange={(e) =>
+                setStock(e.target.value > 0 ? e.target.value : 0)
+              }
+              required
+            />
+            <div className="modal-action">
+              <form method="dialog">
+                <button className="btn">Close</button>
+                <button className="btn btn-primary" onClick={handleStock}>
+                  Save
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };
