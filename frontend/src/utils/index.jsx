@@ -23,4 +23,9 @@ const getUrlParams = () => {
   return new URLSearchParams(window.location.search);
 };
 
-export { fetchData, getUrlParams, postData };
+const maskCreditCard = (creditCard) => {
+  const maskedCreditCard = creditCard.replace(/\d(?=\d{4})/g, '*');
+  return maskedCreditCard;
+};
+
+export { fetchData, getUrlParams, postData, maskCreditCard };

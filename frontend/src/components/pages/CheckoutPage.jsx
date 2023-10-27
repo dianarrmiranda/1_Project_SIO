@@ -9,47 +9,69 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 import { fetchData } from '../../utils';
+import { maskCreditCard } from '../../utils';
+import { API_BASE_URL } from '../../constants';
 
 const CheckoutPage = () => {
+  const navigate = useNavigate();
+
   const [cart, setCart] = useState([]);
   const [user, setUser] = useState([]);
   const [cards, setCards] = useState([]);
+  const [savedCards, setSavedCards] = useState([]);
   const [newCard, setNewCard] = useState({
     card_name: '',
     card_number: '',
     expiration_date: '',
     cvv: '',
   });
+  const [selectedCard, setSelectedCard] = useState(0);
 
   useEffect(() => {
     const initialize = async () => {
       const username = JSON.parse(localStorage.getItem('user'));
+      const saved_cards = JSON.parse(localStorage.getItem('cards'));
+      console.log('Saved cards -> ', saved_cards);
+
       const data_user = await fetchData(`/user/view?id=${username[0].id}`);
 
-      if (data_user) {
+      if (data_user && saved_cards) {
         setUser(data_user);
         setCart(data_user.shopping_Cart);
-
-        const defaultCard = {
-          card_name: 'default',
-          card_number: data_user.credit_Card,
-          expiration_date: '10/24',
-          cvv: '000',
-        };
-        setCards(
-          localStorage.getItem('cards')
-            ? localStorage.getItem('cards')
-            : [defaultCard]
-        );
+        setCards(saved_cards);
       }
+
+      const defaultCard = {
+        card_name: 'Default',
+        card_number: username[0].credit_Card,
+        expiration_date: '01/2025',
+        cvv: '123',
+      };
+
+      setCards(savedCards.length > 0 ? savedCards : [defaultCard]);
     };
     initialize();
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('cards', cards);
+    localStorage.setItem('cards', JSON.stringify(cards));
   }, [cards]);
+
+  const handleCheckout = (e) => {
+    e.preventDefault();
+    axios
+      .post(`${API_BASE_URL}/user/requestCurrentCart?userID=${user.id}`)
+      .then((res) => {
+        if (res.status === 200) {
+          console.log('Order placed successfully');
+          console.log(res.data);
+        }
+      });
+    navigate('/user/' + user.id);
+  };
 
   console.log('User ->', user);
   console.log('Cart -> ', cart);
@@ -230,13 +252,45 @@ const CheckoutPage = () => {
                     expiration_date: '',
                     cvv: '',
                   });
-                  localStorage.setItem('cards', cards);
                 }}
               >
                 Add Card
               </button>
             </div>
-            <div className="flex flex-wrap my-2"></div>
+            <div className="flex flex-wrap justify-start my-2">
+              {cards?.map((card, idx) => (
+                <div
+                  key={card.card_number}
+                  className={`card w-[30%]  flex flex-row m-2 ${
+                    selectedCard === idx
+                      ? 'border-2 border-accent bg-secondary'
+                      : 'bg-base-200'
+                  }`}
+                  onClick={() => {
+                    setSelectedCard(idx);
+                    console.log('Selected -> ', idx);
+                  }}
+                >
+                  <div className="card-body flex justify-between w-full ">
+                    <h1 className="flex flex-row">
+                      <RiBankCardLine className="text-2xl" />
+                      <span className="font-bold card-title mx-2">
+                        {card.card_name}
+                      </span>
+                    </h1>
+                    <span>{maskCreditCard(card.card_number)}</span>
+                    <span>{card.expiration_date}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button
+              className="btn btn-primary my-2 w-full"
+              type="submit"
+              onClick={handleCheckout}
+            >
+              Place Order
+            </button>
           </div>
         </form>
 
