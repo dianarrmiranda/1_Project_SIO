@@ -26,7 +26,6 @@ const ProductPage = () => {
   const [cart, setCart] = useState([]);
   const [stock, setStock] = useState(product.in_stock);
   const [role, setRole] = useState("");
-  console.log("Stock ->", stock);
 
   const [toggleResponse, setToggleResponse] = useState(false);
 
