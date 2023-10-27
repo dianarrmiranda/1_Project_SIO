@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API_BASE_URL } from '../../constants';
 
+import { BsTrash } from 'react-icons/bs';
 const CartPage = () => {
   const [cart, setCart] = useState([]);
   const [user, setUser] = useState({});
@@ -36,40 +37,45 @@ const CartPage = () => {
   return (
     <div className="bg-base-200">
       <Navbar />
-      <div className="mx-[10%] bg-base-100 p-8">
+      <div className="mx-[10%] p-8">
         <h1 className="text-3xl font-bold">Cart</h1>
-        <table className="table h-full">
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>Quantity</th>
-              <th>Price</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {cart.length > 0 ? (
-              cart.map((item, idx) => (
-                <tr
-                  key={item?.id}
-                  className="hover:bg-secondary hover:shadow-lg"
-                >
-                  <td>
-                    <div
-                      className="flex flex-row align-middle"
-                      onClick={() => {
-                        navigate(`/store/product/${item?.prod?.id}`);
-                      }}
-                    >
-                      <img
-                        src={'../../../' + item?.prod?.imgSource}
-                        alt=""
-                        className="w-12 h-12 object-cover rounded-lg mr-2"
-                      />
-                      <h1 className="font-bold text-lg">{item?.prod?.name}</h1>
-                    </div>
-                  </td>
-                  <td>
+        <span className="divider" />
+        <div className="flex flex-col justify-evenly h-full w-3/4">
+          {cart.length > 0 ? (
+            cart.map((item, idx) => (
+              <div
+                key={item?.id}
+                className="flex flex-wrap hover:bg-secondary shadow-lg m-2 p-2 rounded-xl bg-base-100"
+              >
+                <div className="w-1/6 h-1/6 p-2">
+                  <img
+                    src={'../../../' + item?.prod?.imgSource}
+                    alt=""
+                    className="object-cover rounded-lg cursor-pointer"
+                    onClick={() => {
+                      navigate(`/store/product/${item?.prod?.id}`);
+                    }}
+                  />
+                </div>
+                <div className="flex flex-col justify-evenly mx-4 w-1/2">
+                  <span className="flex flex-row justify-start items-center w-full">
+                    <h1 className="font-bold text-xl p-2">
+                      {item?.prod?.name}
+                    </h1>
+                    <button className="aboslute top-1 right-1 " onClick={() => {
+                      axios.post(`${API_BASE_URL}/user/removeFromCart?prod=${item?.prod.id}&userID=${user.id}`);
+                      setCart((prev) => {
+                        const newCart = [...prev];
+                        newCart.splice(idx, 1);
+                        return newCart;
+                      });
+                    }}>
+                      <BsTrash className="text-xl" />
+                    </button>
+                  </span>
+
+                  <span className="mx-2">
+                    Quantity:{' '}
                     <input
                       type="number"
                       min={0}
@@ -86,21 +92,22 @@ const CartPage = () => {
                         );
                       }}
                     />
-                  </td>
-                  <td>{(item?.prod?.price * item.quantity).toFixed(2)}€</td>
-                  <td>
-                    <input
-                      type="checkbox"
-                      className="checkbox checkbox-accent"
-                    />
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <h1>Cart is empty</h1>
-            )}
-          </tbody>
-        </table>
+                  </span>
+                  <div className="flex justify-between m-2">
+                    <span className="font-light">
+                      {item?.quantity}x {item?.prod?.price}€
+                    </span>
+                    <span className="font-extrabold text-accent-focus">
+                      {(item?.prod?.price * item.quantity).toFixed(2)}€
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <h1>Cart is empty</h1>
+          )}
+        </div>
 
         <div>
           <h2>

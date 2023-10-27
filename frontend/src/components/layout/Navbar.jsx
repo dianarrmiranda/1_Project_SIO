@@ -18,6 +18,7 @@ const Navbar = ({ categories }) => {
     localStorage.getItem('theme') ? localStorage.getItem('theme') : 'light'
   );
   const [userInfo, setUserInfo] = useState([]);
+  const [cartItems, setCartItems] = useState(0);
 
   const handleToggle = (e) => {
     if (e.target.checked) {
@@ -40,6 +41,10 @@ const Navbar = ({ categories }) => {
     };
     initialize();
   }, []);
+
+  useEffect(() => {
+    setCartItems(userInfo?.shopping_Cart?.length);
+  }, [userInfo]);
 
   useEffect(() => {
     localStorage.setItem('theme', theme);
@@ -102,7 +107,7 @@ const Navbar = ({ categories }) => {
         {user && (
           <div className="indicator">
             <span className="indicator-item badge-accent badge-sm rounded-full m-4 text-sm">
-              {userInfo?.shopping_Cart?.length}
+              {cartItems}
             </span>
             <button
               className="flex items-center m-2 p-2"
