@@ -83,6 +83,8 @@ To test the api, make sure you have spingboot running and make the needed calls.
 * CWE-521 (Weak Password Requirements)
 * CWE-434 (Unrestricted Upload of File with Dangerous Type)
 * CWE-862 (Missing Authorization)
+* CWE-256 (Plaintext Storage of a Password)
+* CWE-862 (Missing Authorization)
 
 # Authors 
 
