@@ -9,7 +9,7 @@ const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState([]);
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
@@ -18,6 +18,7 @@ const ProductPage = () => {
   useEffect(() => {
     const initialize = async () => {
       const data = await fetchData(`/user/view?id=${id}`);
+      console.log("User_data ->", data);
       setUser(data);
     };
     initialize();
@@ -49,7 +50,7 @@ const ProductPage = () => {
         ).then(
           res => console.log(res)
         );  
-        const data = await res;
+        const data = res;
       } catch (error) {
         console.error("Error during API call", error);
       }
@@ -98,7 +99,7 @@ const ProductPage = () => {
 
         <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 mb-4">
           <h2 className="text-2xl font-bold mt-4 mb-2">My orders</h2>
-          {user.request_History.length === 0 ? (
+          {user?.request_History?.length === 0 ? (
             <p>No purchases done yet</p>
           ) : (
             <table className="table w-full">
@@ -111,7 +112,7 @@ const ProductPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {user.request_History.map((purchase) => (
+                {user.request_History?.map((purchase) => (
                   <tr key={purchase.id}>
                     <td>{purchase.id}</td>
                     <td>Delivered</td>
