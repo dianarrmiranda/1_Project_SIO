@@ -32,6 +32,7 @@ import java.security.spec.KeySpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.SecretKeyFactory;
 import java.util.regex.Pattern;
+import java.util.Arrays;
 
 import com.shop_backend.models.repos.App_UserRepo;
 import com.shop_backend.models.repos.RequestRepo;
@@ -72,6 +73,11 @@ public class App_UserController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Provide all the required data fields!");
     }
 
+    // Check the given email is already associated with another user
+    if (app_userRepository.findapp_userByEmail(email) != null) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A user with this email already exists!");
+    }
+
     String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ 
                             "[a-zA-Z0-9_+&*-]+)*@" + 
                             "(?:[a-zA-Z0-9-]+\\.)+[a-z" + 
@@ -97,15 +103,21 @@ public class App_UserController {
           "The Card number must have twelve digits!");
     }
 
+    if (img != null) {
+      String OGfileName = img.getOriginalFilename();
+      String fileExtention = OGfileName.substring(OGfileName.lastIndexOf(".") + 1);
+      String[] a= {"png", "jpeg", "jpg", "tiff", "tif", "webp"};
+      //  Check file type
+      if (!Arrays.asList(a).contains(fileExtention)) {
+        throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+            "The image file must be of the png, jpeg, jpg, tiff, tif or webp type!");
+      }
+    }
+
     // Check the role is app_user or admin
     if (!role.equals("user") && !role.equals("admin")) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
           "The role value must either be 'user' or 'admin'!");
-    }
-
-    // Check the given email is already associated with another user
-    if (app_userRepository.findapp_userByEmail(email) != null) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A user with this email already exists!");
     }
 
     // Register the App_User Object
