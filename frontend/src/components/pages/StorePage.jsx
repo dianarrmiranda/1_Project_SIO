@@ -1,20 +1,20 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-import { fetchData, getUrlParams } from '../../utils';
+import { fetchData, getUrlParams } from "../../utils";
 
-import Navbar from '../layout/Navbar';
-import Footer from '../layout/Footer';
-import ProductCard from '../layout/ProductCard';
-import Filter from '../layout/Filter';
-import axios from 'axios';
+import Navbar from "../layout/Navbar";
+import Footer from "../layout/Footer";
+import ProductCard from "../layout/ProductCard";
+import Filter from "../layout/Filter";
+import axios from "axios";
 
 const StorePage = () => {
   const navigate = useNavigate();
-  const search_query = getUrlParams().get('search');
-  const minPrice = getUrlParams().get('min');
-  const maxPrice = getUrlParams().get('max');
-  const catFilter = getUrlParams().getAll('category');
+  const search_query = getUrlParams().get("search");
+  const minPrice = getUrlParams().get("min");
+  const maxPrice = getUrlParams().get("max");
+  const catFilter = getUrlParams().getAll("category");
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -22,22 +22,27 @@ const StorePage = () => {
   const [isLoading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [price, setPrice] = useState(0.0);
-  const [category, setCategory] = useState('');
-  const [image, setImage] = useState('');
-  const [origin, setOrigin] = useState('');
+  const [category, setCategory] = useState("");
+  const [image, setImage] = useState("");
+  const [origin, setOrigin] = useState("");
   const [stock, setStock] = useState(0);
-  const [newCategory, setNewCategory] = useState('');
+  const [newCategory, setNewCategory] = useState("");
 
   const [addCategory, setAddCategory] = useState(false);
-  const [catDescription, setCatDescription] = useState('');
+  const [catDescription, setCatDescription] = useState("");
 
+  const [role, setRole] = useState("");
   useEffect(() => {
     const initialize = async () => {
-      const data_products = await fetchData('/product/list');
-      const data_categories = await fetchData('/product/category/list');
+      const data_products = await fetchData("/product/list");
+      const data_categories = await fetchData("/product/category/list");
+
+      getUrlParams().get("isAdmin") === "true"
+        ? setRole("admin")
+        : setRole("user");
 
       if (data_products && data_categories) {
         setLoading(false);
@@ -51,7 +56,7 @@ const StorePage = () => {
 
   useEffect(() => {
     if (search_query) {
-      document.getElementById('show_query_results').innerHTML = search_query;
+      document.getElementById("show_query_results").innerHTML = search_query;
       products.forEach((product) => {
         if (product.name.toLowerCase().includes(search_query.toLowerCase())) {
           setNotFound(false);
@@ -62,82 +67,96 @@ const StorePage = () => {
     }
   }, []);
 
-  const [role, setRole] = useState('');
-
-  useEffect(() => {
-    const initialize = async () => {
-      //o local storage retorna uma lista como é que vou buscar o primeiro elemento?
-      const user = JSON.parse(localStorage.getItem('user'));
-      const firstUser = user[0];
-      if (firstUser) {
-        const { id } = firstUser;
-        const data = await fetchData(`/user/view?id=${id}`);
-        setRole(data.role);
-      }
-    };
-    initialize();
-  }, []);
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem("user"));
     const firstUser = user[0];
     const { id } = firstUser;
     if (addCategory) {
       const formData = new FormData();
-      formData.append('name', newCategory);
-      formData.append('description', catDescription);
-      formData.append('userID', id);
+      formData.append("name", newCategory);
+      formData.append("description", catDescription);
+      formData.append("userID", id);
 
       axios
-        .post('http://localhost:8080/product/category/add', formData)
+        .post("http://localhost:8080/product/category/add", formData)
+        .then((res) => {
+          console.log(res);
+          const formData2 = new FormData();
+          formData2.append("name", name);
+          formData2.append("description", description);
+          formData2.append("img", image);
+          formData2.append("origin", origin);
+          formData2.append("price", price);
+          formData2.append("in_stock", stock);
+          if (addCategory) {
+            formData2.append("category", (categories.length + 1).toString());
+          } else {
+            formData2.append("category", category);
+          }
+          formData2.append("userID", id);
+
+          axios
+            .post("http://localhost:8080/product/add", formData2)
+            .then((res) => {
+              console.log(res);
+            })
+            .catch(console.error);
+          document.getElementById("modal_AddProduct").close();
+          const initialize = async () => {
+            const data_products = await fetchData("/product/list");
+            const data_categories = await fetchData("/product/category/list");
+
+            if (data_products && data_categories) {
+              setLoading(false);
+            }
+            setProducts(data_products);
+            setCategories(data_categories);
+          };
+
+          initialize();
+        })
+        .catch(console.error);
+    } else {
+      const formData2 = new FormData();
+      formData2.append("name", name);
+      formData2.append("description", description);
+      formData2.append("img", image);
+      formData2.append("origin", origin);
+      formData2.append("price", price);
+      formData2.append("in_stock", stock);
+      if (addCategory) {
+        formData2.append("category", (categories.length + 1).toString());
+      } else {
+        formData2.append("category", category);
+      }
+      formData2.append("userID", id);
+
+      axios
+        .post("http://localhost:8080/product/add", formData2)
         .then((res) => {
           console.log(res);
         })
         .catch(console.error);
+
+      document.getElementById("modal_AddProduct").close();
+      const initialize = async () => {
+        const data_products = await fetchData("/product/list");
+        const data_categories = await fetchData("/product/category/list");
+
+        if (data_products && data_categories) {
+          setLoading(false);
+        }
+        setProducts(data_products);
+        setCategories(data_categories);
+      };
+
+      initialize();
     }
-
-    const formData2 = new FormData();
-    formData2.append('name', name);
-    formData2.append('description', description);
-    formData2.append('img', image);
-    formData2.append('origin', origin);
-    formData2.append('price', price);
-    formData2.append('in_stock', stock);
-    if (addCategory) {
-      formData2.append('category', (categories.length + 1).toString());
-    } else {
-      formData2.append('category', category);
-    }
-    formData2.append('userID', id);
-
-    axios
-      .post('http://localhost:8080/product/add', formData2)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch(console.error);
-
-    document.getElementById('modal_AddProduct').close();
-
-    const initialize = async () => {
-      const data_products = await fetchData('/product/list');
-      const data_categories = await fetchData('/product/category/list');
-
-      if (data_products && data_categories) {
-        setLoading(false);
-      }
-      setProducts(data_products);
-      setCategories(data_categories);
-    };
-
-    initialize();
   };
 
-  useEffect(() => {
-    console.log('Products -> ', products);
-    console.log('Categories -> ', categories);
-  }, []);
+  console.log("Products -> ", products);
+  console.log("Categories -> ", categories);
 
   return (
     <div>
@@ -147,15 +166,12 @@ const StorePage = () => {
           {notFound ? (
             <h1>
               Your search <b className="font-extrabold">{search_query}</b> did
-              not generated any results{' '}
+              not generated any results{" "}
             </h1>
           ) : (
             <h3>
-              You've searched for:{' '}
-              <span
-                className="font-extrabold"
-                id="show_query_results"
-              ></span>
+              You've searched for:{" "}
+              <span className="font-extrabold" id="show_query_results"></span>
             </h3>
           )}
         </div>
@@ -168,12 +184,12 @@ const StorePage = () => {
             maxPrice={maxPrice}
             categoryFilter={catFilter}
           />
-          {role === 'admin' && (
+          {role === "admin" && (
             <div className="w-[20vw] flex flex-wrap justify-center">
               <button
                 className="btn btn-accent w-[18vw] m-4"
                 onClick={() =>
-                  document.getElementById('modal_AddProduct').showModal()
+                  document.getElementById("modal_AddProduct").showModal()
                 }
               >
                 Add Product
@@ -222,21 +238,14 @@ const StorePage = () => {
                 return true;
               })
               .map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  isStore
-                />
+                <ProductCard key={product.id} product={product} isStore />
               ))}
           </div>
         )}
       </div>
 
       <Footer />
-      <dialog
-        id="modal_AddProduct"
-        className="modal overflow-y-hidden "
-      >
+      <dialog id="modal_AddProduct" className="modal overflow-y-hidden ">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Add Product</h3>
           <div className="form-control">
@@ -315,10 +324,7 @@ const StorePage = () => {
               onChange={(e) => setCategory(e.target.value)}
               defaultValue={-1}
             >
-              <option
-                disabled="disabled"
-                key={-1}
-              >
+              <option disabled="disabled" key={-1}>
                 Choose Category
               </option>
               {categories.map((category) => (
@@ -381,7 +387,7 @@ const StorePage = () => {
               onChange={(e) => setImage(e.target.files[0])}
             />
           </div>
-          <div className='flex flex-wrap mt-4 justify-between'>
+          <div className="flex flex-wrap mt-4 justify-between">
             <button
               type="submit"
               className="btn btn-accent btn-md w-[48%]"
@@ -392,7 +398,7 @@ const StorePage = () => {
             <button
               className="btn btn-error btn-md w-[48%]"
               onClick={() =>
-                document.getElementById('modal_AddProduct').close()
+                document.getElementById("modal_AddProduct").close()
               }
             >
               Cancel

@@ -23,7 +23,6 @@ export default {
     },
     colors: {
       '-card-color': 'var(--color-card)',
-      '-primary-shade': 'var(--primary-shade)',
     },
   },
   plugins: [require('daisyui')],
@@ -38,8 +37,6 @@ export default {
           neutral: '#1c1c30',
           'base-100': '#e2e2ee',
           '--color-card': '#f5f5f5',
-          '--primary-shade': '#2b8118'
-
         },
         dark: {
           primary: '#3cb521',
@@ -48,7 +45,6 @@ export default {
           neutral: '#1d1d30',
           'base-100': '#181A1B',
           '--color-card': '#2f3132',
-          '--primary-shade': '#91e77e'
         },
       },
     ],

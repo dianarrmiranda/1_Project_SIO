@@ -21,7 +21,10 @@ const ProductPage = () => {
 
   const [product, setProduct] = useState({});
   const [user_id, setUser_id] = useState("");
+  const [token, setToken] = useState("");
   const [comments, setComments] = useState([]);
+  const [stock, setStock] = useState(product.in_stock);
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     const initialize = async () => {
@@ -30,6 +33,11 @@ const ProductPage = () => {
       setComments(data.reviews);
       const username = JSON.parse(localStorage.getItem("user"));
       setUser_id(username.id);
+      setToken(username.token);
+      const dataUser = await fetchData(
+        `/user/view?id=${username.id}&token=${username.token}`
+      );
+      setRole(dataUser.role);
     };
     initialize();
   }, []);
@@ -40,6 +48,20 @@ const ProductPage = () => {
         `${API_BASE_URL}/user/addToCart?prod=${
           product.id
         }&userID=${user_id}&quantity=${document.getElementById("qty").value}}`
+      )
+      .then((res) => {
+        console.log(res);
+      });
+  };
+
+  function showModal() {
+    const modal = document.getElementById("modalStock");
+    modal.showModal();
+  }
+  const handleStock = () => {
+    axios
+      .post(
+        `${API_BASE_URL}/product/updateStock?id=${product.id}&stock=${stock}&userID=${user_id}&token=${token}`
       )
       .then((res) => {
         console.log(res);
@@ -101,6 +123,14 @@ const ProductPage = () => {
             >
               Add to cart <RiShoppingCartFill className="ml-2" />
             </button>
+            {role === "admin" && (
+              <button
+                className="btn btn-accent relative top-8 mb-2"
+                onClick={showModal}
+              >
+                Change Stock
+              </button>
+            )}
           </div>
         </div>
         <div>
@@ -120,6 +150,33 @@ const ProductPage = () => {
       </div>
 
       <Footer />
+      <dialog id="modalStock" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Change Stock</h3>
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">New Stock</span>
+            </label>
+            <input
+              type="number"
+              className="input input-bordered"
+              defaultValue={product.in_Stock}
+              onChange={(e) =>
+                setStock(e.target.value > 0 ? e.target.value : 0)
+              }
+              required
+            />
+            <div className="modal-action">
+              <form method="dialog">
+                <button className="btn">Close</button>
+                <button className="btn btn-primary" onClick={handleStock}>
+                  Save
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };

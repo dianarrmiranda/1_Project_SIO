@@ -13,10 +13,12 @@ import {
 import logo from '../../assets/deti_store_logo.svg';
 
 const Navbar = ({ categories }) => {
+  const navigate = useNavigate();
   const [theme, setTheme] = useState(
     localStorage.getItem('theme') ? localStorage.getItem('theme') : 'light'
   );
-  const navigate = useNavigate();
+  const [userInfo, setUserInfo] = useState([]);
+  const [cartItems, setCartItems] = useState(0);
 
   const handleToggle = (e) => {
     if (e.target.checked) {
@@ -28,6 +30,23 @@ const Navbar = ({ categories }) => {
   };
 
   useEffect(() => {
+    const initialize = async () => {
+      fetchData(`/user/view?id=${user[0]?.id}`).then((res) => {
+        const data_user = res;
+
+        if (data_user) {
+          setUserInfo(data_user);
+        }
+      });
+    };
+    initialize();
+  }, []);
+
+  useEffect(() => {
+    setCartItems(userInfo?.shopping_Cart?.length);
+  }, [userInfo]);
+
+  useEffect(() => {
     localStorage.setItem('theme', theme);
     const localTheme = localStorage.getItem('theme');
 
@@ -36,6 +55,7 @@ const Navbar = ({ categories }) => {
 
   const user = JSON.parse(localStorage.getItem('user'));
   console.log('user -> ', user);
+  console.log('userInfo -> ', userInfo);
 
   return (
     <div className="navbar bg-secondary w-full flex flex-wrap justify-between items-center p-2 top-0">
@@ -65,7 +85,12 @@ const Navbar = ({ categories }) => {
           Search
         </button>
       </form>
-      <p onClick={()=>navigate(`/user/${user[0]?.id}`)} className="mr-2 cursor-grab">{user ? `Hello ${user[0]?.name}!  ` : ''} </p>
+      <p
+        onClick={() => navigate(`/user/${user[0]?.id}`)}
+        className="mr-2 cursor-grab"
+      >
+        {user ? `Hello ${user[0]?.name}!  ` : ''}{' '}
+      </p>
 
       <div className="flex flex-wrap justify-end">
         <label className="swap swap-rotate m-2 p-2 ">
@@ -80,9 +105,17 @@ const Navbar = ({ categories }) => {
         </label>
 
         {user && (
-          <button className="flex items-center m-2 p-2" onClick={() => navigate('/user/cart')}>
-            <RiShoppingBag2Line className="text-xl" />
-          </button>
+          <div className="indicator">
+            <span className="indicator-item badge-accent badge-sm rounded-full m-4 text-sm">
+              {cartItems}
+            </span>
+            <button
+              className="flex items-center m-2 p-2"
+              onClick={() => navigate('/user/cart')}
+            >
+              <RiShoppingBag2Line className="text-xl" />
+            </button>
+          </div>
         )}
 
         {true && (
