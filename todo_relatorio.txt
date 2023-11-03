@@ -1,0 +1,32 @@
+tabela:
+
+qual a vuln
+qual o cwe
+descrição cwe
+vetor de atributos
+rating CWE
+como resolvemos (solução)
+
+
+ver score em NIST.gov NVD CVSS calculator
+
+dizer CWE e vulnerabilidade que obtemos dele
+
+CVSS
+common vulnerabilities
+NÃO CWSS
+
+
+
+
+
+
+num
+description
+CVSS
+CWE
+correction
+
++ 1 paragrafo por linha com o vetor
+
+soma scores deve passar 60

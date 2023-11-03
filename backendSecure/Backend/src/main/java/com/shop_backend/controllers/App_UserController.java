@@ -221,7 +221,7 @@ public class App_UserController {
 
   // View all information of a specific object based on ID
   @GetMapping(path = "/view")
-  public @ResponseBody App_User viewapp_userByID(@RequestParam Integer id, @RequestParam String token) {
+  public @ResponseBody String viewapp_userByID(@RequestParam Integer id, @RequestParam String token) {
     App_User user;
 
     // Check if a User with this ID exists
@@ -236,9 +236,20 @@ public class App_UserController {
     }
     if (!user.getActive_Token().equals(token)) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Token does not match the given user ID!");
-    }
+    }    
+    
+    // Generate the output user object for the frontend
+    JSONObject out = new JSONObject();
+    out.put("id", user.getID().toString());
+    out.put("name", user.getName());
+    out.put("email", user.getEmail());
+    out.put("role", user.getRole());
+    out.put("image", user.getImage());
+    out.put("credit_Card", user.getCredit_Card());
+    out.put("shopping_Cart", user.getShopping_Cart());
+    out.put("request_History", user.getRequest_History());
 
-    return user;
+    return out.toString(1);
   }
 
   // View all app_user info IF email and password check out, else return bad login
