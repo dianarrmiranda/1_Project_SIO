@@ -31,6 +31,7 @@ import java.util.Base64.Encoder;
 import java.security.spec.KeySpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.SecretKeyFactory;
+import java.util.regex.Pattern;
 
 import com.shop_backend.models.repos.App_UserRepo;
 import com.shop_backend.models.repos.RequestRepo;
@@ -69,6 +70,31 @@ public class App_UserController {
         || password == null || password.equals("") || cartao == null || cartao.equals("") || role == null
         || role.equals("")) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Provide all the required data fields!");
+    }
+
+    String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ 
+                            "[a-zA-Z0-9_+&*-]+)*@" + 
+                            "(?:[a-zA-Z0-9-]+\\.)+[a-z" + 
+                            "A-Z]{2,7}$"; 
+    Pattern pat = Pattern.compile(emailRegex); 
+    // Check if the email is valid
+    if (!pat.matcher(email).matches()) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+          "The provided Email must be valid!");
+    }
+
+    String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+]).{8,}$";
+    pat = Pattern.compile(passwordRegex); 
+    // Check if the password is valid
+    if (!pat.matcher(password).matches()) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+          "The provided Password must have more than 8 characters, 1 lowercase, 1 uppercase, 1 number and 1 special character!");
+    }
+
+    // Check if the card number has 12 characters in lenght
+    if (cartao.length() != 12) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+          "The Card number must have twelve digits!");
     }
 
     // Check the role is app_user or admin
@@ -382,7 +408,7 @@ public class App_UserController {
 
     if (!usr.getActive_Token().equals(token)) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
-          "Token does not match the given user ID!> " + usr.getActive_Token() + " -|- " + token);
+          "Token does not match the given user ID");
     }
 
     // Create a new shopping cart item
