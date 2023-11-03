@@ -33,7 +33,7 @@ const Navbar = () => {
   }, []);
   
   useEffect(() => {
-    setCartItems(userInfo.shopping_Cart?.length);
+    setCartItems(userInfo?.shopping_Cart?.length);
   }, [userInfo]);
 
   useEffect(() => {
