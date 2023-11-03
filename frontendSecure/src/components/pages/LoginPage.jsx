@@ -1,15 +1,17 @@
-import React, { useState } from "react";
-import Footer from "../layout/Footer";
-import Navbar from "../layout/Navbar";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import Footer from '../layout/Footer';
+import Navbar from '../layout/Navbar';
+import { useNavigate } from 'react-router-dom';
 
-import shopping from "../../assets/shopping.jpg";
+import { RiEyeLine, RiEyeCloseLine } from 'react-icons/ri';
 
-import { fetchData } from "../../utils";
+import { fetchData } from '../../utils';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [failed, setFailed] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -19,18 +21,20 @@ const LoginPage = () => {
       const response = await fetchData(
         `/user/checkLogin?email=${email}&password=${password}`
       );
-      console.log("res - ", response);
+      console.log('res - ', response);
       if (response.length != 0) {
-        console.log("Login successful");
-        setEmail("");
-        setPassword("");
-        localStorage.setItem("user", JSON.stringify(response));
-        navigate("/");
+        console.log('Login successful');
+        setEmail('');
+        setPassword('');
+        setFailed(false);
+        localStorage.setItem('user', JSON.stringify(response));
+        navigate('/');
       } else {
-        console.error("Login failed");
+        console.error('Login failed');
+        setFailed(true);
       }
     } catch (error) {
-      console.error("Error during API call", error);
+      console.error('Error during API call', error);
     }
   };
 
@@ -47,17 +51,17 @@ const LoginPage = () => {
       <Navbar />
       <div className="hero min-h-screen bg-[url('/src/assets/shopping2.jpg')]">
         <div className="hero-content flex-col w-full lg:flex-row-reverse justify-center items-center">
-          <div className="text-center bg:text-left">
+          <div className="text-center bg:text-left bg-secondary bg-opacity-80 p-2 rounded-md">
             <h1 className="text-5xl font-bold">Login now!</h1>
             <p className="py-6">
-              New here?{" "}
+              New here?{' '}
               <a
                 href=""
-                onClick={() => navigate("/registerUser")}
-                className="link link-primary"
+                onClick={() => navigate('/registerUser')}
+                className="link link-accent"
               >
                 Sign up
-              </a>{" "}
+              </a>{' '}
               for an account to get started.
             </p>
           </div>
@@ -80,17 +84,29 @@ const LoginPage = () => {
                 <label className="label">
                   <span className="label-text">Password</span>
                 </label>
-                <input
-                  type="password"
-                  placeholder="password"
-                  className="input input-bordered"
-                  required
-                  value={password}
-                  onChange={handlePasswordChange}
-                />
+                <div className="join w-full">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="password"
+                    className="input input-bordered join-item "
+                    required
+                    value={password}
+                    onChange={handlePasswordChange}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-bordered join-item"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <RiEyeCloseLine /> : <RiEyeLine />}
+                  </button>
+                </div>
               </div>
               <div className="form-control mt-6">
-                <button className="btn btn-primary" onClick={handleLogin}>
+                <button
+                  className="btn btn-primary"
+                  onClick={handleLogin}
+                >
                   Login
                 </button>
               </div>

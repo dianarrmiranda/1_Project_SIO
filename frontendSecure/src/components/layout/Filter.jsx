@@ -1,12 +1,5 @@
 import { useState } from 'react';
 
-const stock = [
-  { id: 0, status: 'In Stock' },
-  { id: 1, status: 'Available by encomend' },
-  { id: 2, status: 'Out of Stock' },
-  { id: 3, status: 'Unavailable' },
-];
-
 const Filter = ({ categories, minPrice, maxPrice, categoryFilter }) => {
   const [min, setMin] = useState(minPrice ? minPrice : '');
   const [max, setMax] = useState(maxPrice ? maxPrice : '');
@@ -43,7 +36,7 @@ const Filter = ({ categories, minPrice, maxPrice, categoryFilter }) => {
         </div>
       </div>
       <div className="divider">Categoria</div>
-      <div className="flex flex-wrap justify-start">
+      <div className="flex flex-col justify-start">
         {categories?.map((cat) => (
           <span
             className="m-1"
@@ -76,30 +69,7 @@ const Filter = ({ categories, minPrice, maxPrice, categoryFilter }) => {
           </span>
         ))}
       </div>
-      <div className="divider">Stock</div>
-      <div className="flex flex-wrap justify-start">
-        {stock?.map((s) => (
-          <span
-            className="m-1"
-            key={s.id}
-          >
-            <input
-              id={`status-${s.id}`}
-              type="checkbox"
-              value={s.id}
-              className="checkbox checkbox-sm checkbox-accent align-middle"
-              placeholder="lol"
-              name="stock"
-            />
-            <label
-              className="p-1 w-full"
-              htmlFor={`status-${s.id}`}
-            >
-              {s.status}
-            </label>
-          </span>
-        ))}
-      </div>
+      
       <button
         type="submit"
         className="btn btn-accent btn-sm w-full p-2 mt-4 "

@@ -1,25 +1,26 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import Navbar from "../layout/Navbar";
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import Navbar from '../layout/Navbar';
 
-import { fetchData } from "../../utils";
-import Footer from "../layout/Footer";
+import { fetchData } from '../../utils';
+import Footer from '../layout/Footer';
 
 const ProductPage = () => {
-  const { id } = JSON.parse(localStorage.getItem("user"));
-  const { token } = JSON.parse(localStorage.getItem("user"));
+  const { id } = JSON.parse(localStorage.getItem('user'));
+  const { token } = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
 
-  console.log("id -> ", id);
+  console.log('id -> ', id);
 
   const [user, setUser] = useState({});
-  const [password, setPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [actualPassword, setActualPassword] = useState("");
+  const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [actualPassword, setActualPassword] = useState('');
   const [showAlertPass, setShowAlertPass] = useState(false);
   const [showAlertSamePass, setShowAlertSamePass] = useState(false);
   const [changeSuccess, setchangeSuccess] = useState(false);
   const [showChangeFail, setShowChangeFail] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
     const initialize = async () => {
@@ -30,8 +31,8 @@ const ProductPage = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/login");
+    localStorage.removeItem('user');
+    navigate('/login');
   };
 
   const handleChangePass = async (event) => {
@@ -57,14 +58,14 @@ const ProductPage = () => {
 
     try {
       const formData = new FormData();
-      formData.append("id", id);
-      formData.append("token", token);
-      formData.append("newPassword", password);
-      formData.append("oldPassword", actualPassword);
+      formData.append('id', id);
+      formData.append('token', token);
+      formData.append('newPassword', password);
+      formData.append('oldPassword', actualPassword);
       const response = await fetch(
-        "http://localhost:8080/user/updatePassword",
+        'http://localhost:8080/user/updatePassword',
         {
-          method: "POST",
+          method: 'POST',
           body: formData,
         }
       );
@@ -74,57 +75,104 @@ const ProductPage = () => {
         setShowChangeFail(false);
         setchangeSuccess(true);
         setTimeout(() => {
-          document.getElementById("modal_ChangePass").close();
+          document.getElementById('modal_ChangePass').close();
           setchangeSuccess(false);
         }, 2000);
       } else {
         setShowChangeFail(true);
       }
     } catch (error) {
-      console.error("Error during API call", error);
+      console.error('Error during API call', error);
     }
   };
 
-  console.log("User ->", user);
+  const handleViewDetails = (purchase) => {
+    setSelectedOrder(purchase.items);
+    document.getElementById('modal_viewDetails').showModal();
+  };
+
+  console.log('User ->', user);
 
   return (
-    <div>
+    <div className="bg-base-200">
       <Navbar />
 
-      <div className="flex flex-wrap mx-[5%]">
-        <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 mb-4">
-          <h1 className="text-2xl font-bold mb-2">{user.name}</h1>
-          <p className="text-lg mb-2">{user.email}</p>
-
-          <div className="flex">
-            <button
-              className="btn btn-accent mb-2 mr-2"
-              onClick={() =>
-                document.getElementById("modal_ChangePass").showModal()
-              }
-            >
-              Change Password
-            </button>
-            <button className="btn btn-accent mb-2" onClick={handleLogout}>
-              Logout
-            </button>
-          </div>
-        </div>
-        <div className="avatar">
-          <div className="w-40 rounded mr">
+      <div
+        id="body"
+        className="flex flex-wrap mx-[5%]"
+      >
+        <div className="w-full m-4 p-4 flex flex-row bg-base-100 rounded-xl shadow-lg">
+          <div className="avatar w-40">
             <img
-              src={"../../" + user.image}
+              src={'../../' + user.image}
               alt="User Image"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-xl"
             />
           </div>
+          <span className="mx-4">
+            <h1 className="text-2xl font-bold mb-2">{user.name}</h1>
+            <p className="text-lg mb-2">{user.email}</p>
+
+            <div className="flex">
+              <button
+                className="btn btn-accent mb-2 mr-2"
+                onClick={() =>
+                  document.getElementById('modal_ChangePass').showModal()
+                }
+              >
+                Change Password
+              </button>
+              <button
+                className="btn btn-accent mb-2"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          </span>
+        </div>
+
+        <div className="w-full h-full m-4 p-4 rounded-xl shadow-lg bg-base-100">
+          <h2 className="text-2xl font-bold mt-4 mb-2">My orders</h2>
+          {user?.request_History?.length === 0 ? (
+            <p>No purchases done yet</p>
+          ) : (
+            <table className="table w-full">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>State</th>
+                  <th>Total Spent</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {user.request_History?.map((purchase) => (
+                  <tr key={purchase.id}>
+                    <td>{purchase.id}</td>
+                    <td>Delivered</td>
+                    <td>{purchase.total.toFixed(2)}€</td>
+                    <td>
+                      <button
+                        className="btn btn-accent"
+                        onClick={() => handleViewDetails(purchase)}
+                      >
+                        View Details
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
+      <Footer />
 
-      <div style={{ position: "fixed", bottom: "0", width: "100%" }}>
-        <Footer />
-      </div>
-      <dialog id="modal_ChangePass" className="modal">
+      <dialog
+        id="modal_ChangePass"
+        className="modal"
+      >
         <div className="modal-box">
           <h3 className="font-bold text-lg">Change Password!</h3>
           <div className="form-control">
@@ -246,6 +294,40 @@ const ProductPage = () => {
                 Submit
               </button>
             </form>
+            <form method="dialog">
+              <button className="btn">Close</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+
+      <dialog
+        id="modal_viewDetails"
+        className="modal"
+      >
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Order Details</h3>
+          <table className="table w-full">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>SubTotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {selectedOrder?.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.prod.name}</td>
+                  <td>{item.prod.price}€</td>
+                  <td>{item.quantity}</td>
+                  <td>{item.prod.price * item.quantity}€</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="modal-action flex">
             <form method="dialog">
               <button className="btn">Close</button>
             </form>
