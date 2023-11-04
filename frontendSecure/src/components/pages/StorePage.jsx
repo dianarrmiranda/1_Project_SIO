@@ -61,7 +61,6 @@ const StorePage = () => {
 
   useEffect(() => {
     if (search_query) {
-      document.getElementById("show_query_results").innerHTML = search_query;
       products.forEach((product) => {
         if (product.name.toLowerCase().includes(search_query.toLowerCase())) {
           setNotFound(false);
@@ -289,8 +288,7 @@ const StorePage = () => {
             </h1>
           ) : (
             <h3>
-              You've searched for:{" "}
-              <span className="font-extrabold" id="show_query_results"></span>
+              You've searched for: {search_query}
             </h3>
           )}
         </div>
@@ -304,9 +302,9 @@ const StorePage = () => {
             categoryFilter={catFilter}
           />
           {role === "admin" && (
-            <div className="w-[20vw] flex-none">
+            <div className="w-[20vw] flex flex-wrap justify-center">
               <button
-                className="btn btn-accent w-full"
+                className="btn btn-accent w-[18vw] m-4"
                 onClick={() =>
                   document.getElementById("modal_AddProduct").showModal()
                 }
@@ -325,10 +323,9 @@ const StorePage = () => {
             <h1 className="text-center text-xl font-bold">No products found</h1>
           </div>
         ) : (
-          <div className="flex flex-wrap justify-start">
+          <div className="flex flex-wrap justify-items-start h-full mb-4">
             {products
               .filter((product) => {
-                let found = false;
                 if (search_query) {
                   return product.name
                     .toLowerCase()
@@ -596,7 +593,7 @@ const StorePage = () => {
             <input
               type="file"
               placeholder="image"
-              className="input input-bordered"
+              className="file-input input-bordered"
               required
               onChange={handleImageChange}
             />
@@ -621,19 +618,23 @@ const StorePage = () => {
               </span>
             </div>
           )}
-          <button
-            type="submit"
-            className="btn btn-accent btn-sm w-full p-2 mt-4 "
-            onClick={handleSubmit}
-          >
-            Add Product
-          </button>
-          <button
-            className="btn btn-error btn-sm w-full p-2 mt-4 "
-            onClick={() => document.getElementById("modal_AddProduct").close()}
-          >
-            Cancel
-          </button>
+          <div className="flex flex-wrap mt-4 justify-between">
+            <button
+              type="submit"
+              className="btn btn-accent btn-md w-[48%]"
+              onClick={handleSubmit}
+            >
+              Add Product
+            </button>
+            <button
+              className="btn btn-error btn-md w-[48%]"
+              onClick={() =>
+                document.getElementById("modal_AddProduct").close()
+              }
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </dialog>
     </div>
