@@ -1,43 +1,43 @@
-import { useEffect, useState } from 'react';
-import Navbar from '../layout/Navbar';
-import Footer from '../layout/Footer';
-import { RiBankCardLine } from 'react-icons/ri';
+import { useEffect, useState } from "react";
+import Navbar from "../layout/Navbar";
+import Footer from "../layout/Footer";
+import { RiBankCardLine } from "react-icons/ri";
 
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-import { fetchData } from '../../utils';
-import { maskCreditCard } from '../../utils';
-import { API_BASE_URL } from '../../constants';
-import Warning from '../layout/Warning';
+import { fetchData } from "../../utils";
+import { maskCreditCard } from "../../utils";
+import { API_BASE_URL } from "../../constants";
+import Warning from "../layout/Warning";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
 
-  const username = JSON.parse(localStorage.getItem('user'));
+  const username = JSON.parse(localStorage.getItem("user"));
   const [cart, setCart] = useState([]);
   const [user, setUser] = useState([]);
   const [cards, setCards] = useState([]);
   const [newCard, setNewCard] = useState({
-    card_name: '',
-    card_number: '',
-    expiration_date: '',
-    cvv: '',
+    card_name: "",
+    card_number: "",
+    expiration_date: "",
+    cvv: "",
   });
 
   const [form, setForm] = useState({
-    delivery_day: '',
-    delivery_time: '',
-    address: '',
-    address2: '',
-    city: '',
-    country: '',
-    zip_code: '',
+    delivery_day: "",
+    delivery_time: "",
+    address: "",
+    address2: "",
+    city: "",
+    country: "",
+    zip_code: "",
     card: -1,
   });
 
@@ -52,7 +52,7 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     const initialize = async () => {
-      const saved_cards = JSON.parse(localStorage.getItem('cards'));
+      const saved_cards = JSON.parse(localStorage.getItem("cards"));
       const data_user = await fetchData(
         `/user/view?id=${username.id}&token=${username.token}`
       );
@@ -63,10 +63,10 @@ const CheckoutPage = () => {
       }
 
       const defaultCard = {
-        card_name: 'Default',
-        card_number: user.credit_Card,
-        expiration_date: '01/2025',
-        cvv: '123',
+        card_name: "Default",
+        card_number: data_user.credit_Card,
+        expiration_date: "01/2025",
+        cvv: "123",
       };
 
       if (saved_cards) {
@@ -83,7 +83,7 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     if (cards.length > 0) {
-      localStorage.setItem('cards', JSON.stringify(cards));
+      localStorage.setItem("cards", JSON.stringify(cards));
     }
   }, [cards]);
 
@@ -94,6 +94,8 @@ const CheckoutPage = () => {
     });
     if (date.length < 1) {
       setDelivery_dayAlert(true);
+    } else {
+      setDelivery_dayAlert(false);
     }
   };
 
@@ -104,6 +106,8 @@ const CheckoutPage = () => {
     });
     if (date.length < 1) {
       setDelivery_timeAlert(true);
+    } else {
+      setDelivery_timeAlert(false);
     }
   };
 
@@ -114,6 +118,8 @@ const CheckoutPage = () => {
     });
     if (e.target.value.length < 1) {
       setAddressAlert(true);
+    } else {
+      setAddressAlert(false);
     }
   };
 
@@ -124,6 +130,8 @@ const CheckoutPage = () => {
     });
     if (e.target.value.length < 1) {
       setAddress2Alert(true);
+    } else {
+      setAddress2Alert(false);
     }
   };
 
@@ -134,6 +142,8 @@ const CheckoutPage = () => {
     });
     if (e.target.value.length < 1) {
       setCityAlert(true);
+    } else {
+      setCityAlert(false);
     }
   };
 
@@ -144,6 +154,8 @@ const CheckoutPage = () => {
     });
     if (e.target.value.length < 1) {
       setCountryAlert(true);
+    } else {
+      setCountryAlert(false);
     }
   };
 
@@ -154,6 +166,8 @@ const CheckoutPage = () => {
     });
     if (e.target.value.length < 1) {
       setZip_codeAlert(true);
+    } else {
+      setZip_codeAlert(false);
     }
   };
 
@@ -164,21 +178,24 @@ const CheckoutPage = () => {
     });
     if (idx == -1) {
       setCardAlert(true);
+    } else {
+      setCardAlert(false);
     }
   };
 
-  const handleCheckout = async (e) => {
+  const handleCheckout = (e) => {
     e.preventDefault();
     console.log(form);
-    if (form.delivery_day.length < 1) {
-      setDelivery_dayAlert(true);
-    } else {
-      setDelivery_dayAlert(false);
-    }
+
     if (form.delivery_time.length < 1) {
       setDelivery_timeAlert(true);
     } else {
       setDelivery_timeAlert(false);
+    }
+    if (form.delivery_day.length < 1) {
+      setDelivery_dayAlert(true);
+    } else {
+      setDelivery_dayAlert(false);
     }
     if (form.address.length < 1) {
       setAddressAlert(true);
@@ -212,14 +229,14 @@ const CheckoutPage = () => {
     }
 
     if (
-      delivery_dayAlert ||
-      delivery_timeAlert ||
-      addressAlert ||
-      address2Alert ||
-      cityAlert ||
-      countryAlert ||
-      zip_codeAlert ||
-      cardAlert
+      form.delivery_time.length < 1 ||
+      form.address.length < 1 ||
+      form.address2.length < 1 ||
+      form.city.length < 1 ||
+      form.country.length < 1 ||
+      form.zip_code.length < 1 ||
+      form.card == -1 ||
+      form.delivery_day.length < 1
     ) {
       return;
     } else {
@@ -230,21 +247,21 @@ const CheckoutPage = () => {
           )
           .then((res) => {
             if (res.status === 200) {
-              console.log('Order placed successfully');
+              console.log("Order placed successfully");
               console.log(res.data);
             }
           });
 
-        navigate('/user');
+        navigate("/user");
       } catch (e) {
         console.log(e);
       }
     }
   };
 
-  console.log('User ->', user);
-  console.log('Cart -> ', cart);
-  console.log('Cards -> ', cards);
+  console.log("User ->", user);
+  console.log("Cart -> ", cart);
+  console.log("Cards -> ", cards);
 
   return (
     <div className="bg-base-200">
@@ -303,17 +320,11 @@ const CheckoutPage = () => {
             <div>
               <div className="flex flex-wrap m-2">
                 <span className="flex flex-col w-full">
-                  <label
-                    className="font-bold"
-                    htmlFor="address"
-                  >
+                  <label className="font-bold" htmlFor="address">
                     Address
                   </label>
                   {(addressAlert || address2Alert) && (
-                    <Warning
-                      msg="Please insert a valid address"
-                      error
-                    />
+                    <Warning msg="Please insert a valid address" error />
                   )}
                   <input
                     id="address"
@@ -334,12 +345,7 @@ const CheckoutPage = () => {
                 </span>
                 <div className="flex flex-row justify-between w-full mt-2">
                   <span className="flex flex-col">
-                    {cityAlert && (
-                      <Warning
-                        msg="Please enter a city"
-                        error
-                      />
-                    )}
+                    {cityAlert && <Warning msg="Please enter a city" error />}
                     <input
                       id="city"
                       className="input input-bordered"
@@ -350,10 +356,7 @@ const CheckoutPage = () => {
                   </span>
                   <span className="flex flex-col">
                     {countryAlert && (
-                      <Warning
-                        msg="Please enter a country"
-                        error
-                      />
+                      <Warning msg="Please enter a country" error />
                     )}
                     <input
                       id="country"
@@ -365,10 +368,7 @@ const CheckoutPage = () => {
                   </span>
                   <span className="flex flex-col">
                     {zip_codeAlert && (
-                      <Warning
-                        msg="Please insert a zip code"
-                        error
-                      />
+                      <Warning msg="Please insert a zip code" error />
                     )}
 
                     <input
@@ -428,11 +428,11 @@ const CheckoutPage = () => {
                     id="expiration_date"
                     label="Expiration Date"
                     format="MM/YYYY"
-                    views={['month', 'year']}
+                    views={["month", "year"]}
                     onChange={(date) => {
                       setNewCard({
                         ...newCard,
-                        expiration_date: date.format('MM/YYYY'),
+                        expiration_date: date.format("MM/YYYY"),
                       });
                     }}
                   />
@@ -458,30 +458,25 @@ const CheckoutPage = () => {
                 onClick={() => {
                   setCards([...cards, newCard]);
                   setNewCard({
-                    card_name: '',
-                    card_number: '',
-                    expiration_date: '',
-                    cvv: '',
+                    card_name: "",
+                    card_number: "",
+                    expiration_date: "",
+                    cvv: "",
                   });
                 }}
               >
                 Add Card
               </button>
             </div>
-            {cardAlert && (
-              <Warning
-                msg="Please select a card"
-                error
-              />
-            )}
+            {cardAlert && <Warning msg="Please select a card" error />}
             <div className="flex flex-wrap justify-start my-2">
               {cards?.map((card, idx) => (
                 <div
                   key={card.card_number}
                   className={`card w-[30%]  flex flex-row m-2 ${
                     form.card === idx
-                      ? 'border-2 border-accent bg-secondary'
-                      : 'bg-base-200'
+                      ? "border-2 border-accent bg-secondary"
+                      : "bg-base-200"
                   }`}
                   onClick={() => handleCard(idx)}
                 >
@@ -511,13 +506,10 @@ const CheckoutPage = () => {
         <div className="w-[35%] m-4">
           <h1 className="font-bold text-lg">Your order </h1>
           {cart.map((item) => (
-            <div
-              key={item.id}
-              className="flex flex-row justify-between m-4"
-            >
+            <div key={item.id} className="flex flex-row justify-between m-4">
               <div className="flex justify-between w-full ">
                 <h1>
-                  <span className="font-bold ">{item.quantity}x</span>{' '}
+                  <span className="font-bold ">{item.quantity}x</span>{" "}
                   {item.prod.name}
                 </h1>
                 <span>{item.prod.price * item.quantity}€</span>
