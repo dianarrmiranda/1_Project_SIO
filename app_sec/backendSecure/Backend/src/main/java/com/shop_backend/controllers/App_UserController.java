@@ -31,6 +31,8 @@ import java.util.Base64.Encoder;
 import java.security.spec.KeySpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.SecretKeyFactory;
+import java.util.regex.Pattern;
+import java.util.Arrays;
 
 import com.shop_backend.models.repos.App_UserRepo;
 import com.shop_backend.models.repos.RequestRepo;
@@ -71,15 +73,54 @@ public class App_UserController {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Provide all the required data fields!");
     }
 
+    // Check the given email is already associated with another user
+    if (app_userRepository.findapp_userByEmail(email) != null) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A user with this email already exists!");
+    }
+
+    String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ 
+                            "[a-zA-Z0-9_+&*-]+)*@" + 
+                            "(?:[a-zA-Z0-9-]+\\.)+[a-z" + 
+                            "A-Z]{2,7}$"; 
+    Pattern pat = Pattern.compile(emailRegex); 
+    // Check if the email is valid
+    if (!pat.matcher(email).matches()) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+          "The provided Email must be valid!");
+    }
+
+    String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+]).{8,}$";
+    pat = Pattern.compile(passwordRegex); 
+    // Check if the password is valid
+    if (!pat.matcher(password).matches()) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+          "The provided Password must have more than 8 characters, 1 lowercase, 1 uppercase, 1 number and 1 special character!");
+    }
+
+    // Check if the card number has 12 characters in lenght
+    if (cartao.length() != 12) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+          "The Card number must have twelve digits!");
+    }
+
+    
+    if (img != null) {
+      String OGfileName = img.getOriginalFilename();
+      String fileExtention = OGfileName.substring(OGfileName.lastIndexOf(".") + 1);
+      String[] a= {"png", "jpeg", "jpg", "tiff", "tif", "webp"};
+
+      //  Check file type
+      if (!Arrays.asList(a).contains(fileExtention)) {
+        throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+            "The image file must be of the png, jpeg, jpg, tiff, tif or webp type!");
+      }
+    
+    }
+
     // Check the role is app_user or admin
     if (!role.equals("user") && !role.equals("admin")) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
           "The role value must either be 'user' or 'admin'!");
-    }
-
-    // Check the given email is already associated with another user
-    if (app_userRepository.findapp_userByEmail(email) != null) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A user with this email already exists!");
     }
 
     // Register the App_User Object
@@ -118,11 +159,15 @@ public class App_UserController {
       }
 
       Encoder encoder = Base64.getUrlEncoder().withoutPadding();
-      // Generate the password
+
+      //  Generate the random number
       SecureRandom random = new SecureRandom();
+      //  Generate the salt
       byte[] salt = new byte[16];
       random.nextBytes(salt);
+      //  Generate the salted key
       KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
+      //  Generate the final hashed + salted key
       SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
       byte[] hash = factory.generateSecret(spec).getEncoded();
 
@@ -382,7 +427,7 @@ public class App_UserController {
 
     if (!usr.getActive_Token().equals(token)) {
       throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
-          "Token does not match the given user ID!> " + usr.getActive_Token() + " -|- " + token);
+          "Token does not match the given user ID");
     }
 
     // Create a new shopping cart item
