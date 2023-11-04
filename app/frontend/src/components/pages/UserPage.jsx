@@ -117,7 +117,7 @@ const ProductPage = () => {
                   <tr key={purchase.id}>
                     <td>{purchase.id}</td>
                     <td>Delivered</td>
-                    <td>{purchase.total}€</td>
+                    <td>{purchase.total.toFixed(2)}€</td>
                     <td>
                       <button
                         className="btn btn-accent"

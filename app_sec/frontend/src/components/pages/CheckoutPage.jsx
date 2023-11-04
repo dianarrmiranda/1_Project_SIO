@@ -64,7 +64,7 @@ const CheckoutPage = () => {
 
       const defaultCard = {
         card_name: "Default",
-        card_number: data_user.credit_Card,
+        card_number: data_user?.credit_Card,
         expiration_date: "01/2025",
         cvv: "123",
       };
@@ -472,7 +472,7 @@ const CheckoutPage = () => {
             <div className="flex flex-wrap justify-start my-2">
               {cards?.map((card, idx) => (
                 <div
-                  key={card.card_number}
+                  key={idx}
                   className={`card w-[30%]  flex flex-row m-2 ${
                     form.card === idx
                       ? "border-2 border-accent bg-secondary"
