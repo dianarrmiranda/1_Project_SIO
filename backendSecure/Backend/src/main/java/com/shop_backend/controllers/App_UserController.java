@@ -103,15 +103,18 @@ public class App_UserController {
           "The Card number must have twelve digits!");
     }
 
+    
     if (img != null) {
       String OGfileName = img.getOriginalFilename();
       String fileExtention = OGfileName.substring(OGfileName.lastIndexOf(".") + 1);
       String[] a= {"png", "jpeg", "jpg", "tiff", "tif", "webp"};
+
       //  Check file type
       if (!Arrays.asList(a).contains(fileExtention)) {
         throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
             "The image file must be of the png, jpeg, jpg, tiff, tif or webp type!");
       }
+    
     }
 
     // Check the role is app_user or admin
@@ -156,11 +159,15 @@ public class App_UserController {
       }
 
       Encoder encoder = Base64.getUrlEncoder().withoutPadding();
-      // Generate the password
+
+      //  Generate the random number
       SecureRandom random = new SecureRandom();
+      //  Generate the salt
       byte[] salt = new byte[16];
       random.nextBytes(salt);
+      //  Generate the salted key
       KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
+      //  Generate the final hashed + salted key
       SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
       byte[] hash = factory.generateSecret(spec).getEncoded();
 

@@ -56,6 +56,13 @@ cd backend/Backend
  ./mvnw spring-boot:run
 ```
 
+## Run backend inside a docker
+```bash
+    cd backend/Backend
+    ./mvnw install
+    docker build --build-arg JAR_FILE=target/shop_backend-0.0.1-SNAPSHOT.jar -t com/shop_backend .
+    docker run -p 8080:8080 com/shop_backend
+```
 ### BONUS
 #### Setting up postman (to view api calls)
 
@@ -84,7 +91,6 @@ To test the api, make sure you have spingboot running and make the needed calls.
 * CWE-434 (Unrestricted Upload of File with Dangerous Type)
 * CWE-862 (Missing Authorization)
 * CWE-256 (Plaintext Storage of a Password)
-* CWE-862 (Missing Authorization)
 
 # Authors 
 
