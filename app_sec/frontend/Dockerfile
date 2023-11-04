@@ -1,8 +1,8 @@
 FROM node:18-alpine
-WORKDIR /react-docker/
-ENV PATH /app/node_modules/.bin:$PATH
+WORKDIR usr/src/react-docker/
 COPY package.json ./
 COPY package-lock.json ./
 RUN npm install
-COPY . ./
-CMD ["npm", "run", "dev", "--", "--host"]
+COPY . .
+EXPOSE 5173
+CMD ["npm", "run", "dev"]

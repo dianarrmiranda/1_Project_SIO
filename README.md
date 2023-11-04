@@ -16,6 +16,7 @@ This document provides an overview of the project, its structure, vulnerabilitie
     - [Repository stucture](#repository-stucture)
   - [Run the project](#run-the-project)
     - [Run FrontEnd](#run-frontend)
+    - [Run frontend inside a docker](#run-frontend-inside-a-docker)
     - [Run backend](#run-backend)
     - [Run backend inside a docker](#run-backend-inside-a-docker)
     - [Setting up Postman (To Test API Endpoints](#setting-up-postman-to-test-api-endpoints)
@@ -98,38 +99,20 @@ Our repository is organized as follows:
 ```
 .
 ├── analysis
+│   └── postman_collections
 ├── app
 │   ├── backend
-│   │   ├── Backend
-│   │   │   └── src
-│   │   │       ├── main
-│   │   │       │   ├── java
-│   │   │       │   │   └── com
-│   │   │       │   │       └── shop_backend
-│   │   │       │   │           ├── controllers
-│   │   │       │   │           └── models
-│   │   │       │   │               ├── entities
-│   │   │       │   │               └── repos
-│   │   │       │   └── resources
-│   │   │       └── test
-│   │   │           └── java
-│   │   │               └── com
-│   │   │                   └── shop_backend
-│   │   ├── Frontend-Test
-│   │   │   └── resources
-│   │   │       ├── bootstrap-4.3.1-dist
-│   │   │       │   ├── css
-│   │   │       │   └── js
-│   │   │       ├── css
-│   │   │       ├── font-awesome-4.7.0
-│   │   │       │   ├── css
-│   │   │       │   ├── fonts
-│   │   │       │   ├── less
-│   │   │       │   └── scss
-│   │   │       ├── fonts
-│   │   │       ├── images
-│   │   │       └── js
-│   │   └── Postman-Requests
+│   │   └── src
+│   │       ├── main
+│   │       │   ├── java
+│   │       │   │   └── com
+│   │       │   │       └── shop_backend
+│   │       │   │           ├── controllers
+│   │       │   │           └── models
+│   │       │   │               ├── entities
+│   │       │   │               └── repos
+│   │       │   └── resources
+│   │       └── test
 │   └── frontend
 │       ├── public
 │       └── src
@@ -141,23 +124,19 @@ Our repository is organized as follows:
 │           ├── constants
 │           └── utils
 └── app_sec
-    ├── backendSecure
-    │   └── Backend
-    │       └── src
-    │           ├── main
-    │           │   ├── java
-    │           │   │   └── com
-    │           │   │       └── shop_backend
-    │           │   │           ├── controllers
-    │           │   │           └── models
-    │           │   │               ├── entities
-    │           │   │               └── repos
-    │           │   └── resources
-    │           └── test
-    │               └── java
-    │                   └── com
-    │                       └── shop_backend
-    └── frontendSecure
+    ├── backend
+    │   └── src
+    │       ├── main
+    │       │   ├── java
+    │       │   │   └── com
+    │       │   │       └── shop_backend
+    │       │   │           ├── controllers
+    │       │   │           └── models
+    │       │   │               ├── entities
+    │       │   │               └── repos
+    │       │   └── resources
+    │       └── test
+    └── frontend
         ├── public
         └── src
             ├── assets
@@ -167,7 +146,6 @@ Our repository is organized as follows:
             │   └── pages
             ├── constants
             └── utils
-
 ```
 
 ## Run the project
@@ -212,6 +190,14 @@ yarn dev
 -or-
 npm run dev
 ```
+### Run frontend inside a docker
+
+```bash
+cd frontend
+docker build -t react-docker:latest . 
+docker run -p 5173:5173 react-docker:latest
+```
+
 
 ### Run backend
 
