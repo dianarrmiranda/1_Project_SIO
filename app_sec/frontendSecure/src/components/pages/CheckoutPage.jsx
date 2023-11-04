@@ -14,63 +14,232 @@ import { useNavigate } from 'react-router-dom';
 import { fetchData } from '../../utils';
 import { maskCreditCard } from '../../utils';
 import { API_BASE_URL } from '../../constants';
+import Warning from '../layout/Warning';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
 
+  const username = JSON.parse(localStorage.getItem('user'));
   const [cart, setCart] = useState([]);
   const [user, setUser] = useState([]);
   const [cards, setCards] = useState([]);
-  const [savedCards, setSavedCards] = useState([]);
   const [newCard, setNewCard] = useState({
     card_name: '',
     card_number: '',
     expiration_date: '',
     cvv: '',
   });
-  const [selectedCard, setSelectedCard] = useState(0);
+
+  const [form, setForm] = useState({
+    delivery_day: '',
+    delivery_time: '',
+    address: '',
+    address2: '',
+    city: '',
+    country: '',
+    zip_code: '',
+    card: -1,
+  });
+
+  const [delivery_dayAlert, setDelivery_dayAlert] = useState(false);
+  const [delivery_timeAlert, setDelivery_timeAlert] = useState(false);
+  const [addressAlert, setAddressAlert] = useState(false);
+  const [address2Alert, setAddress2Alert] = useState(false);
+  const [cityAlert, setCityAlert] = useState(false);
+  const [countryAlert, setCountryAlert] = useState(false);
+  const [zip_codeAlert, setZip_codeAlert] = useState(false);
+  const [cardAlert, setCardAlert] = useState(false);
 
   useEffect(() => {
     const initialize = async () => {
-      const username = JSON.parse(localStorage.getItem('user'));
       const saved_cards = JSON.parse(localStorage.getItem('cards'));
-      console.log('Saved cards -> ', saved_cards);
+      const data_user = await fetchData(
+        `/user/view?id=${username.id}&token=${username.token}`
+      );
 
-      const data_user = await fetchData(`/user/view?id=${username[0].id}`);
-
-      if (data_user && saved_cards) {
+      if (data_user) {
         setUser(data_user);
         setCart(data_user.shopping_Cart);
-        setCards(saved_cards);
       }
 
       const defaultCard = {
         card_name: 'Default',
-        card_number: username[0].credit_Card,
+        card_number: user.credit_Card,
         expiration_date: '01/2025',
         cvv: '123',
       };
 
-      setCards(savedCards.length > 0 ? savedCards : [defaultCard]);
+      if (saved_cards) {
+        if (saved_cards.length == 0) setCards([defaultCard]);
+        else {
+          setCards(saved_cards);
+        }
+      } else {
+        setCards([defaultCard]);
+      }
     };
     initialize();
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('cards', JSON.stringify(cards));
+    if (cards.length > 0) {
+      localStorage.setItem('cards', JSON.stringify(cards));
+    }
   }, [cards]);
 
-  const handleCheckout = (e) => {
+  const handleDeliveryDay = (date) => {
+    setForm({
+      ...form,
+      delivery_day: date,
+    });
+    if (date.length < 1) {
+      setDelivery_dayAlert(true);
+    }
+  };
+
+  const handleDeliveryTime = (date) => {
+    setForm({
+      ...form,
+      delivery_time: date,
+    });
+    if (date.length < 1) {
+      setDelivery_timeAlert(true);
+    }
+  };
+
+  const handleAddress = (e) => {
+    setForm({
+      ...form,
+      address: e.target.value,
+    });
+    if (e.target.value.length < 1) {
+      setAddressAlert(true);
+    }
+  };
+
+  const handleAddress2 = (e) => {
+    setForm({
+      ...form,
+      address2: e.target.value,
+    });
+    if (e.target.value.length < 1) {
+      setAddress2Alert(true);
+    }
+  };
+
+  const handleCity = (e) => {
+    setForm({
+      ...form,
+      city: e.target.value,
+    });
+    if (e.target.value.length < 1) {
+      setCityAlert(true);
+    }
+  };
+
+  const handleCountry = (e) => {
+    setForm({
+      ...form,
+      country: e.target.value,
+    });
+    if (e.target.value.length < 1) {
+      setCountryAlert(true);
+    }
+  };
+
+  const handleZipCode = (e) => {
+    setForm({
+      ...form,
+      zip_code: e.target.value,
+    });
+    if (e.target.value.length < 1) {
+      setZip_codeAlert(true);
+    }
+  };
+
+  const handleCard = (idx) => {
+    setForm({
+      ...form,
+      card: idx,
+    });
+    if (idx == -1) {
+      setCardAlert(true);
+    }
+  };
+
+  const handleCheckout = async (e) => {
     e.preventDefault();
-    axios
-      .post(`${API_BASE_URL}/user/requestCurrentCart?userID=${user.id}`)
-      .then((res) => {
-        if (res.status === 200) {
-          console.log('Order placed successfully');
-          console.log(res.data);
-        }
-      });
-    navigate('/user/' + user.id);
+    console.log(form);
+    if (form.delivery_day.length < 1) {
+      setDelivery_dayAlert(true);
+    } else {
+      setDelivery_dayAlert(false);
+    }
+    if (form.delivery_time.length < 1) {
+      setDelivery_timeAlert(true);
+    } else {
+      setDelivery_timeAlert(false);
+    }
+    if (form.address.length < 1) {
+      setAddressAlert(true);
+    } else {
+      setAddressAlert(false);
+    }
+    if (form.address2.length < 1) {
+      setAddress2Alert(true);
+    } else {
+      setAddress2Alert(false);
+    }
+    if (form.city.length < 1) {
+      setCityAlert(true);
+    } else {
+      setCityAlert(false);
+    }
+    if (form.country.length < 1) {
+      setCountryAlert(true);
+    } else {
+      setCountryAlert(false);
+    }
+    if (form.zip_code.length < 1) {
+      setZip_codeAlert(true);
+    } else {
+      setZip_codeAlert(false);
+    }
+    if (form.card == -1) {
+      setCardAlert(true);
+    } else {
+      setCardAlert(false);
+    }
+
+    if (
+      delivery_dayAlert ||
+      delivery_timeAlert ||
+      addressAlert ||
+      address2Alert ||
+      cityAlert ||
+      countryAlert ||
+      zip_codeAlert ||
+      cardAlert
+    ) {
+      return;
+    } else {
+      try {
+        axios
+          .post(
+            `${API_BASE_URL}/user/requestCurrentCart?userID=${user.id}&token=${username.token}`
+          )
+          .then((res) => {
+            if (res.status === 200) {
+              console.log('Order placed successfully');
+              console.log(res.data);
+            }
+          });
+
+        navigate('/user');
+      } catch (e) {
+        console.log(e);
+      }
+    }
   };
 
   console.log('User ->', user);
@@ -95,19 +264,31 @@ const CheckoutPage = () => {
               </h1>
             </span>
             <div className="m-4 flex justify-evenly">
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label="Delivery Day"
-                  format="DD/MM/YYYY"
-                />
-              </LocalizationProvider>
+              <div className="flex flex-col justify-center w-1/2">
+                {delivery_dayAlert && (
+                  <Warning msg="Please select a valid delivery day" />
+                )}
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label="Delivery Day"
+                    format="DD/MM/YYYY"
+                    onChange={(date) => handleDeliveryDay(date)}
+                  />
+                </LocalizationProvider>
+              </div>
 
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <TimePicker
-                  label="Delivery Time"
-                  ampm={false}
-                />
-              </LocalizationProvider>
+              <div className="flex flex-col justify-center w-1/2">
+                {delivery_timeAlert && (
+                  <Warning msg="Please select a valid delivery time" />
+                )}
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <TimePicker
+                    label="Delivery Time"
+                    ampm={false}
+                    onChange={(date) => handleDeliveryTime(date)}
+                  />
+                </LocalizationProvider>
+              </div>
             </div>
           </div>
           <div className="flex flex-col bg-base-100 rounded-lg shadow-xl p-4">
@@ -128,11 +309,18 @@ const CheckoutPage = () => {
                   >
                     Address
                   </label>
+                  {(addressAlert || address2Alert) && (
+                    <Warning
+                      msg="Please insert a valid address"
+                      error
+                    />
+                  )}
                   <input
                     id="address"
                     className="input input-bordered w-full"
                     type="text"
                     placeholder="Street address or P.O. box"
+                    onChange={(e) => handleAddress(e)}
                   />
                 </span>
                 <span className="flex flex-col w-full my-1">
@@ -141,30 +329,53 @@ const CheckoutPage = () => {
                     className="input input-bordered"
                     type="text"
                     placeholder="Apt, suite, unit, building, floor, etc."
+                    onChange={(e) => handleAddress2(e)}
                   />
                 </span>
                 <div className="flex flex-row justify-between w-full mt-2">
                   <span className="flex flex-col">
+                    {cityAlert && (
+                      <Warning
+                        msg="Please enter a city"
+                        error
+                      />
+                    )}
                     <input
                       id="city"
                       className="input input-bordered"
                       type="text"
                       placeholder="City"
+                      onChange={(e) => handleCity(e)}
                     />
                   </span>
                   <span className="flex flex-col">
+                    {countryAlert && (
+                      <Warning
+                        msg="Please enter a country"
+                        error
+                      />
+                    )}
                     <input
                       id="country"
                       className="input input-bordered"
                       type="text"
                       placeholder="Country"
+                      onChange={(e) => handleCountry(e)}
                     />
                   </span>
                   <span className="flex flex-col">
+                    {zip_codeAlert && (
+                      <Warning
+                        msg="Please insert a zip code"
+                        error
+                      />
+                    )}
+
                     <input
                       id="zip_code"
                       className="input input-bordered"
                       type="text"
+                      onChange={(e) => handleZipCode(e)}
                       placeholder="Zip Code"
                     />
                   </span>
@@ -257,19 +468,22 @@ const CheckoutPage = () => {
                 Add Card
               </button>
             </div>
+            {cardAlert && (
+              <Warning
+                msg="Please select a card"
+                error
+              />
+            )}
             <div className="flex flex-wrap justify-start my-2">
               {cards?.map((card, idx) => (
                 <div
                   key={card.card_number}
                   className={`card w-[30%]  flex flex-row m-2 ${
-                    selectedCard === idx
+                    form.card === idx
                       ? 'border-2 border-accent bg-secondary'
                       : 'bg-base-200'
                   }`}
-                  onClick={() => {
-                    setSelectedCard(idx);
-                    console.log('Selected -> ', idx);
-                  }}
+                  onClick={() => handleCard(idx)}
                 >
                   <div className="card-body flex justify-between w-full ">
                     <h1 className="flex flex-row">

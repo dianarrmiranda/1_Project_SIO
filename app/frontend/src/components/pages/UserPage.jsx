@@ -1,32 +1,31 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import Navbar from "../layout/Navbar";
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import Navbar from '../layout/Navbar';
 
-import { fetchData } from "../../utils";
-import Footer from "../layout/Footer";
+import { fetchData } from '../../utils';
+import Footer from '../layout/Footer';
 
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [user, setUser] = useState([]);
-  const [password, setPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-
+  const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
     const initialize = async () => {
       const data = await fetchData(`/user/view?id=${id}`);
-      console.log("User_data ->", data);
+      console.log('User_data ->', data);
       setUser(data);
     };
     initialize();
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/login");
+    localStorage.removeItem('user');
+    navigate('/login');
   };
 
   const handleChangePass = async (event) => {
@@ -35,66 +34,71 @@ const ProductPage = () => {
     if (password === newPassword) {
       try {
         const formData = new FormData();
-        formData.append("id", id);
-        formData.append("newPassword", password);
+        formData.append('id', id);
+        formData.append('newPassword', password);
 
-        const res = await fetch("http://localhost:8080/user/updatePassword", {
-          method: "POST",
+        const res = await fetch('http://localhost:8080/user/updatePassword', {
+          method: 'POST',
           body: formData,
         })
           .then(
             (response) => response.json(),
-            (error) => console.log("An error occurred.", error)
+            (error) => console.log('An error occurred.', error)
           )
           .then((res) => console.log(res));
         const data = res;
       } catch (error) {
-        console.error("Error during API call", error);
+        console.error('Error during API call', error);
       }
     }
   };
 
   const handleViewDetails = (purchase) => {
     setSelectedOrder(purchase.items);
-    document.getElementById("modal_viewDetails").showModal();
+    document.getElementById('modal_viewDetails').showModal();
   };
 
-  console.log("User ->", user);
+  console.log('User ->', user);
 
   return (
-    <div>
+    <div className="bg-base-200 h-screen"> 
       <Navbar />
-
-      <div className="flex flex-wrap mx-[5%]">
-        <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 mb-4">
-          <h1 className="text-2xl font-bold mb-2">{user.name}</h1>
-          <p className="text-lg mb-2">{user.email}</p>
-
-          <div className="flex">
-            <button
-              className="btn btn-accent mb-2 mr-2"
-              onClick={() =>
-                document.getElementById("modal_ChangePass").showModal()
-              }
-            >
-              Change Password
-            </button>
-            <button className="btn btn-accent mb-2" onClick={handleLogout}>
-              Logout
-            </button>
-          </div>
-        </div>
-        <div className="avatar">
-          <div className="w-40 rounded mr">
+      <div
+        id="body"
+        className="flex flex-wrap mx-[5%]"
+      >
+        <div className="w-full m-4 p-4 flex flex-row bg-base-100 rounded-xl shadow-lg">
+          <div className="avatar w-40">
             <img
-              src={"../../" + user.image}
+              src={'../../' + user.image}
               alt="User Image"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-xl"
             />
           </div>
+          <span className="mx-4">
+            <h1 className="text-2xl font-bold mb-2">{user.name}</h1>
+            <p className="text-lg mb-2">{user.email}</p>
+
+            <div className="flex">
+              <button
+                className="btn btn-accent mb-2 mr-2"
+                onClick={() =>
+                  document.getElementById('modal_ChangePass').showModal()
+                }
+              >
+                Change Password
+              </button>
+              <button
+                className="btn btn-accent mb-2"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          </span>
         </div>
 
-        <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 mb-4">
+        <div className="w-full h-full m-4 p-4 rounded-xl shadow-lg bg-base-100">
           <h2 className="text-2xl font-bold mt-4 mb-2">My orders</h2>
           {user?.request_History?.length === 0 ? (
             <p>No purchases done yet</p>
@@ -129,11 +133,12 @@ const ProductPage = () => {
           )}
         </div>
       </div>
-      <div style={{ position: "fixed", bottom: "0", width: "100%" }}>
-        <Footer />
-      </div>
+      <Footer />
 
-      <dialog id="modal_ChangePass" className="modal">
+      <dialog
+        id="modal_ChangePass"
+        className="modal"
+      >
         <div className="modal-box">
           <h3 className="font-bold text-lg">Change Password!</h3>
           <div className="form-control">
@@ -178,7 +183,10 @@ const ProductPage = () => {
         </div>
       </dialog>
 
-      <dialog id="modal_viewDetails" className="modal">
+      <dialog
+        id="modal_viewDetails"
+        className="modal"
+      >
         <div className="modal-box">
           <h3 className="font-bold text-lg">Order Details</h3>
           <table className="table w-full">

@@ -31,13 +31,15 @@ const Navbar = ({ categories }) => {
 
   useEffect(() => {
     const initialize = async () => {
-      fetchData(`/user/view?id=${user[0]?.id}`).then((res) => {
-        const data_user = res;
+      const user = JSON.parse(localStorage.getItem('user'));
+      user &&
+        fetchData(`/user/view?id=${user[0]?.id}`).then((res) => {
+          const data_user = res;
 
-        if (data_user) {
-          setUserInfo(data_user);
-        }
-      });
+          if (data_user) {
+            setUserInfo(data_user);
+          }
+        });
     };
     initialize();
   }, []);
@@ -85,12 +87,14 @@ const Navbar = ({ categories }) => {
           Search
         </button>
       </form>
-      <p
-        onClick={() => navigate(`/user/${user[0]?.id}`)}
-        className="mr-2 cursor-grab"
-      >
-        {user ? `Hello ${user[0]?.name}!  ` : ''}{' '}
-      </p>
+      {user && (
+        <p
+          onClick={() => navigate(`/user/${user[0]?.id}`)}
+          className="mr-2 cursor-grab"
+        >
+          {`Hello ${user[0].name}!`}
+        </p>
+      )}
 
       <div className="flex flex-wrap justify-end">
         <label className="swap swap-rotate m-2 p-2 ">

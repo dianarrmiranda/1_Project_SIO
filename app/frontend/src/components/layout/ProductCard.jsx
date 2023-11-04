@@ -44,7 +44,7 @@ const ProductCard = ({ product, className, isStore }) => {
           <div className="flex justify-between py-2 align-text-bottom">
             <p className="text-accent font-bold">{product.price}€</p>
             <div className="card-actions justify-end">
-              {sucess ? (
+              {user && (sucess ? (
                 <div
                   className="tooltip tooltip-accent tooltip-open tooltip-bottom"
                   data-tip="Added to cart!"
@@ -84,12 +84,15 @@ const ProductCard = ({ product, className, isStore }) => {
                             setSucess(false);
                           }, 2000);
                         }
+                      })
+                      .catch((err) => {
+
                       });
                   }}
                 >
                   <RiShoppingCartLine />
                 </button>
-              )}
+              ))}
               <button
                 className=" btn-primary p-1 rounded-md "
                 onClick={() => navigate(`/store/product/${product.id}`)}

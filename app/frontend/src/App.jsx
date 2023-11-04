@@ -27,7 +27,7 @@ const App = () => {
         <Route
           path="/user/cart"
           element={<CartPage />}
-        />
+        />  
         <Route
           path="/user/checkout"
           element={<CheckoutPage />}

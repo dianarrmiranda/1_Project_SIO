@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import Navbar from '../layout/Navbar';
 import Footer from '../layout/Footer';
+import { useNavigate } from 'react-router-dom';
 
 function RegisterUserPage() {
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -65,12 +67,9 @@ function RegisterUserPage() {
   return (
     <div>
       <Navbar />
-      <div className=" min-h-screen bg-base-200">
-        <div className=" w-full justify-center items-center">
-          <div className="text-center">
-            <h1 className="text-5xl font-bold">Register User!</h1>
-          </div>
-          <div className="card ml-72 w-1/3 mr-10 ml-10 shadow-2xl bg-base-100">
+      <div className="hero min-h-screen bg-[url('/src/assets/shopping2.jpg')] bg-cover">
+        <div className="hero-content w-full justify-center items-center">
+          <div className="card w-1/2 m-4 shadow-2xl bg-base-100">
             <form className="card-body">
               <div className="form-control">
                 <label className="label">
@@ -144,6 +143,20 @@ function RegisterUserPage() {
                 </button>
               </div>
             </form>
+          </div>
+
+          <div className="text-start bg-base-100 opacity-80 p-4 rounded-xl w-1/2">
+            <h1 className="text-6xl font-bold">Sign up</h1>
+            <p className="py-6 text-xl">
+              Register now and start shopping!<br/>Enjoy the best products at the
+              best prices!
+            </p>
+            <p className='py-2'>
+              Already have an account?{' '}
+              <a onClick={() => navigate('/login')} className="link link-accent">
+                Login
+              </a>{' '}to your account.
+            </p>
           </div>
         </div>
       </div>

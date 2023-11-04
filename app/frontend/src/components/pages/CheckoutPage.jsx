@@ -14,156 +14,63 @@ import { useNavigate } from 'react-router-dom';
 import { fetchData } from '../../utils';
 import { maskCreditCard } from '../../utils';
 import { API_BASE_URL } from '../../constants';
-import Warning from '../layout/Warning';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
 
-  const username = JSON.parse(localStorage.getItem('user'));
   const [cart, setCart] = useState([]);
   const [user, setUser] = useState([]);
   const [cards, setCards] = useState([]);
+  const [savedCards, setSavedCards] = useState([]);
   const [newCard, setNewCard] = useState({
     card_name: '',
     card_number: '',
     expiration_date: '',
     cvv: '',
   });
-
-  const [form, setForm] = useState({
-    delivery_day: '',
-    delivery_time: '',
-    address: '',
-    address2: '',
-    city: '',
-    country: '',
-    zip_code: '',
-    card: -1,
-  })
-
-  const [delivery_dayAlert, setDelivery_dayAlert] = useState(true);
-  const [delivery_timeAlert, setDelivery_timeAlert] = useState(true);
-  const [addressAlert, setAddressAlert] = useState(true);
-  const [address2Alert, setAddress2Alert] = useState(true);
-  const [cityAlert, setCityAlert] = useState(true);
-  const [countryAlert, setCountryAlert] = useState(true);
-  const [zip_codeAlert, setZip_codeAlert] = useState(true);
-  const [cardAlert, setCardAlert] = useState(true);
+  const [selectedCard, setSelectedCard] = useState(0);
 
   useEffect(() => {
     const initialize = async () => {
+      const username = JSON.parse(localStorage.getItem('user'));
       const saved_cards = JSON.parse(localStorage.getItem('cards'));
-      console.log('Saved cards -> ', saved_cards.length);
+      console.log('Saved cards -> ', saved_cards);
 
-      const data_user = await fetchData(
-        `/user/view?id=${username.id}&token=${username.token}`
-      );
+      const data_user = await fetchData(`/user/view?id=${username[0].id}`);
 
-      if (data_user) {
+      if (data_user && saved_cards) {
         setUser(data_user);
         setCart(data_user.shopping_Cart);
+        setCards(saved_cards);
       }
 
       const defaultCard = {
         card_name: 'Default',
-        card_number: user.credit_Card,
+        card_number: username[0].credit_Card,
         expiration_date: '01/2025',
         cvv: '123',
       };
 
-      if (saved_cards.length == 0) setCards([defaultCard]);
-      else {
-        setCards(saved_cards);
-      }
+      setCards(savedCards.length > 0 ? savedCards : [defaultCard]);
     };
     initialize();
   }, []);
 
   useEffect(() => {
-    if (cards.length > 0) {
-      localStorage.setItem('cards', JSON.stringify(cards));
-    }
+    localStorage.setItem('cards', JSON.stringify(cards));
   }, [cards]);
 
   const handleCheckout = (e) => {
     e.preventDefault();
-
-    // validation
-    if (form.delivery_day == '' || form.delivery_day == null || form.delivery_day == undefined) {
-      setDelivery_dayAlert(true);
-    } else {
-      setDelivery_dayAlert(false);
-    }
-    if (form.delivery_time == '' || form.delivery_time == null || form.delivery_time == undefined) {
-      setDelivery_timeAlert(true);
-    }
-    else {
-      setDelivery_timeAlert(false);
-    }
-    if (form.address == '' || form.address == null || form.address == undefined) {
-      setAddressAlert(true);
-    }
-    else {
-      setAddressAlert(false);
-    }
-    if (form.address2 == '' || form.address2 == null || form.address2 == undefined) {
-      setAddress2Alert(true);
-    }
-    else {
-      setAddress2Alert(false);
-    }
-    if (form.city == '' || form.city == null || form.city == undefined) {
-      setCityAlert(true);
-    }
-    else {
-      setCityAlert(false);
-    }
-    if (form.country == '' || form.country == null || form.country == undefined) {
-      setCountryAlert(true);
-    }
-    else {
-      setCountryAlert(false);
-    }
-    if (form.zip_code == '' || form.zip_code == null || form.zip_code == undefined) {
-      setZip_codeAlert(true);
-    }
-    else {
-      setZip_codeAlert(false);
-    }
-    if (form.card == -1) {
-      setCardAlert(true);
-    }
-    else {
-      setCardAlert(false);
-    }
-
-
-
-    if (
-      delivery_dayAlert ||
-      delivery_timeAlert ||
-      addressAlert ||
-      address2Alert ||
-      cityAlert ||
-      countryAlert ||
-      zip_codeAlert ||
-      cardAlert
-    ) {
-      return;
-    } else {
-      axios
-        .post(
-          `${API_BASE_URL}/user/requestCurrentCart?userID=${user.id}&token=${username.token}`
-        )
-        .then((res) => {
-          if (res.status === 200) {
-            console.log('Order placed successfully');
-            console.log(res.data);
-          }
-        });
-
-      navigate('/user');
-    }
+    axios
+      .post(`${API_BASE_URL}/user/requestCurrentCart?userID=${user.id}`)
+      .then((res) => {
+        if (res.status === 200) {
+          console.log('Order placed successfully');
+          console.log(res.data);
+        }
+      });
+    navigate('/user/' + user.id);
   };
 
   console.log('User ->', user);
@@ -188,46 +95,21 @@ const CheckoutPage = () => {
               </h1>
             </span>
             <div className="m-4 flex justify-evenly">
-              <div className='flex flex-col justify-center w-1/2'>
-                {delivery_dayAlert && (
-                  <Warning msg="Please select a valid delivery day" />
-                )}
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label="Delivery Day"
-                    format="DD/MM/YYYY"
-                    
-                    onChange={(date) => {
-                      setForm({
-                        ...form,
-                        delivery_day: date.format('DD/MM/YYYY'),
-                      });
-                    }}
-                  />
-                </LocalizationProvider>
-              </div>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Delivery Day"
+                  format="DD/MM/YYYY"
+                  required
+                />
+              </LocalizationProvider>
 
-              <div className='flex flex-col justify-center w-1/2'>
-                {delivery_timeAlert && (
-                  <Warning
-                    msg="Please select a valid delivery time"
-                    
-                  />
-                )}
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <TimePicker
-                    label="Delivery Time"
-                    ampm={false}
-                    
-                    onChange={(date) => {
-                      setForm({
-                        ...form,
-                        delivery_time: date.format('HH:mm'),
-                      });
-                    }}
-                  />
-                </LocalizationProvider>
-              </div>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <TimePicker
+                  label="Delivery Time"
+                  ampm={false}
+                  required
+                />
+              </LocalizationProvider>
             </div>
           </div>
           <div className="flex flex-col bg-base-100 rounded-lg shadow-xl p-4">
@@ -248,21 +130,12 @@ const CheckoutPage = () => {
                   >
                     Address
                   </label>
-                  {(addressAlert || address2Alert) && (
-                    <Warning msg="Please insert a valid address" error />
-                  )}
                   <input
                     id="address"
                     className="input input-bordered w-full"
                     type="text"
-                    
+                    required
                     placeholder="Street address or P.O. box"
-                    onChange={(e) => {
-                      setForm({
-                        ...form,
-                        address: e.target.value,
-                      });
-                    }}
                   />
                 </span>
                 <span className="flex flex-col w-full my-1">
@@ -270,72 +143,35 @@ const CheckoutPage = () => {
                     id="address2"
                     className="input input-bordered"
                     type="text"
-                    
+                    required
                     placeholder="Apt, suite, unit, building, floor, etc."
-                    onChange={(e) => {
-                      setForm({
-                        ...form,
-                        address2: e.target.value,
-                      });
-                    }}
                   />
                 </span>
                 <div className="flex flex-row justify-between w-full mt-2">
                   <span className="flex flex-col">
-                    {cityAlert && (
-                      <Warning msg="Please enter a city" error/>
-                    )}
                     <input
                       id="city"
                       className="input input-bordered"
                       type="text"
-                      
+                      required
                       placeholder="City"
-                      onChange={(e) => {
-                        setForm({
-                          ...form,
-                          city: e.target.value,
-                        });
-                      }}
                     />
                   </span>
                   <span className="flex flex-col">
-                    {countryAlert && (
-                      <Warning msg="Please enter a country" error/>
-                    )}
                     <input
                       id="country"
                       className="input input-bordered"
                       type="text"
-                      
+                      required
                       placeholder="Country"
-                      onChange={(e) => {
-                        setForm({
-                          ...form,
-                          country: e.target.value,
-                        });
-                      }}
                     />
                   </span>
                   <span className="flex flex-col">
-                    {zip_codeAlert && (
-                      <Warning
-                        msg="Please insert a zip code"
-                        error
-                      />
-                    )}
-
                     <input
                       id="zip_code"
                       className="input input-bordered"
                       type="text"
-                      onChange={(e) => {
-                        setForm({
-                          ...form,
-                          zip_code: e.target.value,
-                        });
-                      }}
-                      
+                      required
                       placeholder="Zip Code"
                     />
                   </span>
@@ -360,6 +196,7 @@ const CheckoutPage = () => {
                   className="input input-bordered"
                   type="text"
                   placeholder="Card Name"
+                  required
                   onChange={(e) => {
                     setNewCard({
                       ...newCard,
@@ -373,6 +210,7 @@ const CheckoutPage = () => {
                   id="card_number"
                   className="input input-bordered"
                   type="text"
+                  required
                   placeholder="Card Number"
                   onChange={(e) => {
                     setNewCard({
@@ -395,6 +233,7 @@ const CheckoutPage = () => {
                         expiration_date: date.format('MM/YYYY'),
                       });
                     }}
+                    required
                   />
                 </LocalizationProvider>
               </span>
@@ -410,6 +249,7 @@ const CheckoutPage = () => {
                       cvv: e.target.value,
                     });
                   }}
+                  required
                 />
               </span>
               <button
@@ -424,31 +264,24 @@ const CheckoutPage = () => {
                     cvv: '',
                   });
                 }}
-                
+
+                required
               >
                 Add Card
               </button>
             </div>
-            {cardAlert && (
-              <Warning
-                msg="Please select a card"
-                error
-              />
-            )}
             <div className="flex flex-wrap justify-start my-2">
               {cards?.map((card, idx) => (
                 <div
                   key={card.card_number}
                   className={`card w-[30%]  flex flex-row m-2 ${
-                    form.card === idx
+                    selectedCard === idx
                       ? 'border-2 border-accent bg-secondary'
                       : 'bg-base-200'
                   }`}
                   onClick={() => {
-                    setForm({
-                      ...form,
-                      card: idx,
-                    });
+                    setSelectedCard(idx);
+                    console.log('Selected -> ', idx);
                   }}
                 >
                   <div className="card-body flex justify-between w-full ">
