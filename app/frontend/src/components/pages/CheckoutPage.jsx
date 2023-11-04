@@ -115,8 +115,8 @@ const CheckoutPage = () => {
           <div className="flex flex-col bg-base-100 rounded-lg shadow-xl p-4">
             <span className="flex align-text-bottom">
               <h1 className=" rounded-full h-10 w-10 bg-primary p-2 text-center">
-                2
               </h1>
+                2
               <h1 className="font-bold text-xl ml-4 align-text-bottom">
                 Delivery Address
               </h1>
@@ -196,7 +196,6 @@ const CheckoutPage = () => {
                   className="input input-bordered"
                   type="text"
                   placeholder="Card Name"
-                  required
                   onChange={(e) => {
                     setNewCard({
                       ...newCard,
@@ -210,7 +209,6 @@ const CheckoutPage = () => {
                   id="card_number"
                   className="input input-bordered"
                   type="text"
-                  required
                   placeholder="Card Number"
                   onChange={(e) => {
                     setNewCard({
@@ -233,7 +231,6 @@ const CheckoutPage = () => {
                         expiration_date: date.format('MM/YYYY'),
                       });
                     }}
-                    required
                   />
                 </LocalizationProvider>
               </span>
@@ -249,7 +246,6 @@ const CheckoutPage = () => {
                       cvv: e.target.value,
                     });
                   }}
-                  required
                 />
               </span>
               <button
@@ -264,8 +260,6 @@ const CheckoutPage = () => {
                     cvv: '',
                   });
                 }}
-
-                required
               >
                 Add Card
               </button>
