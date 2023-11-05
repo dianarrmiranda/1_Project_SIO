@@ -4,7 +4,7 @@ This document provides an overview of the project, its structure, vulnerabilitie
 
 
 **Version Log**
-- 1.0: Initial version
+- 2.0: Final version
 
 ## Index
 
@@ -31,7 +31,7 @@ This project involves the development of a merchandising website for DETI (Depar
 
 The project comprises two versions:
 
-- **app**: This version contains hidden vulnerabilities that may not be easily detectable by casual users due to coding errors and improper practices, posing a risk to the overall app's security.
+- **app**: This version contains hidden vulnerabilities that may not be easily detectable by casual users due to coding errors and improper practices, posing a risk to the overall app's security and user privacy.
 - **app_sec**: The secure version, where identified vulnerabilities have been corrected, and the overall app security is enhanced.
 
 
@@ -89,8 +89,8 @@ We have carefully selected a technology stack for our project:
 | CSS Framework           | [Tailwind](https://tailwindcss.com/) + [DaisyUI](https://daisyui.com/) |
 | Component Framework     | [MUI](https://mui.com/)                                                |
 | API connection and call | [Axios](https://axios-http.com/)                                       |
-| API creation            | [SpringBoot](https://spring.io/projects/spring-boot)                   |
-| Backend                 | [H2](https://h2database.com/html/main.html)                            |
+| Backend API             | [SpringBoot](https://spring.io/projects/spring-boot)                   |
+| Backend Database        | [H2](https://h2database.com/html/main.html)                            |
 
 ### Repository stucture
 
@@ -175,8 +175,6 @@ Go to the frontend directory:
 cd frontend
 ```
 
----
-
 Install dependencies
 
 ```bash
@@ -192,6 +190,7 @@ yarn dev
 -or-
 npm run dev
 ```
+
 ### Run frontend inside a docker
 
 ```bash
@@ -199,7 +198,7 @@ cd frontend
 docker build -t react-docker:latest . 
 docker run -p 5173:5173 react-docker:latest
 ```
-
+---
 
 ### Run backend
 
@@ -216,8 +215,6 @@ Navigate to the root of the backend project:
 cd backend/Backend
 ```
 
----
-
 Run Spring-Boot:
 
 ```bash
@@ -233,12 +230,12 @@ docker build --build-arg JAR_FILE=target/shop_backend-0.0.1-SNAPSHOT.jar -t com/
 docker run -p 8080:8080 com/shop_backend
 ```
 
-### Setting up Postman (To Test API Endpoints
+### Setting up Postman (To Test API Endpoints)
 
 Install [Postman Desktop](https://www.postman.com/downloads/).
 If you are using Linux, you can search for it in package managers like [snap](https://snapcraft.io/postman) or [flatpack](https://flathub.org/apps/com.getpostman.Postman).
 
-After installing, log in and follow this [tutorial](https://apidog.com/blog/how-to-import-export-postman-collection-data/) to import `/backend/Postman-Requests/Proj1_SIO.postman_collection.json` collection inside each project version (*app* or *app_sec*).
+After installing, log in and follow this [tutorial](https://apidog.com/blog/how-to-import-export-postman-collection-data/) to import `/analysis/postman_collections/col.json` collection for each project version (*app* or *app_sec*).
 To test the endpoints, make sure you have **Spring-Boot running**.
 
 ## Vulnerabilities implemented
