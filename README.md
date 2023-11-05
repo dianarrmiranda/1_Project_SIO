@@ -99,7 +99,9 @@ Our repository is organized as follows:
 ```
 .
 ├── analysis
-│   └── postman_collections
+|   ├── postman_collections
+|   └── report.pdf
+|   
 ├── app
 │   ├── backend
 │   │   └── src
