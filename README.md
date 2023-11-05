@@ -243,15 +243,17 @@ To test the endpoints, make sure you have **Spring-Boot running**.
 
 In the insecure version of our project, we have intentionally implemented various vulnerabilities for demonstration purposes. To maintain simplicity, we list them in the following table:
 
-| Vulnerability Code | Description                                     |
-| ------------------ | ----------------------------------------------- |
-| **CWE-79**         | Cross-Site Scripting                            |
-| **CWE-89**         | SQL Injection                                   |
-| **CWE-20**         | Improper Input Validation                       |
-| **CWE-521**        | Weak Password Requirements                      |
-| **CWE-434**        | Unrestricted Upload of File with Dangerous Type |
-| **CWE-862**        | Missing Authorization                           |
-| **CWE-256**        | Plaintext Storage of a Password                 |
+| Vulnerability Code | Description                                       |
+| ------------------ | --------------------------------------------------|
+| **CWE-79**         | Cross-Site Scripting                              |
+| **CWE-89**         | SQL Injection                                     |
+| **CWE-20**         | Improper Input Validation                         |
+| **CWE-521**        | Weak Password Requirements                        |
+| **CWE-434**        | Unrestricted Upload of File with Dangerous Type   |
+| **CWE-862**        | Missing Authorization                             |
+| **CWE-256**        | Plaintext Storage of a Password                   |
+| **CWE-287**        | Improper Authentication                           |
+| **CWE-201**        | Insertion of sensitive information into sent data |
 
 # Authors
 
